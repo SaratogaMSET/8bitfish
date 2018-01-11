@@ -1,6 +1,7 @@
 
 package org.usfirst.frc.team649.robot;
 
+import org.usfirst.frc.team649.autonomous.autoMaster;
 import org.usfirst.frc.team649.robot.subsystems.DrivetrainSubsystem;
 
 import edu.wpi.first.wpilibj.IterativeRobot;
@@ -18,6 +19,7 @@ public class Robot extends IterativeRobot {
 	public static boolean isVPid;
 	public static boolean isHigh;
 	public static DrivetrainSubsystem drive;
+	public static autoMaster automaster;
 	
 	
 	//prev state variables leave at bottom
@@ -31,6 +33,7 @@ public class Robot extends IterativeRobot {
 	public void robotInit() {
 		oi = new OI();
 		drive = new DrivetrainSubsystem();
+		automaster = new autoMaster();
 	}
 
 	@Override
@@ -43,7 +46,10 @@ public class Robot extends IterativeRobot {
 		Scheduler.getInstance().run();
 	}
 
-	
+	@Override
+	public void autonomousInit() {
+		automaster.autoDecider();
+	}
 	@Override
 	public void autonomousPeriodic() {
 		Scheduler.getInstance().run();
