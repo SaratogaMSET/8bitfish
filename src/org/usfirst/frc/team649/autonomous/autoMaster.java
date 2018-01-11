@@ -150,7 +150,7 @@ public class autoMaster {
 					if (opponentSwitch == true) {
 						// red alliance, switch on left side, scale on right side, opponent switch on
 						// right side
-					} else if (opponentSwitch == false) {
+					} else if (opponentSwitch = false) {
 						// red alliance, switch on left side, scale on right side, opponent switch on
 						// left side
 					}
