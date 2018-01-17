@@ -3,7 +3,6 @@ package org.usfirst.frc.team649.robot.commands;
 import org.usfirst.frc.team649.robot.Robot;
 import org.usfirst.frc.team649.robot.RobotMap;
 
-import com.ctre.CANTalon.TalonControlMode;
 import com.ctre.phoenix.motorcontrol.ControlMode;
 
 import edu.wpi.first.wpilibj.command.Command;

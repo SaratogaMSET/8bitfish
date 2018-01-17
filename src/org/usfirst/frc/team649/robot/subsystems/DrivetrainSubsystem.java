@@ -40,7 +40,7 @@ public class DrivetrainSubsystem extends PIDSubsystem {
 		public static final double DISTANCE_PER_PULSE_HIGH = 0; 	
     }
     
-    public static class GyroPIDConstants {
+    public static class DrivePIDConstants {
     	public static final double GYRO_ABS_TOLERANCE = 0;
     	public static final double k_p = 0.0;
     	public static final double k_i = 0.0;
@@ -66,22 +66,18 @@ public class DrivetrainSubsystem extends PIDSubsystem {
 		public static final double k_F_HIGH = 0.0;
     }
     
-    public boolean drivingStraight;
     
     public Encoder leftEncoder, rightEncoder;
 
     public TalonSRX[] motors;
 	public DoubleSolenoid driveSolLeft, driveSolRight;
-	public ADXRS450_Gyro gyro;
 	
 	public DrivetrainSubsystem() {
-		super("Drivetrain Subsystem", GyroPIDConstants.k_p, GyroPIDConstants.k_i, GyroPIDConstants.k_d);
+		super("Drivetrain Subsystem", DrivePIDConstants.k_p, DrivePIDConstants.k_i, DrivePIDConstants.k_d);
 		
-		leftEncoder = new Encoder(RobotMap.Drivetrain.LEFT_SIDE_ENCODER[0],RobotMap.Drivetrain.LEFT_SIDE_ENCODER[1],RobotMap.Drivetrain.LEFT_SIDE_ENCODER[2]);
-		rightEncoder = new Encoder(RobotMap.Drivetrain.RIGHT_SIDE_ENCODER[0],RobotMap.Drivetrain.RIGHT_SIDE_ENCODER[1],RobotMap.Drivetrain.RIGHT_SIDE_ENCODER[2]);
-		
-		gyro = new ADXRS450_Gyro();
-		drivingStraight = false;
+		leftEncoder = new Encoder(RobotMap.Drivetrain.LEFT_SIDE_ENCODER[0],RobotMap.Drivetrain.LEFT_SIDE_ENCODER[1]);
+		rightEncoder = new Encoder(RobotMap.Drivetrain.RIGHT_SIDE_ENCODER[0],RobotMap.Drivetrain.RIGHT_SIDE_ENCODER[1]);
+		motors = new TalonSRX[4];
 		for (int i = 0; i < motors.length; i++) {
 			motors[i] = new TalonSRX(RobotMap.Drivetrain.MOTOR_PORTS[i]);
 		}
@@ -250,7 +246,9 @@ public class DrivetrainSubsystem extends PIDSubsystem {
 		double encPos = (double) motors[2].getSensorCollection().getQuadraturePosition();
 		return ((encPos)/4096.0) *(14.0/16.0) * (4.0 * Math.PI) / 15.0;
 	}
-	
+	public double getAvgTalonDistance() {
+		return getTalonDistanceLeft() + getTalonDistanceRight()/2;
+	}
 	public void resetEncoders() {
 		motors[0].getSensorCollection().setQuadraturePosition(0, 5);
 		motors[2].getSensorCollection().setQuadraturePosition(0, 5);
@@ -259,39 +257,18 @@ public class DrivetrainSubsystem extends PIDSubsystem {
     	
     }
     
-    public double getGyroAngle() {
-    	return gyro.getAngle();
-    }
-    
-    public void resetGyro() {
-    	gyro.reset();
-    }
-    
 	@Override
 	protected double returnPIDInput() {
 		// TODO Auto-generated method stub
-		return getGyroAngle();
+		return getAvgTalonDistance();
 	}
 	@Override
 	protected void usePIDOutput(double output) {
 		// TODO Auto-generated method stub
 		//currentMotorPower = output;
-		if(drivingStraight) {
-			double left;
-			double right;
-			right = 0.5 - output;
-			left = 0.5 + output;
-			Robot.drive.rawDrive(left, right);
-		} else {
-			Robot.drive.rawDrive(output, -output);
-		}
-//		lastMotorPower = output;
-//		Robot.PIDOutput[Robot.tick] = output;
-//		pidOutput = output;
+		rawDrive(output, output);
 	}
 	
-	public void setDrivingStraight(boolean straight) {
-		drivingStraight = straight;
-	}
+	
 }
 

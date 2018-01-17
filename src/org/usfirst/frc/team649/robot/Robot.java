@@ -2,23 +2,25 @@
 package org.usfirst.frc.team649.robot;
 
 import org.usfirst.frc.team649.autonomous.autoMaster;
+import org.usfirst.frc.team649.robot.commands.DistanceTalonPID;
 import org.usfirst.frc.team649.robot.subsystems.DrivetrainSubsystem;
+import org.usfirst.frc.team649.robot.subsystems.GyroSubsystem;
 
-import edu.wpi.first.wpilibj.IterativeRobot;
+import edu.wpi.first.wpilibj.TimedRobot;
 import edu.wpi.first.wpilibj.command.Command;
 import edu.wpi.first.wpilibj.command.Scheduler;
 import edu.wpi.first.wpilibj.livewindow.LiveWindow;
-import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
-import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 
 
-public class Robot extends IterativeRobot {
+public class Robot extends TimedRobot {
 
 	public static OI oi;
+	public static boolean isPIDActive;
 	public static boolean isAutoShift;
 	public static boolean isVPid;
 	public static boolean isHigh;
 	public static DrivetrainSubsystem drive;
+	public static GyroSubsystem gyro;
 	public static autoMaster automaster;
 	
 	
@@ -33,7 +35,9 @@ public class Robot extends IterativeRobot {
 	public void robotInit() {
 		oi = new OI();
 		drive = new DrivetrainSubsystem();
+		gyro = new GyroSubsystem();
 		automaster = new autoMaster();
+		isPIDActive = false;
 	}
 
 	@Override
@@ -49,6 +53,7 @@ public class Robot extends IterativeRobot {
 	@Override
 	public void autonomousInit() {
 		automaster.autoDecider();
+		new DistanceTalonPID(30).start();
 	}
 	@Override
 	public void autonomousPeriodic() {

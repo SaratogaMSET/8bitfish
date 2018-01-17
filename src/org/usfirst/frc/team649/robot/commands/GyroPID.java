@@ -32,18 +32,18 @@ public class GyroPID extends Command {
     	actuallyFinished = "false";
     	
     	if(angle == 0) {
-    		Robot.drive.setDrivingStraight(true);
+    		Robot.gyro.setDrivingStraight(true);
     	} else {
-    		Robot.drive.setDrivingStraight(false);
+    		Robot.gyro.setDrivingStraight(false);
     	}
     }
 
     // Called just before this Command runs the first time
     protected void initialize() {
     	drivePID.enable();
-    	double setpoint = Robot.drive.getGyroAngle() + angle;
+    	double setpoint = Robot.gyro.getGyroAngle() + angle;
     	
-    	Robot.drive.resetGyro();
+    	Robot.gyro.resetGyro();
     	
     	drivePID.setSetpoint(setpoint);
     	SmartDashboard.putNumber("Setpoint", setpoint);
@@ -76,8 +76,8 @@ public class GyroPID extends Command {
     	SmartDashboard.putBoolean("End", true);
     	SmartDashboard.putBoolean("pid done", true);
     	Robot.drive.rawDrive(0, 0);
-    	Robot.drive.resetGyro();
-    	Robot.drive.setDrivingStraight(false);
+    	Robot.gyro.resetGyro();
+    	Robot.gyro.setDrivingStraight(false);
     }
 
     // Called when another command which requires one or more of the same
