@@ -33,9 +33,9 @@ public class DrivetrainSubsystem extends PIDSubsystem {
     
     public static class AutoPIDConstants{
     	public static final double PID_ABS_TOLERANCE = 2;
-    	public static double k_P = 0.0;
+    	public static double k_P = 0.2;
 		public static double k_I = 0.0;
-		public static double k_D = 0.0;
+		public static double k_D = 0.1;
 		public static double k_F = 0.0;
 		public static final double DISTANCE_PER_PULSE_LOW = 0;
 		public static final double DISTANCE_PER_PULSE_HIGH = 0; 	
@@ -75,11 +75,12 @@ public class DrivetrainSubsystem extends PIDSubsystem {
 	public DoubleSolenoid driveSolLeft, driveSolRight;
 	
 	public DrivetrainSubsystem() {
-		super("Drivetrain Subsystem", DrivePIDConstants.k_p, DrivePIDConstants.k_i, DrivePIDConstants.k_d);
+		super("Drivetrain Subsystem", AutoPIDConstants.k_P, AutoPIDConstants.k_I, AutoPIDConstants.k_D);
 		
 		drivePIDOutput = 0;
 		
 		leftEncoder = new Encoder(RobotMap.Drivetrain.LEFT_SIDE_ENCODER[0],RobotMap.Drivetrain.LEFT_SIDE_ENCODER[1]);
+		leftEncoder.setDistancePerPulse(4.00 * Math.PI / 2048.0 * 14 / 60);
 		rightEncoder = new Encoder(RobotMap.Drivetrain.RIGHT_SIDE_ENCODER[0],RobotMap.Drivetrain.RIGHT_SIDE_ENCODER[1]);
 		motors = new TalonSRX[4];
 		for (int i = 0; i < motors.length; i++) {
@@ -101,24 +102,25 @@ public class DrivetrainSubsystem extends PIDSubsystem {
 //		motors[0].configEncoderCodesPerRev(VPIDConstants.DISTANCE_PER_REV);
 //		motors[1].changeControlMode(ControlMode.Follower);
 		motors[1].set(ControlMode.Follower,RobotMap.Drivetrain.MOTOR_PORTS[0]);
-		motors[2].configSelectedFeedbackSensor(FeedbackDevice.QuadEncoder, 0, 15);
+		motors[2].configSelectedFeedbackSensor(FeedbackDevice.QuadEncoder, 0, 20);
 		motors[2].setSensorPhase(false);
-		motors[2].configNominalOutputForward(0,15);
-		motors[2].configNominalOutputReverse(0, 15);
-		motors[2].configPeakOutputForward(1, 15);
-		motors[2].configPeakOutputReverse(-1, 15);
+		motors[2].configNominalOutputForward(0,20);
+		motors[2].configNominalOutputReverse(0, 20);
+		motors[2].configPeakOutputForward(1, 20);
+		motors[2].configPeakOutputReverse(-1, 20);
 
 		
-		motors[3].configNominalOutputForward(0,15);
-		motors[3].configNominalOutputReverse(0, 15);
-		motors[3].configPeakOutputForward(1, 15);
-		motors[3].configPeakOutputReverse(-1, 15);
+		motors[3].configNominalOutputForward(0,20);
+		motors[3].configNominalOutputReverse(0, 20);
+		motors[3].configPeakOutputForward(1, 20);
+		motors[3].configPeakOutputReverse(-1, 20);
 		
 //		motors[2].configEncoderCodesPerRev(VPIDConstants.DISTANCE_PER_REV);
 		motors[3].set(ControlMode.Follower,RobotMap.Drivetrain.MOTOR_PORTS[2]);
 		isLeftVPid = false;
 		isRightVPid = false;
 		isHighGear = false;
+		this.getPIDController().setAbsoluteTolerance(AutoPIDConstants.PID_ABS_TOLERANCE);
 	}
 	//changes the drivetrain between vbus and vpid 
 	private void changeDrivetrainModesLeft(boolean isVPid){
@@ -253,15 +255,17 @@ public class DrivetrainSubsystem extends PIDSubsystem {
 			motors[2].set(ControlMode.PercentOutput,0);
 		}
 	}
-	
+	public double getEncDistanceLeft() {
+		return leftEncoder.getDistance();
+	}
 	public double getTalonDistanceLeft() {
 		double encPos = (double) motors[0].getSensorCollection().getQuadraturePosition();
-		return ((encPos)/4096.0) *(14.0/16.0) * (4.0 * Math.PI) / 15.0;
+		return ((encPos)/4096.0) *(14.0/16.0) * (4.0 * Math.PI) / 15.0 * 2;
 	}
 	
 	public double getTalonDistanceRight() {
 		double encPos = (double) motors[2].getSensorCollection().getQuadraturePosition();
-		return ((encPos)/4096.0) *(14.0/16.0) * (4.0 * Math.PI) / 15.0;
+		return ((encPos)/4096.0) *(14.0/16.0) * (4.0 * Math.PI) / 15.0 * 2;
 	}
 	public double getAvgTalonDistance() {
 		return getTalonDistanceLeft() + getTalonDistanceRight()/ 2.0;
@@ -269,6 +273,7 @@ public class DrivetrainSubsystem extends PIDSubsystem {
 	public void resetEncoders() {
 		motors[0].getSensorCollection().setQuadraturePosition(0, 20);
 		motors[2].getSensorCollection().setQuadraturePosition(0, 20);
+		leftEncoder.reset();
 	}
     public void initDefaultCommand() {
     	

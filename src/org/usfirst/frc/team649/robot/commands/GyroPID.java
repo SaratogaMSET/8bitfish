@@ -55,6 +55,9 @@ public class GyroPID extends Command {
 
     // Called repeatedly when this Command is scheduled to run
     protected void execute() {
+    	
+    	double output = Robot.gyro.GyroPIDOutput;
+    	Robot.drive.rawDrive(output, -output);
     	if (time.get() <= 0) {
     		time.start();
     	}

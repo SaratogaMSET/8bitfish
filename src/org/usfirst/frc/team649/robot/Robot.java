@@ -3,6 +3,7 @@ package org.usfirst.frc.team649.robot;
 
 import org.usfirst.frc.team649.autonomous.autoMaster;
 import org.usfirst.frc.team649.robot.commands.DistanceTalonPID;
+import org.usfirst.frc.team649.robot.commands.DrivetrainPIDCommand;
 import org.usfirst.frc.team649.robot.subsystems.DrivetrainSubsystem;
 import org.usfirst.frc.team649.robot.subsystems.GyroSubsystem;
 
@@ -55,7 +56,7 @@ public class Robot extends TimedRobot {
 	public void autonomousInit() {
 		automaster.autoDecider();
 		drive.resetEncoders();
-		new DistanceTalonPID(30.0).start();
+		new DrivetrainPIDCommand(30.0).start();
 	}
 	@Override
 	public void autonomousPeriodic() {
@@ -79,21 +80,23 @@ public class Robot extends TimedRobot {
 		checkAutoShiftToggle();
 		checkVbusToggle();
 		
-		if(!isAutoShift || oi.driver.forceLowGear()){
-			//manual shift
-		}else{
-			//auto shift
-		}
-		double joyXVal = Robot.oi.driver.getRotation();
-		double joyYVal = Robot.oi.driver.getForward();
-		if(!isVPid || oi.driver.isVBusOveridePush()||(Math.abs(joyXVal)<0.2 && joyYVal == 0)){
-			drive.driveFwdRotate(joyYVal, joyXVal, true);
-		}else{
-			
-		}
+//		if(!isAutoShift || oi.driver.forceLowGear()){
+//			//manual shift
+//		}else{
+//			//auto shift
+//		}
+//		double joyXVal = Robot.oi.driver.getRotation();
+//		double joyYVal = Robot.oi.driver.getForward();
+//		if(!isVPid || oi.driver.isVBusOveridePush()||(Math.abs(joyXVal)<0.2 && joyYVal == 0)){
+//			drive.driveFwdRotate(joyYVal, joyXVal, true);
+//		}else{
+//			
+//		}
+		drive.rawDrive(oi.driveJoystickVertical.getY(), oi.driveJoystickVertical.getY());
 		
 		SmartDashboard.putNumber("TalonRaw", drive.motors[0].getSensorCollection().getQuadraturePosition());
-		
+		SmartDashboard.putNumber("Encoder Val", drive.getEncDistanceLeft());
+		SmartDashboard.putNumber("Talon Enc Distance", drive.getTalonDistanceLeft());
 		//these are checking the previous state of a variable make sure this is at the bottom			
 		autoShiftButtonPrevState = oi.driver.switchToNormalShift();
 		VPidButtonPrevState = oi.driver.switchToVbus();

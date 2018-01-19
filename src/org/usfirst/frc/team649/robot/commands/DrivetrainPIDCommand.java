@@ -61,6 +61,10 @@ public class DrivetrainPIDCommand extends Command {
 //    	if (timeout.get() > 7) {
 //    		isFinished = true;
 //    	}
+    	double output = Robot.drive.getDrivePIDOutput();
+    	
+    	Robot.drive.rawDrive(output, output);
+    	
     	if(drivePID.onTarget() && time.get() < 0.01){
     		time.start();
     	}else if(time.get() > 0.01 && !drivePID.onTarget()){
