@@ -29,15 +29,16 @@ public class DistanceTalonPID extends Command {
     	
     	Robot.drive.resetEncoders();
     	
-    	Robot.drive.motors[0].getSensorCollection().setQuadraturePosition(0, 1);
-    	Robot.drive.motors[2].getSensorCollection().setQuadraturePosition(0, 1);
+    	Robot.drive.motors[0].getSensorCollection().setQuadraturePosition(0, 20);
+    	Robot.drive.motors[2].getSensorCollection().setQuadraturePosition(0, 20);
     	
     	for(int i = 0; i < Robot.drive.motors.length; i++) {
-    		Robot.drive.motors[i].config_kP(0, 0.02, 1);
-    		Robot.drive.motors[i].config_kI(0, 0.0, 1);
-    		Robot.drive.motors[i].config_kD(0, 0.1, 1);
+    		Robot.drive.motors[i].config_kP(0, 0.02, 20);
+    		Robot.drive.motors[i].config_kI(0, 0.0, 20);
+    		Robot.drive.motors[i].config_kD(0, 0.1, 20);
     	}
 		
+    	
 		SmartDashboard.putNumber("Setpoint", setpoint);
 		SmartDashboard.putString("Current Command", getName());
 		
@@ -45,16 +46,20 @@ public class DistanceTalonPID extends Command {
 
     // Called repeatedly when this Command is scheduled to run
     protected void execute() {
-    	Robot.drive.motors[0].set(ControlMode.Position, ((setpoint/(4.0*Math.PI))/ (14.0/60.0)) * 4096 );
+    	Robot.drive.motors[0].set(ControlMode.Position, ((setpoint/(4.0*Math.PI))/ (14.0/60.0)) * 4096.0 );
 		Robot.drive.motors[1].set(ControlMode.Follower, RobotMap.Drivetrain.MOTOR_PORTS[0]);
-		Robot.drive.motors[2].set(ControlMode.Position, -((setpoint/(4.0*Math.PI))/ (14.0/60.0)) * 4096 );
+		Robot.drive.motors[2].set(ControlMode.Position, -((setpoint/(4.0*Math.PI))/ (14.0/60.0)) * 4096.0 );
 		Robot.drive.motors[3].set(ControlMode.Follower, RobotMap.Drivetrain.MOTOR_PORTS[2]);
     	SmartDashboard.putNumber("Setpoint", ((setpoint/(4.0*Math.PI))/ (14.0/60.0)) * 4096);
 		
+    	double rawSetpoint = ((setpoint/(4.0*Math.PI))/ (14.0/60.0)) * 4096.0;
 //		if (Math.abs(Robot.drive.motors[0].getEncPosition() - setpoint) < 2) {
 //			isFinished = true;
 //		}
-    	if (Math.abs(Robot.drive.getTalonDistanceLeft() - setpoint) < 2) {
+    	
+    	SmartDashboard.putNumber("Left Talon Distance", Robot.drive.getTalonDistanceLeft());
+    	
+    	if (Math.abs(rawSetpoint - Robot.drive.motors[0].getSensorCollection().getQuadraturePosition()) < 100) {//(Math.abs(Robot.drive.getTalonDistanceLeft() - setpoint) < 2) {
 			isFinished = true;
 		}
     }

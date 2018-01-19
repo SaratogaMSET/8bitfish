@@ -17,6 +17,8 @@ public class OI {
 	public Driver driver;
 	public Operator operator;
 	
+	public boolean oldValue;
+	
 	public  OI(){
 		buttonBoard = new Joystick(RobotMap.BUTTON_BOARD);
 		driveJoystickHorizontal = new Joystick(RobotMap.DRIVE_JOYSTICK_HORIZONTAL);
@@ -24,9 +26,58 @@ public class OI {
 //		gamePad = new Joystick(3);
 		driver = new Driver();
 		operator = new Operator();
+		
+		oldValue = false;
 	}
 	public class Operator {
-	
+		public boolean PIDTunePhase() {
+			boolean value = buttonBoard.getRawButton(1);
+			if(value == true && oldValue == false){
+				oldValue = value;
+				return true;
+			}
+			oldValue = value;
+			return false;
+		}
+		public boolean getButton2() {
+			return buttonBoard.getRawButton(2);
+		}
+		public boolean getButton3() {
+			return buttonBoard.getRawButton(3);
+		}
+		public boolean getButton4() {
+			return buttonBoard.getRawButton(4);
+		}
+		public boolean getButton5() {
+			return buttonBoard.getRawButton(5);
+		}
+		public boolean getButton6() {
+			return buttonBoard.getRawButton(6);
+		}
+		public boolean getButton7() {
+			return buttonBoard.getRawButton(7);
+		}
+		public boolean getButton8() {
+			return buttonBoard.getRawButton(8);
+		}
+		public boolean getButton9() {
+			return buttonBoard.getRawButton(9);
+		}
+		public boolean getButton10() {
+			return buttonBoard.getRawButton(10);
+		}
+		public boolean getButton11() {
+			return buttonBoard.getRawButton(11);
+		}
+		public boolean getButton12() {
+			return buttonBoard.getRawButton(12);
+		}
+		public boolean getButton13() {
+			return buttonBoard.getRawButton(13);
+		}
+		public boolean startNewPID() {
+			return buttonBoard.getRawButton(14);
+		}
 	}
 	public class Driver {
 		public double getForward() {

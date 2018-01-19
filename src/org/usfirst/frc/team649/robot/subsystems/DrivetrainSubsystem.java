@@ -2,6 +2,7 @@ package org.usfirst.frc.team649.robot.subsystems;
 
 import org.usfirst.frc.team649.robot.Robot;
 import org.usfirst.frc.team649.robot.RobotMap;
+import org.usfirst.frc.team649.robot.subsystems.GyroSubsystem.GyroPIDConstants;
 
 import com.ctre.phoenix.motorcontrol.ControlMode;
 import com.ctre.phoenix.motorcontrol.FeedbackDevice;
@@ -31,11 +32,11 @@ public class DrivetrainSubsystem extends PIDSubsystem {
     }
     
     public static class AutoPIDConstants{
-    	public static final double PID_ABS_TOLERANCE = 0;
-    	public static final double k_P = 0.0;
-		public static final double k_I = 0.0;
-		public static final double k_D = 0.0;
-		public static final double k_F = 0.0;
+    	public static final double PID_ABS_TOLERANCE = 2;
+    	public static double k_P = 0.0;
+		public static double k_I = 0.0;
+		public static double k_D = 0.0;
+		public static double k_F = 0.0;
 		public static final double DISTANCE_PER_PULSE_LOW = 0;
 		public static final double DISTANCE_PER_PULSE_HIGH = 0; 	
     }
@@ -68,12 +69,15 @@ public class DrivetrainSubsystem extends PIDSubsystem {
     
     
     public Encoder leftEncoder, rightEncoder;
-
+    
+    public double drivePIDOutput;
     public TalonSRX[] motors;
 	public DoubleSolenoid driveSolLeft, driveSolRight;
 	
 	public DrivetrainSubsystem() {
 		super("Drivetrain Subsystem", DrivePIDConstants.k_p, DrivePIDConstants.k_i, DrivePIDConstants.k_d);
+		
+		drivePIDOutput = 0;
 		
 		leftEncoder = new Encoder(RobotMap.Drivetrain.LEFT_SIDE_ENCODER[0],RobotMap.Drivetrain.LEFT_SIDE_ENCODER[1]);
 		rightEncoder = new Encoder(RobotMap.Drivetrain.RIGHT_SIDE_ENCODER[0],RobotMap.Drivetrain.RIGHT_SIDE_ENCODER[1]);
@@ -82,21 +86,34 @@ public class DrivetrainSubsystem extends PIDSubsystem {
 			motors[i] = new TalonSRX(RobotMap.Drivetrain.MOTOR_PORTS[i]);
 		}
 		
-		motors[0].configSelectedFeedbackSensor(FeedbackDevice.QuadEncoder, 0, 10);
+		motors[0].configSelectedFeedbackSensor(FeedbackDevice.QuadEncoder, 0, 15);
 		motors[0].setSensorPhase(false);
-		motors[0].configNominalOutputForward(0,10);
-		motors[0].configNominalOutputReverse(0, 10);
-		motors[0].configPeakOutputForward(1, 10);
-		motors[0].configPeakOutputReverse(-1, 10);
+		motors[0].configNominalOutputForward(0,15);
+		motors[0].configNominalOutputReverse(0, 15);
+		motors[0].configPeakOutputForward(1, 15);
+		motors[0].configPeakOutputReverse(-1, 15);
+		
+		motors[1].configNominalOutputForward(0,15);
+		motors[1].configNominalOutputReverse(0, 15);
+		motors[1].configPeakOutputForward(1, 15);
+		motors[1].configPeakOutputReverse(-1, 15);
+		
 //		motors[0].configEncoderCodesPerRev(VPIDConstants.DISTANCE_PER_REV);
 //		motors[1].changeControlMode(ControlMode.Follower);
 		motors[1].set(ControlMode.Follower,RobotMap.Drivetrain.MOTOR_PORTS[0]);
-		motors[2].configSelectedFeedbackSensor(FeedbackDevice.QuadEncoder, 0, 10);
+		motors[2].configSelectedFeedbackSensor(FeedbackDevice.QuadEncoder, 0, 15);
 		motors[2].setSensorPhase(false);
-		motors[2].configNominalOutputForward(0,10);
-		motors[2].configNominalOutputReverse(0, 10);
-		motors[2].configPeakOutputForward(1, 10);
-		motors[2].configPeakOutputReverse(-1, 10);	
+		motors[2].configNominalOutputForward(0,15);
+		motors[2].configNominalOutputReverse(0, 15);
+		motors[2].configPeakOutputForward(1, 15);
+		motors[2].configPeakOutputReverse(-1, 15);
+
+		
+		motors[3].configNominalOutputForward(0,15);
+		motors[3].configNominalOutputReverse(0, 15);
+		motors[3].configPeakOutputForward(1, 15);
+		motors[3].configPeakOutputReverse(-1, 15);
+		
 //		motors[2].configEncoderCodesPerRev(VPIDConstants.DISTANCE_PER_REV);
 		motors[3].set(ControlMode.Follower,RobotMap.Drivetrain.MOTOR_PORTS[2]);
 		isLeftVPid = false;
@@ -247,11 +264,11 @@ public class DrivetrainSubsystem extends PIDSubsystem {
 		return ((encPos)/4096.0) *(14.0/16.0) * (4.0 * Math.PI) / 15.0;
 	}
 	public double getAvgTalonDistance() {
-		return getTalonDistanceLeft() + getTalonDistanceRight()/2;
+		return getTalonDistanceLeft() + getTalonDistanceRight()/ 2.0;
 	}
 	public void resetEncoders() {
-		motors[0].getSensorCollection().setQuadraturePosition(0, 5);
-		motors[2].getSensorCollection().setQuadraturePosition(0, 5);
+		motors[0].getSensorCollection().setQuadraturePosition(0, 20);
+		motors[2].getSensorCollection().setQuadraturePosition(0, 20);
 	}
     public void initDefaultCommand() {
     	
@@ -266,9 +283,32 @@ public class DrivetrainSubsystem extends PIDSubsystem {
 	protected void usePIDOutput(double output) {
 		// TODO Auto-generated method stub
 		//currentMotorPower = output;
-		rawDrive(output, output);
+		drivePIDOutput = output;
+		
 	}
 	
+	public double getDrivePIDOutput() {
+		return drivePIDOutput;
+	}
+	
+	public double getP() {
+		return AutoPIDConstants.k_P;
+	}
+	public double getI() {
+		return AutoPIDConstants.k_I;
+	}
+	public double getD() {
+		return AutoPIDConstants.k_D;
+	}
+	public void setP(double d) {
+		AutoPIDConstants.k_P += d;
+	}
+	public void setI(double d) {
+		AutoPIDConstants.k_I += d;
+	}
+	public void setD(double d) {
+		AutoPIDConstants.k_D += d;
+	}
 	
 }
 

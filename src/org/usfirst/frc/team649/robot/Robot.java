@@ -10,6 +10,7 @@ import edu.wpi.first.wpilibj.TimedRobot;
 import edu.wpi.first.wpilibj.command.Command;
 import edu.wpi.first.wpilibj.command.Scheduler;
 import edu.wpi.first.wpilibj.livewindow.LiveWindow;
+import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 
 
 public class Robot extends TimedRobot {
@@ -53,7 +54,8 @@ public class Robot extends TimedRobot {
 	@Override
 	public void autonomousInit() {
 		automaster.autoDecider();
-		new DistanceTalonPID(30).start();
+		drive.resetEncoders();
+		new DistanceTalonPID(30.0).start();
 	}
 	@Override
 	public void autonomousPeriodic() {
@@ -66,7 +68,7 @@ public class Robot extends TimedRobot {
 		isVPid = true;
 		autoShiftButtonPrevState = oi.driver.switchToNormalShift();
 		VPidButtonPrevState = oi.driver.switchToVbus();
-		
+		drive.resetEncoders();
 		
 	}
 
@@ -90,7 +92,7 @@ public class Robot extends TimedRobot {
 			
 		}
 		
-		
+		SmartDashboard.putNumber("TalonRaw", drive.motors[0].getSensorCollection().getQuadraturePosition());
 		
 		//these are checking the previous state of a variable make sure this is at the bottom			
 		autoShiftButtonPrevState = oi.driver.switchToNormalShift();
@@ -114,6 +116,6 @@ public class Robot extends TimedRobot {
 
 	@Override
 	public void testPeriodic() {
-		LiveWindow.run();
+		
 	}
 }
