@@ -80,23 +80,29 @@ public class Robot extends TimedRobot {
 		checkAutoShiftToggle();
 		checkVbusToggle();
 		
-//		if(!isAutoShift || oi.driver.forceLowGear()){
-//			//manual shift
-//		}else{
-//			//auto shift
-//		}
-//		double joyXVal = Robot.oi.driver.getRotation();
-//		double joyYVal = Robot.oi.driver.getForward();
-//		if(!isVPid || oi.driver.isVBusOveridePush()||(Math.abs(joyXVal)<0.2 && joyYVal == 0)){
-//			drive.driveFwdRotate(joyYVal, joyXVal, true);
-//		}else{
-//			
-//		}
-		drive.rawDrive(oi.driveJoystickVertical.getY(), oi.driveJoystickVertical.getY());
+		if(!isAutoShift || oi.driver.forceLowGear()){
+			//manual shift
+		}else{
+			//auto shift
+		}
+		double joyXVal = Robot.oi.driver.getRotation();
+		double joyYVal = Robot.oi.driver.getForward();
 		
-		SmartDashboard.putNumber("TalonRaw", drive.motors[0].getSensorCollection().getQuadraturePosition());
-		SmartDashboard.putNumber("Encoder Val", drive.getEncDistanceLeft());
-		SmartDashboard.putNumber("Talon Enc Distance", drive.getTalonDistanceLeft());
+		if(!isVPid || oi.driver.isVBusOveridePush()||Math.abs(joyXVal)<0.2){
+			//VBUS
+			drive.driveFwdRotate(joyYVal, joyXVal, true);
+		}else{
+			//VPID
+			joyYVal =  (joyYVal/Math.abs(joyYVal))*Math.pow(Math.abs(joyYVal), DrivetrainSubsystem.VPIDConstants.Y_COMPONENT_EXP);
+			if(Math.abs(joyXVal) > 0.3){
+				joyXVal =(joyXVal/Math.abs(joyXVal))*(Math.pow(Math.abs(joyXVal), DrivetrainSubsystem.VPIDConstants.X_COMPONENT_HIGH_EXP));
+			}else{
+				joyXVal = (joyXVal/Math.abs(joyXVal))*Math.pow(Math.abs(joyXVal), DrivetrainSubsystem.VPIDConstants.X_COMPONENT_LOW_EXP);
+			}
+			drive.driveFwdRotate(joyYVal, joyXVal,false);
+		}
+		updateSmartDashboardTesting();
+		
 		//these are checking the previous state of a variable make sure this is at the bottom			
 		autoShiftButtonPrevState = oi.driver.switchToNormalShift();
 		VPidButtonPrevState = oi.driver.switchToVbus();
@@ -113,7 +119,12 @@ public class Robot extends TimedRobot {
 			isVPid = !isVPid;
 		}
 	}
-	private void updateSmartDashboard(){
+	private void updateSmartDashboardTesting(){
+		SmartDashboard.putNumber("TalonRaw", drive.motors[0].getSensorCollection().getQuadraturePosition());
+		SmartDashboard.putNumber("Encoder Val", drive.getEncDistanceLeft());
+		SmartDashboard.putNumber("Talon Enc Distance", drive.getTalonDistanceLeft());
+	}
+	private void updateSmartDashboardComp(){
 		
 	}
 
