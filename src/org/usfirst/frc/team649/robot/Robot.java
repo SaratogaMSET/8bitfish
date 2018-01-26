@@ -266,7 +266,11 @@ public class Robot extends TimedRobot {
 			isVPid = !isVPid;
 		}
 	}
-	private void updateSmartDashboard(){
+	private void updateSmartDashboardTesting(){
+		SmartDashboard.putNumber("TalonRaw", drive.motors[0].getSensorCollection().getQuadraturePosition());
+		SmartDashboard.putNumber("Talon Enc Distance", drive.getTalonDistanceLeft());
+	}
+	private void updateSmartDashboardComp(){
 		
 	}
 

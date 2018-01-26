@@ -65,6 +65,9 @@ public class DrivetrainSubsystem extends PIDSubsystem {
 		public static final double k_I_HIGH = 0.0;
 		public static final double k_D_HIGH = 0.0;
 		public static final double k_F_HIGH = 0.0;
+		public static final double Y_COMPONENT_EXP = 1.32;
+		public static final double X_COMPONENT_HIGH_EXP = 1.75;
+		public static final double X_COMPONENT_LOW_EXP = 3;
     }
     
     
