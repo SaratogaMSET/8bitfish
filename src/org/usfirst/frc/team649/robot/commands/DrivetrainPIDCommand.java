@@ -43,7 +43,7 @@ public class DrivetrainPIDCommand extends Command {
     	drivePID.enable();
     	//drivePIDRight.enable();
     	Robot.isPIDActive = true;
-    	double setpoint = Robot.drive.getPosition() + distance;
+    	double setpoint = Robot.drive.getAvgTalonDistance() + distance;
     	drivePID.setSetpoint(setpoint);
     	SmartDashboard.putNumber("Setpoint", setpoint);
     	//drivePIDRight.setSetpoint(setpoint);
@@ -58,9 +58,9 @@ public class DrivetrainPIDCommand extends Command {
 //    	if(Math.abs(Robot.drive.getDistanceDTBoth() - distanceTraveled) < 0.01){
 //    		isFinished = true;
 //    	}
-//    	if (timeout.get() > 7) {
-//    		isFinished = true;
-//    	}
+    	if (timeout.get() > 7) {
+    		isFinished = true;
+    	}
     	double output = Robot.drive.getDrivePIDOutput();
     	
     	Robot.drive.rawDrive(output, output);
@@ -85,8 +85,8 @@ public class DrivetrainPIDCommand extends Command {
     @Override
 	protected boolean isFinished() {
 
-    	encoderRight = Robot.drive.rightEncoder.getDistance();
-    	encoderLeft = Robot.drive.leftEncoder.getDistance();
+//    	encoderRight = Robot.drive.rightEncoder.getDistance();
+//    	encoderLeft = Robot.drive.leftEncoder.getDistance();
         return isFinished;
     }
 

@@ -79,47 +79,47 @@ public class DrivetrainSubsystem extends PIDSubsystem {
 		
 		drivePIDOutput = 0;
 		
-		leftEncoder = new Encoder(RobotMap.Drivetrain.LEFT_SIDE_ENCODER[0],RobotMap.Drivetrain.LEFT_SIDE_ENCODER[1]);
-		leftEncoder.setDistancePerPulse(4.00 * Math.PI / 2048.0 * 14 / 60);
-		rightEncoder = new Encoder(RobotMap.Drivetrain.RIGHT_SIDE_ENCODER[0],RobotMap.Drivetrain.RIGHT_SIDE_ENCODER[1]);
+//		leftEncoder = new Encoder(RobotMap.Drivetrain.LEFT_SIDE_ENCODER[0],RobotMap.Drivetrain.LEFT_SIDE_ENCODER[1]);
+//		leftEncoder.setDistancePerPulse(4.00 * Math.PI / 2048.0 * 14 / 60);
+//		rightEncoder = new Encoder(RobotMap.Drivetrain.RIGHT_SIDE_ENCODER[0],RobotMap.Drivetrain.RIGHT_SIDE_ENCODER[1]);
 		motors = new TalonSRX[4];
 		for (int i = 0; i < motors.length; i++) {
 			motors[i] = new TalonSRX(RobotMap.Drivetrain.MOTOR_PORTS[i]);
 		}
 		
-		motors[0].configSelectedFeedbackSensor(FeedbackDevice.QuadEncoder, 0, 15);
+		motors[0].configSelectedFeedbackSensor(FeedbackDevice.QuadEncoder, 0, 30);
 		motors[0].setSensorPhase(false);
-		motors[0].configNominalOutputForward(0,15);
-		motors[0].configNominalOutputReverse(0, 15);
-		motors[0].configPeakOutputForward(1, 15);
-		motors[0].configPeakOutputReverse(-1, 15);
+		motors[0].configNominalOutputForward(0, 30);
+		motors[0].configNominalOutputReverse(0, 30);
+		motors[0].configPeakOutputForward(1, 30);
+		motors[0].configPeakOutputReverse(-1, 30);
 		
-		motors[1].configNominalOutputForward(0,15);
-		motors[1].configNominalOutputReverse(0, 15);
-		motors[1].configPeakOutputForward(1, 15);
-		motors[1].configPeakOutputReverse(-1, 15);
+		motors[1].configNominalOutputForward(0, 30);
+		motors[1].configNominalOutputReverse(0, 30);
+		motors[1].configPeakOutputForward(1, 30);
+		motors[1].configPeakOutputReverse(-1, 30);
 		
 //		motors[0].configEncoderCodesPerRev(VPIDConstants.DISTANCE_PER_REV);
 //		motors[1].changeControlMode(ControlMode.Follower);
 		motors[1].set(ControlMode.Follower,RobotMap.Drivetrain.MOTOR_PORTS[0]);
-		motors[2].configSelectedFeedbackSensor(FeedbackDevice.QuadEncoder, 0, 20);
+		motors[2].configSelectedFeedbackSensor(FeedbackDevice.QuadEncoder, 0, 30);
 		motors[2].setSensorPhase(false);
-		motors[2].configNominalOutputForward(0,20);
-		motors[2].configNominalOutputReverse(0, 20);
-		motors[2].configPeakOutputForward(1, 20);
-		motors[2].configPeakOutputReverse(-1, 20);
+		motors[2].configNominalOutputForward(0, 30);
+		motors[2].configNominalOutputReverse(0, 30);
+		motors[2].configPeakOutputForward(1, 30);
+		motors[2].configPeakOutputReverse(-1, 30);
 
 		
-		motors[3].configNominalOutputForward(0,20);
-		motors[3].configNominalOutputReverse(0, 20);
-		motors[3].configPeakOutputForward(1, 20);
-		motors[3].configPeakOutputReverse(-1, 20);
+		motors[3].configNominalOutputForward(0, 30);
+		motors[3].configNominalOutputReverse(0, 30);
+		motors[3].configPeakOutputForward(1, 30);
+		motors[3].configPeakOutputReverse(-1, 30);
 		
 //		motors[2].configEncoderCodesPerRev(VPIDConstants.DISTANCE_PER_REV);
 		motors[3].set(ControlMode.Follower,RobotMap.Drivetrain.MOTOR_PORTS[2]);
 		isLeftVPid = false;
 		isRightVPid = false;
-		isHighGear = false;
+		isHighGear = true;
 		this.getPIDController().setAbsoluteTolerance(AutoPIDConstants.PID_ABS_TOLERANCE);
 	}
 	//changes the drivetrain between vbus and vpid 
@@ -163,30 +163,30 @@ public class DrivetrainSubsystem extends PIDSubsystem {
 			leftEncoder.setDistancePerPulse(AutoPIDConstants.DISTANCE_PER_PULSE_HIGH);
 			rightEncoder.setDistancePerPulse(AutoPIDConstants.DISTANCE_PER_PULSE_HIGH);
 			if(isLeftVPid){
-				motors[0].config_kF(0,VPIDConstants.k_F_HIGH,10); 
-				motors[0].config_kP(0,VPIDConstants.k_P_HIGH,10);
-				motors[0].config_kI(0,VPIDConstants.k_I_HIGH,10);
-				motors[0].config_kD(0,VPIDConstants.k_D_HIGH,10); 
+				motors[0].config_kF(0,VPIDConstants.k_F_HIGH,30); 
+				motors[0].config_kP(0,VPIDConstants.k_P_HIGH,30);
+				motors[0].config_kI(0,VPIDConstants.k_I_HIGH,30);
+				motors[0].config_kD(0,VPIDConstants.k_D_HIGH,30); 
 			}
 			if(isRightVPid){
-				motors[2].config_kF(0,VPIDConstants.k_F_HIGH,10); 
-				motors[2].config_kP(0,VPIDConstants.k_P_HIGH,10);
-				motors[2].config_kI(0,VPIDConstants.k_I_HIGH,10);
-				motors[2].config_kD(0,VPIDConstants.k_D_HIGH,10);
+				motors[2].config_kF(0,VPIDConstants.k_F_HIGH,30); 
+				motors[2].config_kP(0,VPIDConstants.k_P_HIGH,30);
+				motors[2].config_kI(0,VPIDConstants.k_I_HIGH,30);
+				motors[2].config_kD(0,VPIDConstants.k_D_HIGH,30);
 			}
 		}else{
 			leftEncoder.setDistancePerPulse(AutoPIDConstants.DISTANCE_PER_PULSE_LOW);
 			rightEncoder.setDistancePerPulse(AutoPIDConstants.DISTANCE_PER_PULSE_LOW);
 			if(isLeftVPid){
-				motors[0].config_kF(0,VPIDConstants.k_F_LOW,10); 
-				motors[0].config_kP(0,VPIDConstants.k_P_LOW,10);
-				motors[0].config_kI(0,VPIDConstants.k_I_LOW,10);
-				motors[0].config_kD(0,VPIDConstants.k_D_LOW,10);
+				motors[0].config_kF(0,VPIDConstants.k_F_LOW,30); 
+				motors[0].config_kP(0,VPIDConstants.k_P_LOW,30);
+				motors[0].config_kI(0,VPIDConstants.k_I_LOW,30);
+				motors[0].config_kD(0,VPIDConstants.k_D_LOW,30);
 			}else{
-				motors[2].config_kF(0,VPIDConstants.k_F_LOW,10); 
-				motors[2].config_kP(0,VPIDConstants.k_P_LOW,10);
-				motors[2].config_kI(0,VPIDConstants.k_I_LOW,10);
-				motors[2].config_kD(0,VPIDConstants.k_D_LOW,10);
+				motors[2].config_kF(0,VPIDConstants.k_F_LOW,30); 
+				motors[2].config_kP(0,VPIDConstants.k_P_LOW,30);
+				motors[2].config_kI(0,VPIDConstants.k_I_LOW,30);
+				motors[2].config_kD(0,VPIDConstants.k_D_LOW,30);
 			}
 		}
 	}
@@ -255,17 +255,23 @@ public class DrivetrainSubsystem extends PIDSubsystem {
 			motors[2].set(ControlMode.PercentOutput,0);
 		}
 	}
-	public double getEncDistanceLeft() {
-		return leftEncoder.getDistance();
-	}
+	
 	public double getTalonDistanceLeft() {
 		double encPos = (double) motors[0].getSensorCollection().getQuadraturePosition();
-		return ((encPos)/4096.0) *(14.0/16.0) * (4.0 * Math.PI) / 15.0 * 2;
+		if (!isHighGear) {
+			return ((encPos)/4096.0) *(14.0/60.0) * (5.0 * Math.PI) / 8.0 * 2;
+		} else {
+			return ((encPos)/4096.0) *(24.0/50) * (5.0 * Math.PI) / 8.0 * 2;
+		}
 	}
 	
 	public double getTalonDistanceRight() {
 		double encPos = (double) motors[2].getSensorCollection().getQuadraturePosition();
-		return ((encPos)/4096.0) *(14.0/16.0) * (4.0 * Math.PI) / 15.0 * 2;
+		if (!isHighGear) {
+			return ((encPos)/4096.0) *(14.0/60.0) * (5.0 * Math.PI) / 8.0 * 2;
+		} else {
+			return ((encPos)/4096.0) *(24.0/50) * (5.0 * Math.PI) / 8.0 * 2;
+		}
 	}
 	public double getAvgTalonDistance() {
 		return getTalonDistanceLeft() + getTalonDistanceRight()/ 2.0;
@@ -273,7 +279,7 @@ public class DrivetrainSubsystem extends PIDSubsystem {
 	public void resetEncoders() {
 		motors[0].getSensorCollection().setQuadraturePosition(0, 20);
 		motors[2].getSensorCollection().setQuadraturePosition(0, 20);
-		leftEncoder.reset();
+//		leftEncoder.reset();
 	}
     public void initDefaultCommand() {
     	
