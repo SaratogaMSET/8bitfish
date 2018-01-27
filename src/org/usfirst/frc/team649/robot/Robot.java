@@ -81,8 +81,7 @@ public class Robot extends TimedRobot {
 			if (oi.operator.getButton2()) {
 				isTuningPID = false;
 				drive.getPIDController().setPID(k_p, k_i, k_d);
-				new DrivetrainPIDCommand(30).start()
-				;
+				new DrivetrainPIDCommand(30).start();
 			}
 			
 			if(oi.operator.getButton6()) {
@@ -245,14 +244,11 @@ public class Robot extends TimedRobot {
 		} else if (tuningConstant == 3) {
 			SmartDashboard.putString("Currently Tuning", "k_d: " + k_d);
 		}
-		SmartDashboard.putNumber("k_p", k_p);
-		SmartDashboard.putNumber("k_i", k_i);
-		SmartDashboard.putNumber("k_d", k_d);
+		
+		updateSmartDashboardTesting();
+		drive.driveFwdRotate(oi.driver.getForward(), -oi.driver.getRotation(), true);
 	}
-	SmartDashboard.putBoolean("PID Tuning?", isTuningPID);
-	SmartDashboard.putNumber("k_p", k_p);
-	SmartDashboard.putNumber("k_i", k_i);
-	SmartDashboard.putNumber("k_d", k_d);
+	
 		
 	}
 	private void checkAutoShiftToggle(){
@@ -267,6 +263,10 @@ public class Robot extends TimedRobot {
 		}
 	}
 	private void updateSmartDashboardTesting(){
+		SmartDashboard.putBoolean("PID Tuning?", isTuningPID);
+		SmartDashboard.putNumber("k_p", k_p);
+		SmartDashboard.putNumber("k_i", k_i);
+		SmartDashboard.putNumber("k_d", k_d);
 		SmartDashboard.putNumber("TalonRaw", drive.motors[0].getSensorCollection().getQuadraturePosition());
 		SmartDashboard.putNumber("Talon Enc Distance", drive.getTalonDistanceLeft());
 	}

@@ -32,7 +32,7 @@ public class DrivetrainSubsystem extends PIDSubsystem {
     }
     
     public static class AutoPIDConstants{
-    	public static final double PID_ABS_TOLERANCE = 2;
+    	public static final double PID_ABS_TOLERANCE = 0.5;
     	public static double k_P = 0.2;
 		public static double k_I = 0.0;
 		public static double k_D = 0.1;
@@ -224,9 +224,9 @@ public class DrivetrainSubsystem extends PIDSubsystem {
 	}
 	
 	public void rawDrive(double left, double right) {
-		motors[0].set(ControlMode.PercentOutput, left);
+		motors[0].set(ControlMode.PercentOutput, -left);
 		motors[1].set(ControlMode.Follower, RobotMap.Drivetrain.MOTOR_PORTS[0]);
-		motors[2].set(ControlMode.PercentOutput, -right);
+		motors[2].set(ControlMode.PercentOutput, right);
 		motors[3].set(ControlMode.Follower, RobotMap.Drivetrain.MOTOR_PORTS[2]);
 	}
 	
@@ -271,13 +271,13 @@ public class DrivetrainSubsystem extends PIDSubsystem {
 	public double getTalonDistanceRight() {
 		double encPos = (double) motors[2].getSensorCollection().getQuadraturePosition();
 		if (!isHighGear) {
-			return ((encPos)/4096.0) *(14.0/60.0) * (5.0 * Math.PI) / 8.0 * 2;
+			return -((encPos)/4096.0) *(14.0/60.0) * (5.0 * Math.PI) / 8.0 * 2;
 		} else {
-			return ((encPos)/4096.0) *(24.0/50) * (5.0 * Math.PI) / 8.0 * 2;
+			return -((encPos)/4096.0) *(24.0/50) * (5.0 * Math.PI) / 8.0 * 2;
 		}
 	}
 	public double getAvgTalonDistance() {
-		return getTalonDistanceLeft() + getTalonDistanceRight()/ 2.0;
+		return (getTalonDistanceLeft() + getTalonDistanceRight())/ 2.0;
 	}
 	public void resetEncoders() {
 		motors[0].getSensorCollection().setQuadraturePosition(0, 20);
