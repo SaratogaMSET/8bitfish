@@ -39,10 +39,12 @@ public class DrivetrainPIDCommand extends Command {
     // Called just before this Command runs the first time
     @Override
 	protected void initialize() {
-    	Robot.drive.resetEncoders();
+    	Robot.drive.changeBrakeCoast(true);
+//    	Robot.drive.resetEncoders();
     	drivePID.enable();
     	//drivePIDRight.enable();
     	Robot.isPIDActive = true;
+    	SmartDashboard.putNumber("Val b4", Robot.drive.getAvgTalonDistance());
     	double setpoint = Robot.drive.getAvgTalonDistance() + distance;
     	drivePID.setSetpoint(setpoint);
     	SmartDashboard.putNumber("Setpoint", setpoint);

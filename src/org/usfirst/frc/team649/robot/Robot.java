@@ -167,90 +167,116 @@ public class Robot extends TimedRobot {
 //		}else{
 //			//auto shift
 //		}
-//		double joyXVal = Robot.oi.driver.getRotation();
-//		double joyYVal = Robot.oi.driver.getForward();
-//		if(!isVPid || oi.driver.isVBusOveridePush()||(Math.abs(joyXVal)<0.2 && joyYVal == 0)){
-//			drive.driveFwdRotate(joyYVal, joyXVal, true);
-//		}else{
-//			
-//		}
+		SmartDashboard.putBoolean("is VPID runnig", isVPid);
+		double joyXVal = -Robot.oi.driver.getRotation();
+		double joyYVal = Robot.oi.driver.getForward();
+		if(!isVPid || oi.driver.isVBusOveridePush()||((Math.abs(joyXVal) < 0.1) && joyYVal == 0 )){
+			if(joyXVal>0){
+				joyXVal = Math.pow(joyXVal,2);
+			}else{
+				joyXVal = -Math.pow(Math.abs(joyXVal), 2);
+			}
+			SmartDashboard.putBoolean("is in Vbus", true);
+			drive.driveFwdRotate(joyYVal, joyXVal, true);
+		}else if(Math.abs(joyXVal) < 0.1 && Math.abs(joyYVal)<0.15){
+			drive.driveFwdRotate(joyYVal, joyXVal, true);
+		}else{
+			SmartDashboard.putBoolean("is in Vbus", false);
+			if(joyYVal > 0){
+				joyYVal =  Math.pow(Math.abs(joyYVal), DrivetrainSubsystem.VPIDConstants.Y_COMPONENT_EXP);
+			}else{
+				joyYVal = -Math.pow(Math.abs(joyYVal), DrivetrainSubsystem.VPIDConstants.Y_COMPONENT_EXP);
+			}
+			if(joyXVal > 0){
+			    if(joyXVal > 0.3){
+					joyXVal = Math.pow(Math.abs(joyXVal), DrivetrainSubsystem.VPIDConstants.X_COMPONENT_HIGH_EXP);
+				}else{
+					joyXVal = Math.pow(Math.abs(joyXVal), DrivetrainSubsystem.VPIDConstants.X_COMPONENT_LOW_EXP);
+				}
+				
+			}else{
+				if(joyXVal < -0.1){
+					joyXVal = -Math.pow(Math.abs(joyXVal), DrivetrainSubsystem.VPIDConstants.X_COMPONENT_HIGH_EXP);
+				}else{
+					joyXVal = -Math.pow(Math.abs(joyXVal), DrivetrainSubsystem.VPIDConstants.X_COMPONENT_LOW_EXP);
+				}
+			}
+			drive.driveFwdRotate(joyYVal, joyXVal,false);
+		}
 //		drive.rawDrive(oi.driveJoystickVertical.getY(), oi.driveJoystickVertical.getY());
 //		drive.rawDrive(0.3, 0.3);
 //		drive.driveFwdRotate(oi.driver.getForward(), oi.driver.getRotation(), true);
-//		SmartDashboard.putNumber("TalonRaw", drive.motors[0].getSensorCollection().getQuadraturePosition());
-//		SmartDashboard.putNumber("Talon Enc Distance", drive.getTalonDistanceLeft());
-//		//these are checking the previous state of a variable make sure this is at the bottom			
-//		autoShiftButtonPrevState = oi.driver.switchToNormalShift();
-//		VPidButtonPrevState = oi.driver.switchToVbus();
+		//these are checking the previous state of a variable make sure this is at the bottom			
+		autoShiftButtonPrevState = oi.driver.switchToNormalShift();
+		VPidButtonPrevState = oi.driver.switchToVbus();
 		if (oi.operator.PIDTunePhase()) {
 			SmartDashboard.putBoolean("PID Tuning?", isTuningPID);
 			isTuningPID = true;
 		}
 	
-	if (isTuningPID) {
-		if (oi.operator.getButton2()) {
-			isTuningPID = false;
-			drive.getPIDController().setPID(k_p, k_i, k_d);
-			new DrivetrainPIDCommand(30).start();
-		}
+		if (isTuningPID) {
+			if (oi.operator.getButton2()) {
+				isTuningPID = false;
+				drive.getPIDController().setPID(k_p, k_i, k_d);
+				new DrivetrainPIDCommand(30).start();
+			}
 		
-		if(oi.operator.getButton6()) {
+			if(oi.operator.getButton6()) {
+				if (tuningConstant == 1) {
+					k_p += 0.1;
+				} else if (tuningConstant == 2) {
+					k_i += 0.1;
+				} else if (tuningConstant == 3) {
+					k_d += 0.1;
+				}
+			}
+			if(oi.operator.getButton4()) {
+				if (tuningConstant == 1) {
+					k_p -= 0.1;
+				} else if (tuningConstant == 2) {
+					k_i -= 0.1;
+				} else if (tuningConstant == 3) {
+					k_d -= 0.1;
+				}
+			}
+			if(oi.operator.getButton5()) {
+				if (tuningConstant == 1) {
+					k_p += 0.01;
+				} else if (tuningConstant == 2) {
+					k_i += 0.01;
+				} else if (tuningConstant == 3) {
+					k_d += 0.01;
+				}
+			}
+			if(oi.operator.getButton7()) {
+				if (tuningConstant == 1) {
+					k_p -= 0.01;
+				} else if (tuningConstant == 2) {
+					k_i -= 0.01;
+				} else if (tuningConstant == 3) {
+					k_d -= 0.01;
+				}
+			}
+			if (oi.operator.getButton3()) {
+				if (tuningConstant < 3) {
+					tuningConstant += 1;
+				} else {
+					tuningConstant = 1;
+				}
+			}
 			if (tuningConstant == 1) {
-				k_p += 0.1;
+				SmartDashboard.putString("Currently Tuning", "k_p: " + k_p);
 			} else if (tuningConstant == 2) {
-				k_i += 0.1;
+				SmartDashboard.putString("Currently Tuning", "k_i: " + k_i);
 			} else if (tuningConstant == 3) {
-				k_d += 0.1;
+				SmartDashboard.putString("Currently Tuning", "k_d: " + k_d);
 			}
 		}
-		if(oi.operator.getButton4()) {
-			if (tuningConstant == 1) {
-				k_p -= 0.1;
-			} else if (tuningConstant == 2) {
-				k_i -= 0.1;
-			} else if (tuningConstant == 3) {
-				k_d -= 0.1;
-			}
-		}
-		if(oi.operator.getButton5()) {
-			if (tuningConstant == 1) {
-				k_p += 0.01;
-			} else if (tuningConstant == 2) {
-				k_i += 0.01;
-			} else if (tuningConstant == 3) {
-				k_d += 0.01;
-			}
-		}
-		if(oi.operator.getButton7()) {
-			if (tuningConstant == 1) {
-				k_p -= 0.01;
-			} else if (tuningConstant == 2) {
-				k_i -= 0.01;
-			} else if (tuningConstant == 3) {
-				k_d -= 0.01;
-			}
-		}
-		if (oi.operator.getButton3()) {
-			if (tuningConstant < 3) {
-				tuningConstant += 1;
-			} else {
-				tuningConstant = 1;
-			}
-		}
-		if (tuningConstant == 1) {
-			SmartDashboard.putString("Currently Tuning", "k_p: " + k_p);
-		} else if (tuningConstant == 2) {
-			SmartDashboard.putString("Currently Tuning", "k_i: " + k_i);
-		} else if (tuningConstant == 3) {
-			SmartDashboard.putString("Currently Tuning", "k_d: " + k_d);
-		}
-		
+//		drive.driveFwdRotate(oi.driver.getForward(), -oi.driver.getRotation(), true);
 		updateSmartDashboardTesting();
-		drive.driveFwdRotate(oi.driver.getForward(), -oi.driver.getRotation(), true);
 	}
 	
 		
-	}
 	private void checkAutoShiftToggle(){
 		//on release 
 		if(!oi.driver.switchToNormalShift() && autoShiftButtonPrevState){
@@ -268,7 +294,17 @@ public class Robot extends TimedRobot {
 		SmartDashboard.putNumber("k_i", k_i);
 		SmartDashboard.putNumber("k_d", k_d);
 		SmartDashboard.putNumber("TalonRaw", drive.motors[0].getSensorCollection().getQuadraturePosition());
-		SmartDashboard.putNumber("Talon Enc Distance", drive.getTalonDistanceLeft());
+		SmartDashboard.putNumber("Talon Enc Distance Left", drive.getTalonDistanceLeft());
+		SmartDashboard.putNumber("Talon Enc Distance Right", drive.getTalonDistanceRight());
+
+		SmartDashboard.putNumber("PID error", drive.motors[2].getClosedLoopError(0));
+		SmartDashboard.putNumber("Target Current output", drive.motors[2].getMotorOutputPercent());
+		
+		SmartDashboard.putNumber("Left Velocity", drive.motors[0].getSelectedSensorVelocity(0));
+		SmartDashboard.putNumber("Left Dist", drive.motors[0].getSelectedSensorPosition(0));
+		SmartDashboard.putNumber("Right Velocity", drive.motors[2].getSelectedSensorVelocity(0));
+		SmartDashboard.putNumber("Right Dist", drive.motors[2].getSelectedSensorPosition(0));
+		
 	}
 	private void updateSmartDashboardComp(){
 		
