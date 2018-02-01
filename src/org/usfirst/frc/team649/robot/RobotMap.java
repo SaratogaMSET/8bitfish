@@ -15,5 +15,21 @@ public class RobotMap {
 		public static final int[] RIGHT_DRIVE_SOL = { 2, 0, 1 };
 		public static final int[] LEFT_DRIVE_SOL = { 2, 2, 3 };
 	}
-	
+	public static class Camera{
+		public static final String axisPort = "10.6.49.15";
+		public static final String axisName = "greenAxisCamera";
+		public static final int axisResWidth = 320;
+		public static final int axisResHeight = 480;
+		public static final String axis2Port = "10.6.49.17";
+		public static final String axis2Name = "blackAxisCamera";
+		public static final int axisFPS = 30;
+		public static final int axis2ResWidth = 320;
+		public static final int axis2ResHeight = 480;
+		public static final int axis2FPS = 30;
+		public static final String axis3Port = "10.6.49.13";
+		public static final String axis3Name = "whiteAxisCamera";
+		public static final int axis3ResWidth = 320;
+		public static final int axis3ResHeight = 480;
+		public static final int axis3FPS = 30;
+	}
 }

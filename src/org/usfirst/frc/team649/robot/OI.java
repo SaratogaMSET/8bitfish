@@ -151,20 +151,31 @@ public class OI {
 			}
 			return buttonBoard.getRawButton(9);
 		}
-		public boolean getButton10() {
-			return buttonBoard.getRawButton(10);
-		}
-		public boolean getButton11() {
-			return buttonBoard.getRawButton(11);
-		}
-		public boolean getButton12() {
-			return buttonBoard.getRawButton(12);
-		}
+//		public boolean getButton10() {
+//			return buttonBoard.getRawButton(10);
+//		}
+//		public boolean getButton11() {
+//			return buttonBoard.getRawButton(11);
+//		}
+//		public boolean getButton12() {
+//			return buttonBoard.getRawButton(12);
+//		}
 		public boolean getButton13() {
 			return buttonBoard.getRawButton(13);
 		}
 		public boolean startNewPID() {
 			return buttonBoard.getRawButton(14);
+		}
+		public boolean switchToCamera1() {
+			return buttonBoard.getRawButton(10);
+		}
+
+		public boolean switchToCamera2() {
+			return buttonBoard.getRawButton(11);
+		}
+
+		public boolean switchToCamera3() {
+			return buttonBoard.getRawButton(12);
 		}
 	}
 	public class Driver {
