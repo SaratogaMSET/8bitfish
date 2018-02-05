@@ -15,6 +15,7 @@ import edu.wpi.first.wpilibj.DoubleSolenoid;
 import edu.wpi.first.wpilibj.Encoder;
 import edu.wpi.first.wpilibj.command.PIDSubsystem;
 import edu.wpi.first.wpilibj.command.Subsystem;
+import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 
 /**
  *
@@ -32,8 +33,8 @@ public class DrivetrainSubsystem extends PIDSubsystem {
     }
     
     public static class AutoPIDConstants{
-    	public static final double PID_ABS_TOLERANCE = 2;
-    	public static double k_P = 0.2;
+    	public static final double PID_ABS_TOLERANCE = 0.5;
+    	public static double k_P = 0.05;
 		public static double k_I = 0.0;
 		public static double k_D = 0.1;
 		public static double k_F = 0.0;
@@ -50,7 +51,7 @@ public class DrivetrainSubsystem extends PIDSubsystem {
     
     public static class VPIDConstants{
     	public static final double MAX_RPM_LOW = 0;
-    	public static final double MAX_RPM_HIGH = 0;
+    	public static final double MAX_RPM_HIGH = 21000;
     	public static final int DISTANCE_PER_REV = 2048;
     	//high end is when to shift up
     	//low end is when to shift back down
@@ -61,13 +62,13 @@ public class DrivetrainSubsystem extends PIDSubsystem {
 		public static final double k_I_LOW = 0.0;
 		public static final double k_D_LOW = 0.0;
 		public static final double k_F_LOW = 0.0;
-		public static final double k_P_HIGH = 0.0;
+		public static final double k_P_HIGH = 0.07;
 		public static final double k_I_HIGH = 0.0;
-		public static final double k_D_HIGH = 0.0;
-		public static final double k_F_HIGH = 0.0;
+		public static final double k_D_HIGH = 0.06;
+		public static final double k_F_HIGH = 0.04;
 		public static final double Y_COMPONENT_EXP = 1.32;
-		public static final double X_COMPONENT_HIGH_EXP = 1.75;
-		public static final double X_COMPONENT_LOW_EXP = 3;
+		public static final double X_COMPONENT_HIGH_EXP = 3;
+		public static final double X_COMPONENT_LOW_EXP = 5;
     }
     
     
@@ -130,6 +131,7 @@ public class DrivetrainSubsystem extends PIDSubsystem {
 		if(isVPid){
 //			motors[0].changeControlMode(TalonControlMode.Speed);
 			isLeftVPid = true;
+			shift(isHighGear);
 		}else{
 			isLeftVPid = false;
 //			motors[0].changeControlMode(TalonControlMode.PercentVbus);
@@ -160,26 +162,37 @@ public class DrivetrainSubsystem extends PIDSubsystem {
 	
 	public void shift(boolean isHigh){
 		isHighGear = isHigh;
-		driveSolLeft.set(isHigh ? DoubleSolenoid.Value.kForward : DoubleSolenoid.Value.kReverse);
-		driveSolRight.set(isHigh ? DoubleSolenoid.Value.kReverse : DoubleSolenoid.Value.kForward);
+		SmartDashboard.putBoolean("Gear", isHigh);
+//		driveSolLeft.set(isHigh ? DoubleSolenoid.Value.kForward : DoubleSolenoid.Value.kReverse);
+//		driveSolRight.set(isHigh ? DoubleSolenoid.Value.kReverse : DoubleSolenoid.Value.kForward);
 		if(isHigh){
-			leftEncoder.setDistancePerPulse(AutoPIDConstants.DISTANCE_PER_PULSE_HIGH);
-			rightEncoder.setDistancePerPulse(AutoPIDConstants.DISTANCE_PER_PULSE_HIGH);
+			SmartDashboard.putBoolean("Gear Finish0", true);
+
+//			leftEncoder.setDistancePerPulse(AutoPIDConstants.DISTANCE_PER_PULSE_HIGH);
+//			rightEncoder.setDistancePerPulse(AutoPIDConstants.DISTANCE_PER_PULSE_HIGH);
+			SmartDashboard.putBoolean("Gear Finish", true);
+
 			if(isLeftVPid){
+				SmartDashboard.putBoolean("Gear Finish1", true);
 				motors[0].config_kF(0,VPIDConstants.k_F_HIGH,30); 
 				motors[0].config_kP(0,VPIDConstants.k_P_HIGH,30);
 				motors[0].config_kI(0,VPIDConstants.k_I_HIGH,30);
 				motors[0].config_kD(0,VPIDConstants.k_D_HIGH,30); 
+				SmartDashboard.putBoolean("Gear Finish2", true);
 			}
 			if(isRightVPid){
+				SmartDashboard.putBoolean("Gear Finish3", true);
 				motors[2].config_kF(0,VPIDConstants.k_F_HIGH,30); 
+				
 				motors[2].config_kP(0,VPIDConstants.k_P_HIGH,30);
 				motors[2].config_kI(0,VPIDConstants.k_I_HIGH,30);
 				motors[2].config_kD(0,VPIDConstants.k_D_HIGH,30);
+				SmartDashboard.putBoolean("Gear Finish4", true);
 			}
 		}else{
-			leftEncoder.setDistancePerPulse(AutoPIDConstants.DISTANCE_PER_PULSE_LOW);
-			rightEncoder.setDistancePerPulse(AutoPIDConstants.DISTANCE_PER_PULSE_LOW);
+			SmartDashboard.putBoolean("Gear Finish5", true);
+//			leftEncoder.setDistancePerPulse(AutoPIDConstants.DISTANCE_PER_PULSE_LOW);
+//			rightEncoder.setDistancePerPulse(AutoPIDConstants.DISTANCE_PER_PULSE_LOW);
 			if(isLeftVPid){
 				motors[0].config_kF(0,VPIDConstants.k_F_LOW,30); 
 				motors[0].config_kP(0,VPIDConstants.k_P_LOW,30);
@@ -190,6 +203,7 @@ public class DrivetrainSubsystem extends PIDSubsystem {
 				motors[2].config_kP(0,VPIDConstants.k_P_LOW,30);
 				motors[2].config_kI(0,VPIDConstants.k_I_LOW,30);
 				motors[2].config_kD(0,VPIDConstants.k_D_LOW,30);
+				SmartDashboard.putBoolean("Gear Finish6", true);
 			}
 		}
 	}
@@ -204,6 +218,7 @@ public class DrivetrainSubsystem extends PIDSubsystem {
 	}
 	
 	public void driveFwdRotate(double fwd, double roti, boolean isVBus){
+		
 		double rot = roti * roti;
 		if(roti < 0){
 			rot = -1*rot;
@@ -212,47 +227,63 @@ public class DrivetrainSubsystem extends PIDSubsystem {
 		double max = Math.max(1, Math.max(Math.abs(left), Math.abs(right)));
 		left /= max;
 		right /= max;
+		SmartDashboard.putBoolean("help me", isVBus);
 		if(isVBus){
 			changeDrivetrainModesLeft(false);
 			changeDrivetrainModesRight(false);
 			motors[0].set(ControlMode.PercentOutput,left);
 			motors[2].set(ControlMode.PercentOutput,-right);
 		}else{
+			SmartDashboard.putBoolean("isRunning the loops", true);
 			rawDriveVelPidLeft(left);
 			rawDriveVelPidRight(-right);
 		}
 	}
 	
 	public void rawDrive(double left, double right) {
-		motors[0].set(ControlMode.PercentOutput, left);
+		motors[0].set(ControlMode.PercentOutput, -left);
 		motors[1].set(ControlMode.Follower, RobotMap.Drivetrain.MOTOR_PORTS[0]);
-		motors[2].set(ControlMode.PercentOutput, -right);
+		motors[2].set(ControlMode.PercentOutput, right);
 		motors[3].set(ControlMode.Follower, RobotMap.Drivetrain.MOTOR_PORTS[2]);
 	}
 	
 	private void rawDriveVelPidLeft(double left){
-		if(Math.abs(left) > 0.05){
+		SmartDashboard.putNumber("IS in Pid Left Speed", left);
+		SmartDashboard.putNumber("Lefty", left);
+//		if(Math.abs(left) > 0.05){
+			SmartDashboard.putBoolean("Is during inside idk", true);
+
 			changeDrivetrainModesLeft(true);
-			shift(isHighGear);
+			
+			SmartDashboard.putBoolean("Did finish", true);
+
 			if(isHighGear){
 				motors[0].set(ControlMode.Velocity, left * VPIDConstants.MAX_RPM_HIGH); 
 			}else{
-				motors[0].set(ControlMode.Velocity, left * VPIDConstants.MAX_RPM_LOW); 
+				motors[0].set(ControlMode.Velocity, left * VPIDConstants.MAX_RPM_LOW);
+				
 			}
-		}else{
-			changeDrivetrainModesLeft(false);
-			motors[0].set(ControlMode.PercentOutput,0);
-		}
+
+//		s}
+//		else{
+//			SmartDashboard.putBoolean("Is during inside idk", false);
+//			changeDrivetrainModesLeft(false);
+//			motors[0].set(ControlMode.PercentOutput,0);
+//		}
+
 	}
 	private void rawDriveVelPidRight(double right){
+		SmartDashboard.putNumber("IS in Pid Right Speed", right);
+
 		if(Math.abs(right) > 0.05){
 			changeDrivetrainModesRight(true);
 			shift(isHighGear);
 			if(isHighGear){
-				motors[2].set(ControlMode.Velocity,-right * VPIDConstants.MAX_RPM_HIGH); 
+				motors[2].set(ControlMode.Velocity,right * VPIDConstants.MAX_RPM_HIGH); 
 			}else{
-				motors[2].set(ControlMode.Velocity,-right * VPIDConstants.MAX_RPM_LOW); 
+				motors[2].set(ControlMode.Velocity,right * VPIDConstants.MAX_RPM_LOW); 
 			}
+			
 		}else{
 			changeDrivetrainModesRight(false);
 			motors[2].set(ControlMode.PercentOutput,0);
@@ -271,14 +302,15 @@ public class DrivetrainSubsystem extends PIDSubsystem {
 	public double getTalonDistanceRight() {
 		double encPos = (double) motors[2].getSensorCollection().getQuadraturePosition();
 		if (!isHighGear) {
-			return ((encPos)/4096.0) *(14.0/60.0) * (5.0 * Math.PI) / 8.0 * 2;
+			return -((encPos)/4096.0) *(14.0/60.0) * (5.0 * Math.PI) / 8.0 * 2;
 		} else {
-			return ((encPos)/4096.0) *(24.0/50) * (5.0 * Math.PI) / 8.0 * 2;
+			return -((encPos)/4096.0) *(24.0/50) * (5.0 * Math.PI) / 8.0 * 2;
 		}
 	}
 	public double getAvgTalonDistance() {
 		return (getTalonDistanceLeft() + getTalonDistanceRight())/ 2.0;
 	}
+	
 	public void resetEncoders() {
 		motors[0].getSensorCollection().setQuadraturePosition(0, 20);
 		motors[2].getSensorCollection().setQuadraturePosition(0, 20);
