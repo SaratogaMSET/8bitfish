@@ -4,6 +4,7 @@ package org.usfirst.frc.team649.robot;
 import org.usfirst.frc.team649.autonomous.autoMaster;
 import org.usfirst.frc.team649.robot.commands.DistanceTalonPID;
 import org.usfirst.frc.team649.robot.commands.DrivetrainPIDCommand;
+import org.usfirst.frc.team649.robot.subsystems.ArmSubsystem;
 import org.usfirst.frc.team649.robot.subsystems.DrivetrainSubsystem;
 import org.usfirst.frc.team649.robot.subsystems.GyroSubsystem;
 
@@ -23,13 +24,14 @@ public class Robot extends TimedRobot {
 	public static boolean isAutoShift;
 	public static boolean isVPid;
 	public static boolean isHigh;
-	public static boolean isTuningPID = true;
+	public static boolean isTuningPID = false;
 	public static double k_p;
 	public static double k_i;
 	public static double k_d;
 	public static int tuningConstant;
 	public static DrivetrainSubsystem drive;
 	public static GyroSubsystem gyro;
+	public static ArmSubsystem arm;
 	public static autoMaster automaster;
 	
 	
@@ -45,6 +47,7 @@ public class Robot extends TimedRobot {
 		oi = new OI();
 		drive = new DrivetrainSubsystem();
 		gyro = new GyroSubsystem();
+		arm = new ArmSubsystem();
 		automaster = new autoMaster();
 		isPIDActive = false;
 		k_p = drive.getPIDController().getP();
@@ -183,16 +186,16 @@ public class Robot extends TimedRobot {
 //		//these are checking the previous state of a variable make sure this is at the bottom			
 //		autoShiftButtonPrevState = oi.driver.switchToNormalShift();
 //		VPidButtonPrevState = oi.driver.switchToVbus();
-		if (oi.operator.PIDTunePhase()) {
-			SmartDashboard.putBoolean("PID Tuning?", isTuningPID);
-			isTuningPID = true;
-		}
+	if (oi.operator.PIDTunePhase()) {
+		SmartDashboard.putBoolean("PID Tuning?", isTuningPID);
+		isTuningPID = true;
+	}
 	
 	if (isTuningPID) {
 		if (oi.operator.getButton2()) {
 			isTuningPID = false;
 			drive.getPIDController().setPID(k_p, k_i, k_d);
-			new DrivetrainPIDCommand(30).start();
+			new DrivetrainPIDCommand(100).start();
 		}
 		
 		if(oi.operator.getButton6()) {
@@ -248,12 +251,12 @@ public class Robot extends TimedRobot {
 		SmartDashboard.putNumber("k_p", k_p);
 		SmartDashboard.putNumber("k_i", k_i);
 		SmartDashboard.putNumber("k_d", k_d);
+		drive.driveFwdRotate(oi.driver.getForward(), oi.driver.getRotation(), true);
 	}
-	SmartDashboard.putBoolean("PID Tuning?", isTuningPID);
-	SmartDashboard.putNumber("k_p", k_p);
-	SmartDashboard.putNumber("k_i", k_i);
-	SmartDashboard.putNumber("k_d", k_d);
-		
+	updateSmartDashboardTesting();
+	
+	drive.driveFwdRotate(oi.driver.getForward(), -oi.driver.getRotation(), true);
+
 	}
 	private void checkAutoShiftToggle(){
 		//on release 
@@ -267,8 +270,15 @@ public class Robot extends TimedRobot {
 		}
 	}
 	private void updateSmartDashboardTesting(){
+		SmartDashboard.putNumber("Talon Left speed",drive.motors[0].getSensorCollection().getQuadratureVelocity());
+		SmartDashboard.putNumber("Talon Right speed",drive.motors[2].getSensorCollection().getQuadratureVelocity());
+		SmartDashboard.putBoolean("PID Tuning?", isTuningPID);
+		SmartDashboard.putNumber("k_p", k_p);
+		SmartDashboard.putNumber("k_i", k_i);
+		SmartDashboard.putNumber("k_d", k_d);
 		SmartDashboard.putNumber("TalonRaw", drive.motors[0].getSensorCollection().getQuadraturePosition());
 		SmartDashboard.putNumber("Talon Enc Distance", drive.getTalonDistanceLeft());
+		SmartDashboard.putBoolean("Infrared", arm.getInfraredSensor());
 	}
 	private void updateSmartDashboardComp(){
 		

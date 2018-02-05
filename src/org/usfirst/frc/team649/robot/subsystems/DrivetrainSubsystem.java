@@ -277,7 +277,7 @@ public class DrivetrainSubsystem extends PIDSubsystem {
 		}
 	}
 	public double getAvgTalonDistance() {
-		return getTalonDistanceLeft() + getTalonDistanceRight()/ 2.0;
+		return (getTalonDistanceLeft() + getTalonDistanceRight())/ 2.0;
 	}
 	public void resetEncoders() {
 		motors[0].getSensorCollection().setQuadraturePosition(0, 20);
