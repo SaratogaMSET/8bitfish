@@ -38,7 +38,7 @@ public class LiftSubsystem extends Subsystem {
     	public static int CARRIAGE_MID_SECOND_LOW = 8;
     }
     public TalonSRX mainLiftMotor,followerLiftMotor;
-    public DigitalInput botSecondStageHal, topSecondStageHal, botCarriageHal;
+    public DigitalInput botSecondStageHal, topSecondStageHal, botCarriageHal, topCarriageHal;
     public LiftSubsystem(){
     	mainLiftMotor = new TalonSRX(RobotMap.Lift.RIGHT_WINCH_MOTOR);
     	mainLiftMotor.configSelectedFeedbackSensor(FeedbackDevice.CTRE_MagEncoder_Relative, 0, 10);
@@ -55,7 +55,7 @@ public class LiftSubsystem extends Subsystem {
     	botSecondStageHal = new DigitalInput(RobotMap.Lift.SECOND_STAGE_HAL_BOT);
     	topSecondStageHal = new DigitalInput(RobotMap.Lift.SECOND_STAGE_HAL_TOP);
     	botCarriageHal = new DigitalInput(RobotMap.Lift.ARM_HAL_BOT);
-//    	topCarriageHal = new DigitalInput(RobotMap.Lift.ARM_HAL_TOP);
+    	topCarriageHal = new DigitalInput(RobotMap.Lift.ARM_HAL_TOP);
     }
     public double getLiftHeight(){
     	double height = 0;

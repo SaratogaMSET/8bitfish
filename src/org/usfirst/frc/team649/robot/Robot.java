@@ -353,6 +353,7 @@ public class Robot extends TimedRobot {
 		SmartDashboard.putBoolean("Bottom Second Stage Hal", !lift.botSecondStageHal.get());
 		SmartDashboard.putBoolean("Bottom Carriage Stage Hal", !lift.botCarriageHal.get());
 		SmartDashboard.putBoolean("Top Second Stage Hal", !lift.topSecondStageHal.get());
+		SmartDashboard.putBoolean("Top Carriage Hal", !lift.topCarriageHal.get());
 		SmartDashboard.putNumber("Carriage Winch Raw", lift.getRawLift());
 
 
