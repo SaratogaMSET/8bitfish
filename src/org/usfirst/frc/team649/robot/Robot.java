@@ -314,7 +314,7 @@ public class Robot extends TimedRobot {
 //			}
 //		}
 //		// drive.driveFwdRotate(oi.driver.getForward(), -oi.driver.getRotation(), true);
-//		updateSmartDashboardTesting();
+		updateSmartDashboardTesting();
 	}
 
 	private void checkAutoShiftToggle() {

@@ -46,12 +46,12 @@ public class LiftSubsystem extends Subsystem {
 //    	followerLiftMotor.set(ControlMode.Follower, RobotMap.Lift.LEFT_WINCH_MOTOR);
     	mainLiftMotor.configNominalOutputForward(0, 30);
 		mainLiftMotor.configNominalOutputReverse(0, 30);
-		mainLiftMotor.configPeakOutputForward(0.5, 30);
-		mainLiftMotor.configPeakOutputReverse(-0.5, 30);
+		mainLiftMotor.configPeakOutputForward(1.0, 30);
+		mainLiftMotor.configPeakOutputReverse(-1.0, 30);
 		followerLiftMotor.configNominalOutputForward(0, 30);
 		followerLiftMotor.configNominalOutputReverse(0, 30);
-		followerLiftMotor.configPeakOutputForward(0.5, 30);
-		followerLiftMotor.configPeakOutputReverse(-0.5, 30);
+		followerLiftMotor.configPeakOutputForward(1.0, 30);
+		followerLiftMotor.configPeakOutputReverse(-1.0, 30);
     	botSecondStageHal = new DigitalInput(RobotMap.Lift.SECOND_STAGE_HAL_BOT);
     	topSecondStageHal = new DigitalInput(RobotMap.Lift.SECOND_STAGE_HAL_TOP);
     	botCarriageHal = new DigitalInput(RobotMap.Lift.ARM_HAL_BOT);
