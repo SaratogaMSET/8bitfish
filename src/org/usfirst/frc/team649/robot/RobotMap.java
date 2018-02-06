@@ -20,10 +20,10 @@ public class RobotMap {
 		//mag srx encoder on 11
 		public static final int LEFT_WINCH_MOTOR = 10;
 		public static final int RIGHT_WINCH_MOTOR = 16;
-		public static final int ARM_HAL_BOT = 6;
-		public static final int ARM_HAL_TOP = 8;
-		public static final int SECOND_STAGE_HAL_BOT = 7;
-		public static final int SECOND_STAGE_HAL_TOP = 9;
+		public static final int CARRIAGE_HAL_BOT = 0;
+		public static final int CARRIAGE_HAL_TOP = 9;
+		public static final int SECOND_STAGE_HAL_BOT = 8;
+		public static final int SECOND_STAGE_HAL_TOP = 1;
 	}
 
 	public static class Camera{

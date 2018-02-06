@@ -13,7 +13,7 @@ public class ArmSubsystem extends Subsystem {
 	DigitalInput infraredSensor;
 	
 	public ArmSubsystem() {
-		infraredSensor = new DigitalInput(0);
+		infraredSensor = new DigitalInput(6);
 	}
 	
 	public boolean getInfraredSensor() {

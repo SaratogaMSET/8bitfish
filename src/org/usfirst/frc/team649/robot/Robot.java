@@ -209,6 +209,7 @@ public class Robot extends TimedRobot {
 		SmartDashboard.putBoolean("is VPID runnig", isVPid);
 		
 		lift.setLift(oi.operator.getOperatorY());
+		lift.getLiftState();
 		
 //		double joyXVal = -Robot.oi.driver.getRotation();
 //		double joyYVal = Robot.oi.driver.getForward();
@@ -335,28 +336,34 @@ public class Robot extends TimedRobot {
 	}
 
 	private void updateSmartDashboardTesting(){
-		SmartDashboard.putBoolean("PID Tuning?", isTuningPID);
-		SmartDashboard.putNumber("k_p", k_p);
-		SmartDashboard.putNumber("k_i", k_i);
-		SmartDashboard.putNumber("k_d", k_d);
-		SmartDashboard.putNumber("TalonRaw", drive.motors[0].getSensorCollection().getQuadraturePosition());
-		SmartDashboard.putNumber("Talon Enc Distance", drive.getTalonDistanceLeft());
-		SmartDashboard.putBoolean("Infrared", arm.getInfraredSensor());
-		SmartDashboard.putNumber("Talon Enc Distance Left", drive.getTalonDistanceLeft());
-		SmartDashboard.putNumber("Talon Enc Distance Right", drive.getTalonDistanceRight());
-
-		SmartDashboard.putNumber("PID error", drive.motors[2].getClosedLoopError(0));
-		SmartDashboard.putNumber("Target Current output", drive.motors[2].getMotorOutputPercent());
-
-		SmartDashboard.putNumber("Left Velocity", drive.motors[0].getSelectedSensorVelocity(0));
-		SmartDashboard.putNumber("Left Dist", drive.motors[0].getSelectedSensorPosition(0));
-		SmartDashboard.putNumber("Right Velocity", drive.motors[2].getSelectedSensorVelocity(0));
-		SmartDashboard.putNumber("Right Dist", drive.motors[2].getSelectedSensorPosition(0));
-		SmartDashboard.putBoolean("Bottom Second Stage Hal", !lift.botSecondStageHal.get());
-		SmartDashboard.putBoolean("Bottom Carriage Stage Hal", !lift.botCarriageHal.get());
-		SmartDashboard.putBoolean("Top Second Stage Hal", !lift.topSecondStageHal.get());
-		SmartDashboard.putBoolean("Top Carriage Hal", !lift.topCarriageHal.get());
-		SmartDashboard.putNumber("Carriage Winch Raw", lift.getRawLift());
+//		SmartDashboard.putBoolean("PID Tuning?", isTuningPID);
+//		SmartDashboard.putNumber("k_p", k_p);
+//		SmartDashboard.putNumber("k_i", k_i);
+//		SmartDashboard.putNumber("k_d", k_d);
+//		SmartDashboard.putNumber("TalonRaw", drive.motors[0].getSensorCollection().getQuadraturePosition());
+//		SmartDashboard.putNumber("Talon Enc Distance", drive.getTalonDistanceLeft());
+//		SmartDashboard.putBoolean("Infrared", arm.getInfraredSensor());
+//		SmartDashboard.putNumber("Talon Enc Distance Left", drive.getTalonDistanceLeft());
+//		SmartDashboard.putNumber("Talon Enc Distance Right", drive.getTalonDistanceRight());
+//
+//		SmartDashboard.putNumber("PID error", drive.motors[2].getClosedLoopError(0));
+//		SmartDashboard.putNumber("Target Current output", drive.motors[2].getMotorOutputPercent());
+//
+//		SmartDashboard.putNumber("Left Velocity", drive.motors[0].getSelectedSensorVelocity(0));
+//		SmartDashboard.putNumber("Left Dist", drive.motors[0].getSelectedSensorPosition(0));
+//		SmartDashboard.putNumber("Right Velocity", drive.motors[2].getSelectedSensorVelocity(0));
+//		SmartDashboard.putNumber("Right Dist", drive.motors[2].getSelectedSensorPosition(0));
+//		SmartDashboard.putBoolean("Bottom Second Stage Hal", !lift.botSecondStageHal.get());
+//		SmartDashboard.putBoolean("Bottom Carriage Stage Hal", !lift.botCarriageHal.get());
+//		SmartDashboard.putBoolean("Top Second Stage Hal", !lift.topSecondStageHal.get());
+//		SmartDashboard.putBoolean("Top Carriage Hal", !lift.topCarriageHal.get());
+//		SmartDashboard.putNumber("Carriage Winch Raw", lift.getRawLift());
+		SmartDashboard.putBoolean("is Second Stage at Bottom", lift.isSecondStageAtBottom());
+		SmartDashboard.putBoolean("is Second Stage at Top", lift.isSecondStageAtTop());
+		SmartDashboard.putBoolean("is Carriage at Bottom", lift.isCarriageAtBottom());
+		SmartDashboard.putBoolean("is Carriage at Top", lift.isCarriageAtTop());
+		SmartDashboard.putNumber("Lift Raw", lift.getRawLift());
+		SmartDashboard.putNumber("Lift Scaled Distance", lift.getLiftDistance());
 	}
 
 	private void updateSmartDashboardComp() {
