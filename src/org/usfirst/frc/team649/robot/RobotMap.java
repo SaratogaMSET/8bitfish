@@ -28,6 +28,7 @@ public class RobotMap {
 	public static class Arm {
 		public static final int BOTTOM_ARM_MOTOR = 17;
 		public static final int TOP_ARM_MOTOR = 10;
+		public static final int INFRARED_SENSOR = 6;
 	}
 
 	public static class Camera{

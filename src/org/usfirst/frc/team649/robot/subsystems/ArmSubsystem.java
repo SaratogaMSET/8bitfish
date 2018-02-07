@@ -23,7 +23,7 @@ public class ArmSubsystem extends Subsystem {
 	public ArmSubsystem() {
 		bottomMotor = new TalonSRX(RobotMap.Arm.BOTTOM_ARM_MOTOR);
 		topMotor = new TalonSRX(RobotMap.Arm.TOP_ARM_MOTOR);
-		infraredSensor = new DigitalInput(6);
+		infraredSensor = new DigitalInput(RobotMap.Arm.INFRARED_SENSOR);
 	}
 	public void setArm(double power){
 		bottomMotor.set(ControlMode.PercentOutput, -power);
