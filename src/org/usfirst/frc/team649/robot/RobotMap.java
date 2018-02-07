@@ -3,6 +3,7 @@ package org.usfirst.frc.team649.robot;
 //constants for ports other constants will be placed in respective subsystems
 public class RobotMap {
 	public static final int BUTTON_BOARD = 4;
+	public static final int OPERATOR_JOYSTICK = 2;
 	public static final int DRIVE_JOYSTICK_HORIZONTAL = 1;
 	public static final int DRIVE_JOYSTICK_VERTICAL = 0;
 	
@@ -11,10 +12,25 @@ public class RobotMap {
 		public static final int[] LEFT_SIDE_ENCODER = { 4, 5 };
 		public static final int[] RIGHT_SIDE_ENCODER = { 6, 7 };
 		// FL,BL,BR,FR
-		public static final int[] MOTOR_PORTS = { 10, 11, 13, 12 };
+		public static final int[] MOTOR_PORTS = { 12, 13, 18, 19 };
 		public static final int[] RIGHT_DRIVE_SOL = { 2, 0, 1 };
 		public static final int[] LEFT_DRIVE_SOL = { 2, 2, 3 };
 	}
+	public static class Lift {
+		//mag srx encoder on 11
+		public static final int LEFT_WINCH_MOTOR = 11;
+		public static final int RIGHT_WINCH_MOTOR = 16;
+		public static final int CARRIAGE_HAL_BOT = 0;
+		public static final int CARRIAGE_HAL_TOP = 9;
+		public static final int SECOND_STAGE_HAL_BOT = 8;
+		public static final int SECOND_STAGE_HAL_TOP = 1;
+	}
+	public static class Arm {
+		public static final int BOTTOM_ARM_MOTOR = 17;
+		public static final int TOP_ARM_MOTOR = 10;
+		public static final int INFRARED_SENSOR = 6;
+	}
+
 	public static class Camera{
 		public static final String axisPort = "10.6.49.15";
 		public static final String axisName = "greenAxisCamera";

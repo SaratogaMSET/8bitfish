@@ -13,6 +13,7 @@ public class OI {
 	public Joystick buttonBoard;
 	public Joystick driveJoystickHorizontal;
 	public Joystick driveJoystickVertical;
+	public Joystick operatorJoystick;
 	
 	public Driver driver;
 	public Operator operator;
@@ -29,6 +30,7 @@ public class OI {
 	
 	public  OI(){
 		buttonBoard = new Joystick(RobotMap.BUTTON_BOARD);
+		operatorJoystick = new Joystick(RobotMap.OPERATOR_JOYSTICK);
 		driveJoystickHorizontal = new Joystick(RobotMap.DRIVE_JOYSTICK_HORIZONTAL);
 		driveJoystickVertical = new Joystick(RobotMap.DRIVE_JOYSTICK_VERTICAL);
 //		gamePad = new Joystick(3);
@@ -176,6 +178,18 @@ public class OI {
 
 		public boolean switchToCamera3() {
 			return buttonBoard.getRawButton(12);
+		}
+		public double getOperatorY() {
+			if(Math.abs(operatorJoystick.getY()) >= 0.05){
+				return operatorJoystick.getY();
+			}
+			return 0.0;
+		}
+		public boolean getArmUp(){
+			return operatorJoystick.getRawButton(3);
+		}
+		public boolean getArmDown(){
+			return operatorJoystick.getRawButton(2);
 		}
 	}
 	public class Driver {
