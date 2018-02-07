@@ -180,7 +180,16 @@ public class OI {
 			return buttonBoard.getRawButton(12);
 		}
 		public double getOperatorY() {
-			return operatorJoystick.getY();
+			if(Math.abs(operatorJoystick.getY()) >= 0.05){
+				return operatorJoystick.getY();
+			}
+			return 0.0;
+		}
+		public boolean getArmUp(){
+			return operatorJoystick.getRawButton(3);
+		}
+		public boolean getArmDown(){
+			return operatorJoystick.getRawButton(2);
 		}
 	}
 	public class Driver {

@@ -156,6 +156,7 @@ public class Robot extends TimedRobot {
 		autoShiftButtonPrevState = oi.driver.switchToNormalShift();
 		VPidButtonPrevState = oi.driver.switchToVbus();
 		drive.resetEncoders();
+		lift.resetLiftEncoder();
 //		new Thread(() -> {
 //
 //			AxisCamera camera1 = CameraServer.getInstance().addAxisCamera("greenAxisCamera", RobotMap.Camera.axisPort);
@@ -208,8 +209,27 @@ public class Robot extends TimedRobot {
 		// }
 		SmartDashboard.putBoolean("is VPID runnig", isVPid);
 		
-		lift.setLift(oi.operator.getOperatorY());
 		lift.getLiftState();
+		double liftJoy = oi.operator.getOperatorY();
+		if(lift.getLiftState() == LiftSubsystem.LiftStateConstants.LOWEST_STATE){
+			if(liftJoy<0){
+				liftJoy = 0;
+			}
+		}else if(lift.getLiftState() == LiftSubsystem.LiftStateConstants.CARRIAGE_HIGH_SECOND_HIGH){
+			if(liftJoy>0.15){
+				liftJoy=0;
+			}
+		}
+		lift.setLift(liftJoy);
+		if(oi.operator.getArmUp()){
+			arm.setArm(-oi.operatorJoystick.getRawAxis(2));
+		}else if(oi.operator.getArmDown()){
+			arm.setArm(oi.operatorJoystick.getRawAxis(2));
+		}else{
+			arm.setArm(0.0);
+		}
+		SmartDashboard.putNumber("SLider", -oi.operatorJoystick.getRawAxis(2));
+		
 		
 //		double joyXVal = -Robot.oi.driver.getRotation();
 //		double joyYVal = Robot.oi.driver.getForward();
@@ -364,6 +384,25 @@ public class Robot extends TimedRobot {
 		SmartDashboard.putBoolean("is Carriage at Top", lift.isCarriageAtTop());
 		SmartDashboard.putNumber("Lift Raw", lift.getRawLift());
 		SmartDashboard.putNumber("Lift Scaled Distance", lift.getLiftDistance());
+		SmartDashboard.putNumber("Lidar", lift.getLidarValue());
+		int state = lift.getLiftState();
+		if(state == 1){
+			SmartDashboard.putString("Lift State (carriage/second)", "Low Low");
+		}else if(state == 2){
+			SmartDashboard.putString("Lift State (carriage/second)", "Low Mid");
+		}else if(state == 3){
+			SmartDashboard.putString("Lift State (carriage/second)", "Low High");
+		}else if(state == 4){
+			SmartDashboard.putString("Lift State (carriage/second)", "Mid High");
+		}else if(state == 5){
+			SmartDashboard.putString("Lift State (carriage/second)", "High High");
+		}else if(state == 6){
+			SmartDashboard.putString("Lift State (carriage/second)", "High Mid");
+		}else if(state == 7){
+			SmartDashboard.putString("Lift State (carriage/second)", "High Low");
+		}else if(state == 8){
+			SmartDashboard.putString("Lift State (carriage/second)", "Mid Low");
+		}
 	}
 
 	private void updateSmartDashboardComp() {
