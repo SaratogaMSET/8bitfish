@@ -111,6 +111,22 @@ public class LiftSubsystem extends PIDSubsystem {
     	mainLiftMotor.set(ControlMode.PercentOutput, power);
     	followerLiftMotor.set(ControlMode.PercentOutput, -power);
     }
+    public void setLiftWithSafety(double power, boolean override) {
+    	if (!override) {	
+    		if (isCarriageAtBottom() && isSecondStageAtBottom()) {
+    			if(power < 0) {
+    				power = 0;
+    			}
+    		} else if (isCarriageAtTop() && isSecondStageAtTop()) {
+    			if (power > 0) {
+    				power = 0;
+    			}
+    		}
+    		setLift(power);
+    	} else if (override) {
+    		setLift(power);
+    	}
+    }
     public void resetLiftEncoder(){
     	mainLiftMotor.setSelectedSensorPosition(0, 0, 30);
     }
