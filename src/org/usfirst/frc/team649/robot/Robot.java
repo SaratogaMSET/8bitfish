@@ -340,7 +340,6 @@ public class Robot extends TimedRobot {
 		SmartDashboard.putNumber("Left Dist", drive.motors[0].getSelectedSensorPosition(0));
 		SmartDashboard.putNumber("Right Velocity", drive.motors[2].getSelectedSensorVelocity(0));
 		SmartDashboard.putNumber("Right Dist", drive.motors[2].getSelectedSensorPosition(0));
-
 	}
 
 	private void updateSmartDashboardComp() {
