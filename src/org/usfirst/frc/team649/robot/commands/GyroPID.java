@@ -41,6 +41,7 @@ public class GyroPID extends Command {
     // Called just before this Command runs the first time
     protected void initialize() {
     	drivePID.enable();
+    	Robot.drivePIDRunning = true;
     	double setpoint = Robot.gyro.getGyroAngle() + angle;
     	
     	Robot.gyro.resetGyro();
@@ -74,6 +75,7 @@ public class GyroPID extends Command {
 
     // Called once after isFinished returns true
     protected void end() {
+    	Robot.drivePIDRunning = false;
     	drivePID.disable();
     	SmartDashboard.putBoolean("Timeout", isTimeout);
     	SmartDashboard.putBoolean("End", true);

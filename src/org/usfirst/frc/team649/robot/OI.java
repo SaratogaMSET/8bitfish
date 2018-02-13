@@ -185,11 +185,20 @@ public class OI {
 			}
 			return 0.0;
 		}
-		public boolean getArmUp(){
+		public boolean getIntakeForward(){
+			return operatorJoystick.getRawButton(5);
+		}
+		public boolean getIntakeReverse(){
 			return operatorJoystick.getRawButton(3);
 		}
-		public boolean getArmDown(){
-			return operatorJoystick.getRawButton(2);
+		public double returnSlider() {
+			return operatorJoystick.getRawAxis(3);
+		}
+		public boolean isIntakeOut(){
+			return operatorJoystick.getRawButton(9);
+		}
+		public boolean isIntakeIn(){
+			return operatorJoystick.getRawButton(10);
 		}
 	}
 	public class Driver {

@@ -3,6 +3,7 @@ package org.usfirst.frc.team649.robot.subsystems;
 import org.usfirst.frc.team649.robot.RobotMap;
 
 import com.ctre.phoenix.motorcontrol.ControlMode;
+import com.ctre.phoenix.motorcontrol.FeedbackDevice;
 import com.ctre.phoenix.motorcontrol.can.TalonSRX;
 
 import edu.wpi.first.wpilibj.DigitalInput;
@@ -19,9 +20,11 @@ public class ArmSubsystem extends Subsystem {
 		public static final double ARM_POWER = 0.4;
 	}
 	DigitalInput infraredSensor;
-	TalonSRX bottomMotor,topMotor;
+	public TalonSRX bottomMotor;
+	public TalonSRX topMotor;
 	public ArmSubsystem() {
 		bottomMotor = new TalonSRX(RobotMap.Arm.BOTTOM_ARM_MOTOR);
+		bottomMotor.configSelectedFeedbackSensor(FeedbackDevice.CTRE_MagEncoder_Absolute, 0, 30);
 		topMotor = new TalonSRX(RobotMap.Arm.TOP_ARM_MOTOR);
 		infraredSensor = new DigitalInput(RobotMap.Arm.INFRARED_SENSOR);
 	}
@@ -32,6 +35,7 @@ public class ArmSubsystem extends Subsystem {
 	public boolean getInfraredSensor() {
 		return infraredSensor.get();
 	}
+	
     public void initDefaultCommand() {
         // Set the default command for a subsystem here.
         //setDefaultCommand(new MySpecialCommand());

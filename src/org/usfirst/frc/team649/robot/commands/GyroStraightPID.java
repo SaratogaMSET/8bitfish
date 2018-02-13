@@ -29,7 +29,7 @@ public class GyroStraightPID extends Command {
     // Called just before this Command runs the first time
     protected void initialize() {
     	Robot.gyro.setDrivingStraight(true);
-    	
+    	Robot.drivePIDRunning = true;
     	GyroController.enable();
     	DriveController.enable();
     	
@@ -74,6 +74,7 @@ public class GyroStraightPID extends Command {
 
     // Called once after isFinished returns true
     protected void end() {
+    	Robot.drivePIDRunning = false;
     	GyroController.disable();
     	DriveController.disable();
     	

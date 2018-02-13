@@ -33,7 +33,7 @@ public class DrivetrainSubsystem extends PIDSubsystem {
     }
     
     public static class AutoPIDConstants{
-    	public static final double PID_ABS_TOLERANCE = 0.5;
+    	public static final double PID_ABS_TOLERANCE = 1.0;
     	public static double k_P = 0.05;
 		public static double k_I = 0.0;
 		public static double k_D = 0.1;
@@ -82,7 +82,8 @@ public class DrivetrainSubsystem extends PIDSubsystem {
 		super("Drivetrain Subsystem", AutoPIDConstants.k_P, AutoPIDConstants.k_I, AutoPIDConstants.k_D);
 		
 		drivePIDOutput = 0;
-		
+		driveSolLeft = new DoubleSolenoid(RobotMap.Drivetrain.LEFT_DRIVE_SOL[0], RobotMap.Drivetrain.LEFT_DRIVE_SOL[1], RobotMap.Drivetrain.LEFT_DRIVE_SOL[2]);
+		driveSolRight = new DoubleSolenoid(RobotMap.Drivetrain.RIGHT_DRIVE_SOL[0], RobotMap.Drivetrain.RIGHT_DRIVE_SOL[1], RobotMap.Drivetrain.RIGHT_DRIVE_SOL[2]);
 //		leftEncoder = new Encoder(RobotMap.Drivetrain.LEFT_SIDE_ENCODER[0],RobotMap.Drivetrain.LEFT_SIDE_ENCODER[1]);
 //		leftEncoder.setDistancePerPulse(4.00 * Math.PI / 2048.0 * 14 / 60);
 //		rightEncoder = new Encoder(RobotMap.Drivetrain.RIGHT_SIDE_ENCODER[0],RobotMap.Drivetrain.RIGHT_SIDE_ENCODER[1]);
@@ -103,11 +104,11 @@ public class DrivetrainSubsystem extends PIDSubsystem {
 		motors[1].configPeakOutputForward(1, 30);
 		motors[1].configPeakOutputReverse(-1, 30);
 		
-//		motors[0].configEncoderCodesPerRev(VPIDConstants.DISTANCE_PER_REV);
-//		motors[1].changeControlMode(ControlMode.Follower);
+
 		motors[1].set(ControlMode.Follower,RobotMap.Drivetrain.MOTOR_PORTS[0]);
 		motors[2].configSelectedFeedbackSensor(FeedbackDevice.QuadEncoder, 0, 30);
 		motors[2].setSensorPhase(false);
+//		motors[2].setInverted(true);
 		motors[2].configNominalOutputForward(0, 30);
 		motors[2].configNominalOutputReverse(0, 30);
 		motors[2].configPeakOutputForward(1, 30);
@@ -118,8 +119,6 @@ public class DrivetrainSubsystem extends PIDSubsystem {
 		motors[3].configNominalOutputReverse(0, 30);
 		motors[3].configPeakOutputForward(1, 30);
 		motors[3].configPeakOutputReverse(-1, 30);
-		
-//		motors[2].configEncoderCodesPerRev(VPIDConstants.DISTANCE_PER_REV);
 		motors[3].set(ControlMode.Follower,RobotMap.Drivetrain.MOTOR_PORTS[2]);
 		isLeftVPid = false;
 		isRightVPid = false;
@@ -163,11 +162,10 @@ public class DrivetrainSubsystem extends PIDSubsystem {
 	public void shift(boolean isHigh){
 		isHighGear = isHigh;
 		SmartDashboard.putBoolean("Gear", isHigh);
-//		driveSolLeft.set(isHigh ? DoubleSolenoid.Value.kForward : DoubleSolenoid.Value.kReverse);
-//		driveSolRight.set(isHigh ? DoubleSolenoid.Value.kReverse : DoubleSolenoid.Value.kForward);
+		driveSolLeft.set(isHigh ? DoubleSolenoid.Value.kForward : DoubleSolenoid.Value.kReverse);
+		driveSolRight.set(isHigh ? DoubleSolenoid.Value.kReverse : DoubleSolenoid.Value.kForward);
 		if(isHigh){
 			SmartDashboard.putBoolean("Gear Finish0", true);
-
 //			leftEncoder.setDistancePerPulse(AutoPIDConstants.DISTANCE_PER_PULSE_HIGH);
 //			rightEncoder.setDistancePerPulse(AutoPIDConstants.DISTANCE_PER_PULSE_HIGH);
 			SmartDashboard.putBoolean("Gear Finish", true);
@@ -239,7 +237,12 @@ public class DrivetrainSubsystem extends PIDSubsystem {
 			rawDriveVelPidRight(-right);
 		}
 	}
-	
+	public void rawDrivePID(double left, double right){
+		motors[0].set(ControlMode.PercentOutput, left);
+		motors[1].set(ControlMode.Follower, RobotMap.Drivetrain.MOTOR_PORTS[0]);
+		motors[2].set(ControlMode.PercentOutput, -right);
+		motors[3].set(ControlMode.Follower, RobotMap.Drivetrain.MOTOR_PORTS[2]);
+	}
 	public void rawDrive(double left, double right) {
 		motors[0].set(ControlMode.PercentOutput, -left);
 		motors[1].set(ControlMode.Follower, RobotMap.Drivetrain.MOTOR_PORTS[0]);
@@ -300,11 +303,11 @@ public class DrivetrainSubsystem extends PIDSubsystem {
 	}
 	
 	public double getTalonDistanceRight() {
-		double encPos = (double) motors[2].getSensorCollection().getQuadraturePosition();
+		double encPos = -(double) motors[2].getSensorCollection().getQuadraturePosition();
 		if (!isHighGear) {
-			return -((encPos)/4096.0) *(14.0/60.0) * (5.0 * Math.PI) / 8.0 * 2;
+			return ((encPos)/4096.0) *(14.0/60.0) * (5.0 * Math.PI) / 8.0 * 2;
 		} else {
-			return -((encPos)/4096.0) *(24.0/50) * (5.0 * Math.PI) / 8.0 * 2;
+			return ((encPos)/4096.0) *(24.0/50) * (5.0 * Math.PI) / 8.0 * 2;
 		}
 	}
 	public double getAvgTalonDistance() {

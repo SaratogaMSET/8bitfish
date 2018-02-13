@@ -39,14 +39,15 @@ public class DrivetrainPIDCommand extends Command {
     // Called just before this Command runs the first time
     @Override
 	protected void initialize() {
+    	Robot.drivePIDRunning = true;
     	Robot.drive.changeBrakeCoast(true);
-//    	Robot.drive.resetEncoders();
+    	Robot.drive.resetEncoders();
     	drivePID.enable();
     	//drivePIDRight.enable();
     	Robot.isPIDActive = true;
     	SmartDashboard.putNumber("Val b4", Robot.drive.getAvgTalonDistance());
-    	double setpoint = Robot.drive.getAvgTalonDistance() + distance;
-    	drivePID.setSetpoint(setpoint);
+    	double setpoint = distance;
+    	drivePID.setSetpoint(distance);
     	SmartDashboard.putNumber("Setpoint", setpoint);
     	//drivePIDRight.setSetpoint(setpoint);
     	System.out.println("DT PID: setpoint = " + setpoint);
@@ -65,7 +66,7 @@ public class DrivetrainPIDCommand extends Command {
     	}
     	double output = Robot.drive.getDrivePIDOutput();
     	
-    	Robot.drive.rawDrive(-output, -output);
+    	Robot.drive.rawDrivePID(output, output);
     	
     	if(drivePID.onTarget() && time.get() < 0.01){
     		time.start();
@@ -96,7 +97,10 @@ public class DrivetrainPIDCommand extends Command {
     // Called once after isFinished returns true
     @Override
 	protected void end() {
+    	Robot.drivePIDRunning = false;
     	drivePID.disable();
+		Robot.drive.changeBrakeCoast(false);
+
     	SmartDashboard.putBoolean("End", true);
     	SmartDashboard.putNumber("encoder Right", encoderRight);
     	SmartDashboard.putNumber("encoder left", encoderLeft);

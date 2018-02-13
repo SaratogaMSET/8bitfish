@@ -45,14 +45,14 @@ public class LiftSubsystem extends PIDSubsystem {
     public TalonSRX mainLiftMotor,followerLiftMotor;
     public DigitalInput botSecondStageHal, topSecondStageHal, botCarriageHal, topCarriageHal;
     double liftPIDOutPut;
-    public Lidar lidar;
     
     public LiftSubsystem(){
     	super(LiftPIDConstants.k_P, LiftPIDConstants.k_I, LiftPIDConstants.k_D);
     	mainLiftMotor = new TalonSRX(RobotMap.Lift.RIGHT_WINCH_MOTOR);
     	mainLiftMotor.configSelectedFeedbackSensor(FeedbackDevice.CTRE_MagEncoder_Relative, 0, 10);
     	followerLiftMotor = new TalonSRX(RobotMap.Lift.LEFT_WINCH_MOTOR);
-//    	followerLiftMotor.set(ControlMode.Follower, RobotMap.Lift.LEFT_WINCH_MOTOR);
+    	followerLiftMotor.setInverted(true);
+    	followerLiftMotor.set(ControlMode.Follower, RobotMap.Lift.RIGHT_WINCH_MOTOR);
     	mainLiftMotor.configNominalOutputForward(0, 30);
 		mainLiftMotor.configNominalOutputReverse(0, 30);
 		mainLiftMotor.configPeakOutputForward(1.0, 30);
@@ -63,15 +63,14 @@ public class LiftSubsystem extends PIDSubsystem {
 		followerLiftMotor.configPeakOutputReverse(-1.0, 30);
 		mainLiftMotor.setNeutralMode(NeutralMode.Brake);
 		followerLiftMotor.setNeutralMode(NeutralMode.Brake);
-		lidar = new Lidar(I2C.Port.kOnboard, 0xC4 >> 1);
     	botSecondStageHal = new DigitalInput(RobotMap.Lift.SECOND_STAGE_HAL_BOT);
     	topSecondStageHal = new DigitalInput(RobotMap.Lift.SECOND_STAGE_HAL_TOP);
     	botCarriageHal = new DigitalInput(RobotMap.Lift.CARRIAGE_HAL_BOT);
     	topCarriageHal = new DigitalInput(RobotMap.Lift.CARRIAGE_HAL_TOP);
     }
-    public double getLidarValue(){
-    	return lidar.getSample();
-    }
+//    public double getLidarValue(){
+//    	return lidar.getSample();
+//    }
     //u have a max height of 2nd stage and u have a translsational value tuned by max heihgt/winch turns. 
     //Then u get total height by lidar + (total winch - lidar portion converted)
 
@@ -109,7 +108,6 @@ public class LiftSubsystem extends PIDSubsystem {
     }
     public void setLift(double power){
     	mainLiftMotor.set(ControlMode.PercentOutput, power);
-    	followerLiftMotor.set(ControlMode.PercentOutput, -power);
     }
     public void setLiftWithSafety(double power, boolean override) {
     	if (!override) {	
@@ -133,6 +131,9 @@ public class LiftSubsystem extends PIDSubsystem {
     public void setEncoderMaxLift(){
     	
     }
+//    public double getWinchRPM(){
+//    	
+//    }
     public int getLiftState(){
     	if(isSecondStageAtBottom()){
     		if(isCarriageAtBottom()){
