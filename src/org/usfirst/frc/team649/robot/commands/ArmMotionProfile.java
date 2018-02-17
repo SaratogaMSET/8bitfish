@@ -5,13 +5,17 @@ import org.usfirst.frc.team649.robot.subsystems.ArmSubsystem;
 
 import com.ctre.phoenix.motorcontrol.ControlMode;
 
+import edu.wpi.first.wpilibj.Timer;
 import edu.wpi.first.wpilibj.command.Command;
+import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 
 /**
  *
  */
 public class ArmMotionProfile extends Command {
 	int value;
+	Timer doneTime;
+	int donePos;
     public ArmMotionProfile(int encoderValue) {
     	value = encoderValue;
         
@@ -19,8 +23,11 @@ public class ArmMotionProfile extends Command {
 
     // Called just before this Command runs the first time
     protected void initialize() {
+    	SmartDashboard.putBoolean("ran is fin", false);
 		Robot.isArmPidRunning = true;
     	Robot.arm.setArmBrake(false);
+    	doneTime = new Timer();
+    	donePos = 0;
     	
     }
 
@@ -32,11 +39,22 @@ public class ArmMotionProfile extends Command {
 
     // Make this return true when this Command no longer needs to run execute()
     protected boolean isFinished() {
-        return Math.abs(Robot.arm.bottomMotor.getSelectedSensorPosition(0)-value)<ArmSubsystem.ArmConstants.RAW_ABS_TOL || (Robot.arm.getVel() < 15 &&Math.abs(Robot.arm.bottomMotor.getSelectedSensorPosition(0)-value)<50);
+    	if(doneTime.get() > 0.15){
+    		return true;
+    		
+    	}else if(!(doneTime.get() == 0) && Math.abs(donePos-Robot.arm.getArmRaw()) > 5){
+    		doneTime.stop();
+    		doneTime.reset();
+    	}else if(Math.abs(Robot.arm.getArmRaw() - value)< ArmSubsystem.ArmConstants.RAW_ABS_TOL && doneTime.get() == 0){
+    		donePos = Robot.arm.getArmRaw();
+    		doneTime.start();
+    	}
+    	return false;
     }
 
     // Called once after isFinished returns true
     protected void end() {
+    	SmartDashboard.putBoolean("ran is fin", true);
 		Robot.isArmPidRunning = false;
     	Robot.arm.setArmBrake(true);
     	Robot.arm.bottomMotor.set(ControlMode.PercentOutput, 0);

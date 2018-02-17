@@ -74,6 +74,7 @@ public class Robot extends TimedRobot {
 	public double lastAccel;
 	public Timer time;
 	public static boolean isArmPidRunning;
+	public double armVelMax;
 	// prev state variables leave at bottom
 
 	// these two are for buttons not the actual
@@ -231,6 +232,7 @@ public class Robot extends TimedRobot {
 
 	@Override
 	public void teleopInit() {
+		armVelMax = 0;
 		intakeTimer.start();
 //		logger.setUseParentHandlers(false);
 //		drive.changeBrakeCoast(false);
@@ -298,6 +300,10 @@ public class Robot extends TimedRobot {
 		// }else{
 		// //auto shift
 		// }
+		if(Math.abs(Robot.arm.bottomMotor.getSelectedSensorVelocity(0)) > armVelMax && Robot.arm.getArmRaw() > 4950 ){
+			armVelMax = Math.abs(Robot.arm.bottomMotor.getSelectedSensorVelocity(0));
+		}
+		SmartDashboard.putNumber("arm Vel max", armVelMax);
 		SmartDashboard.putBoolean("is VPID runnig", isVPid);
 		if(oi.operatorJoystick.getRawButton(11)){
 			arm.setArmBrake(true);
@@ -343,19 +349,19 @@ public class Robot extends TimedRobot {
 		if(oi.operatorJoystick.getRawButton(2)) {
 			SmartDashboard.putBoolean("is Here", true);
 			if(!isArmPidRunning){
-				new ArmMotionProfile(160).start();
+				new ArmMotionProfile(6500).start();
 			}
 			SmartDashboard.putNumber("Arm Voltage Motion Magic", arm.bottomMotor.getMotorOutputVoltage());
 		} else if (oi.operatorJoystick.getRawButton(3)) {
 			if(!isArmPidRunning){
-				new ArmMotionProfile(2800).start();
+				new ArmMotionProfile(4700).start();
 			}
 			SmartDashboard.putNumber("Arm Voltage Motion Magic", arm.bottomMotor.getMotorOutputVoltage());
-		} else {
+		}else if(!isArmPidRunning) {
 			isArmPidRunning = false;
 			double armJoy = oi.operator.getOperatorY();
 			if(armJoy == 0) {
-				if (time.get() > 0.5) {
+				if (time.get() > 0.3) {
 					arm.setArmBrake(true);
 				}
 			} else {
@@ -573,7 +579,8 @@ public class Robot extends TimedRobot {
 		SmartDashboard.putBoolean("is Carriage at Top", lift.isCarriageAtTop());
 		SmartDashboard.putNumber("Lift Raw", lift.getRawLift());
 		SmartDashboard.putNumber("Lift Scaled Distance", lift.getLiftDistance());
-		SmartDashboard.putNumber("Arm Raw", arm.bottomMotor.getSelectedSensorPosition(0));
+		SmartDashboard.putNumber("Arm Raw", arm.getArmRaw());
+		SmartDashboard.putNumber("Arm Raw Second", arm.bottomMotor.getSensorCollection().getAnalogInRaw());
 		SmartDashboard.putNumber("Vel arm", arm.bottomMotor.getSelectedSensorVelocity(0));
 		SmartDashboard.putNumber("Arm scaled", arm.getArmPosition());
 		if(lidarCount == 12){

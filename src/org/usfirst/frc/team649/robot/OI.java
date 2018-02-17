@@ -180,7 +180,7 @@ public class OI {
 			return buttonBoard.getRawButton(12);
 		}
 		public double getOperatorY() {
-			if(Math.abs(operatorJoystick.getY()) >= 0.075){
+			if(Math.abs(operatorJoystick.getY()) >= 0.1){
 				return operatorJoystick.getY();
 			}
 			return 0.0;
