@@ -206,41 +206,41 @@ public class Robot extends TimedRobot {
 		VPidButtonPrevState = oi.driver.switchToVbus();
 		drive.resetEncoders();
 		lift.resetLiftEncoder();
-		new Thread(() -> {
-
-			AxisCamera camera1 = CameraServer.getInstance().addAxisCamera("greenAxisCamera", RobotMap.Camera.axisPort);
-			camera1.setResolution(RobotMap.Camera.axisResWidth, RobotMap.Camera.axisResWidth);
-			camera1.setFPS(RobotMap.Camera.axisFPS);
-			AxisCamera camera2 = CameraServer.getInstance().addAxisCamera("blackAxisCamera", RobotMap.Camera.axis2Port);
-			camera2.setResolution(RobotMap.Camera.axis2ResWidth, RobotMap.Camera.axis2ResHeight);
-			camera2.setFPS(RobotMap.Camera.axis2FPS);
-			AxisCamera camera3 = CameraServer.getInstance().addAxisCamera("whiteAxisCamera", RobotMap.Camera.axis3Port);
-			camera3.setResolution(RobotMap.Camera.axis3ResWidth, RobotMap.Camera.axis3ResHeight);
-			camera3.setFPS(RobotMap.Camera.axis3FPS);
-
-			CvSink cvSink = CameraServer.getInstance().getVideo("greenAxisCamera");
-			CvSource outputStream = CameraServer.getInstance().putVideo("Switcher", 320, 240);
-
-			Mat frame = new Mat();
-
-			while (!Thread.interrupted()) {
-
-				if (oi.operator.switchToCamera1()) {
-					System.out.println("Switching to camera 1");
-					cvSink = CameraServer.getInstance().getVideo("greenAxisCamera");
-				} else if (oi.operator.switchToCamera2()) {
-					System.out.println("Switching to camera 2");
-					cvSink = CameraServer.getInstance().getVideo("blackAxisCamera");
-				} else if (oi.operator.switchToCamera3()) {
-					System.out.println("Switching to camera 3");
-					cvSink = CameraServer.getInstance().getVideo("whiteAxisCamera");
-				}
-
-				cvSink.grabFrame(frame);
-				outputStream.putFrame(frame);
-
-			}
-		}).start();
+//		new Thread(() -> {
+//
+//			AxisCamera camera1 = CameraServer.getInstance().addAxisCamera("greenAxisCamera", RobotMap.Camera.axisPort);
+//			camera1.setResolution(RobotMap.Camera.axisResWidth, RobotMap.Camera.axisResWidth);
+//			camera1.setFPS(RobotMap.Camera.axisFPS);
+//			AxisCamera camera2 = CameraServer.getInstance().addAxisCamera("blackAxisCamera", RobotMap.Camera.axis2Port);
+//			camera2.setResolution(RobotMap.Camera.axis2ResWidth, RobotMap.Camera.axis2ResHeight);
+//			camera2.setFPS(RobotMap.Camera.axis2FPS);
+//			AxisCamera camera3 = CameraServer.getInstance().addAxisCamera("whiteAxisCamera", RobotMap.Camera.axis3Port);
+//			camera3.setResolution(RobotMap.Camera.axis3ResWidth, RobotMap.Camera.axis3ResHeight);
+//			camera3.setFPS(RobotMap.Camera.axis3FPS);
+//
+//			CvSink cvSink = CameraServer.getInstance().getVideo("greenAxisCamera");
+//			CvSource outputStream = CameraServer.getInstance().putVideo("Switcher", 320, 240);
+//
+//			Mat frame = new Mat();
+//
+//			while (!Thread.interrupted()) {
+//
+//				if (oi.operator.switchToCamera1()) {
+//					System.out.println("Switching to camera 1");
+//					cvSink = CameraServer.getInstance().getVideo("greenAxisCamera");
+//				} else if (oi.operator.switchToCamera2()) {
+//					System.out.println("Switching to camera 2");
+//					cvSink = CameraServer.getInstance().getVideo("blackAxisCamera");
+//				} else if (oi.operator.switchToCamera3()) {
+//					System.out.println("Switching to camera 3");
+//					cvSink = CameraServer.getInstance().getVideo("whiteAxisCamera");
+//				}
+//
+//				cvSink.grabFrame(frame);
+//				outputStream.putFrame(frame);
+//
+//			}
+//		}).start();
 
 	}
 
@@ -259,29 +259,29 @@ public class Robot extends TimedRobot {
 		// }else{
 		// //auto shift
 		// }
-		SmartDashboard.putBoolean("is VPID runnig", isVPid);
-		
-		lift.getLiftState();
-		double liftJoy = oi.operator.getOperatorY();
-		if(lift.getLiftState() == LiftSubsystem.LiftStateConstants.LOWEST_STATE){
-			if(liftJoy<0){
-				liftJoy = 0;
-			}
-		}else if(lift.getLiftState() == LiftSubsystem.LiftStateConstants.CARRIAGE_HIGH_SECOND_HIGH){
-			if(liftJoy>0.15){
-				liftJoy=0;
-			}
-		}
-		lift.setLift(liftJoy);
-		if(oi.operator.getArmUp()){
-			arm.setArm(-oi.operatorJoystick.getRawAxis(2));
-		}else if(oi.operator.getArmDown()){
-			arm.setArm(oi.operatorJoystick.getRawAxis(2));
-		}else{
-			arm.setArm(0.0);
-		}
-		SmartDashboard.putNumber("SLider", -oi.operatorJoystick.getRawAxis(2));
-		
+//		SmartDashboard.putBoolean("is VPID runnig", isVPid);
+//		
+//		lift.getLiftState();
+//		double liftJoy = oi.operator.getOperatorY();
+//		if(lift.getLiftState() == LiftSubsystem.LiftStateConstants.LOWEST_STATE){
+//			if(liftJoy<0){
+//				liftJoy = 0;
+//			}
+//		}else if(lift.getLiftState() == LiftSubsystem.LiftStateConstants.CARRIAGE_HIGH_SECOND_HIGH){
+//			if(liftJoy>0.15){
+//				liftJoy=0;
+//			}
+//		}
+//		lift.setLift(liftJoy);
+//		if(oi.operator.getArmUp()){
+//			arm.setArm(-oi.operatorJoystick.getRawAxis(2));
+//		}else if(oi.operator.getArmDown()){
+//			arm.setArm(oi.operatorJoystick.getRawAxis(2));
+//		}else{
+//			arm.setArm(0.0);
+//		}
+//		SmartDashboard.putNumber("SLider", -oi.operatorJoystick.getRawAxis(2));
+//		
 		
 //		double joyXVal = -Robot.oi.driver.getRotation();
 //		double joyYVal = Robot.oi.driver.getForward();
@@ -327,69 +327,69 @@ public class Robot extends TimedRobot {
 //		autoShiftButtonPrevState = oi.driver.switchToNormalShift();
 //		VPidButtonPrevState = oi.driver.switchToVbus();
 
-//		if (oi.operator.PIDTunePhase()) {
-//			SmartDashboard.putBoolean("PID Tuning?", isTuningPID);
-//			isTuningPID = true;
-//		}
-//
-//		if (isTuningPID) {
-//			if (oi.operator.getButton2()) {
-//				isTuningPID = false;
-//				drive.getPIDController().setPID(k_p, k_i, k_d);
-//				new DrivetrainPIDCommand(30).start();
-//			}
-//
-//			if (oi.operator.getButton6()) {
-//				if (tuningConstant == 1) {
-//					k_p += 0.1;
-//				} else if (tuningConstant == 2) {
-//					k_i += 0.1;
-//				} else if (tuningConstant == 3) {
-//					k_d += 0.1;
-//				}
-//			}
-//			if (oi.operator.getButton4()) {
-//				if (tuningConstant == 1) {
-//					k_p -= 0.1;
-//				} else if (tuningConstant == 2) {
-//					k_i -= 0.1;
-//				} else if (tuningConstant == 3) {
-//					k_d -= 0.1;
-//				}
-//			}
-//			if (oi.operator.getButton5()) {
-//				if (tuningConstant == 1) {
-//					k_p += 0.01;
-//				} else if (tuningConstant == 2) {
-//					k_i += 0.01;
-//				} else if (tuningConstant == 3) {
-//					k_d += 0.01;
-//				}
-//			}
-//			if (oi.operator.getButton7()) {
-//				if (tuningConstant == 1) {
-//					k_p -= 0.01;
-//				} else if (tuningConstant == 2) {
-//					k_i -= 0.01;
-//				} else if (tuningConstant == 3) {
-//					k_d -= 0.01;
-//				}
-//			}
-//			if (oi.operator.getButton3()) {
-//				if (tuningConstant < 3) {
-//					tuningConstant += 1;
-//				} else {
-//					tuningConstant = 1;
-//				}
-//			}
-//			if (tuningConstant == 1) {
-//				SmartDashboard.putString("Currently Tuning", "k_p: " + k_p);
-//			} else if (tuningConstant == 2) {
-//				SmartDashboard.putString("Currently Tuning", "k_i: " + k_i);
-//			} else if (tuningConstant == 3) {
-//				SmartDashboard.putString("Currently Tuning", "k_d: " + k_d);
-//			}
-//		}
+		if (oi.operator.PIDTunePhase()) {
+			SmartDashboard.putBoolean("PID Tuning?", isTuningPID);
+			isTuningPID = true;
+		}
+
+		if (isTuningPID) {
+			if (oi.operator.getButton2()) {
+				isTuningPID = false;
+				drive.getPIDController().setPID(k_p, k_i, k_d);
+				new DrivetrainPIDCommand(30).start();
+			}
+
+			if (oi.operator.getButton6()) {
+				if (tuningConstant == 1) {
+					k_p += 0.1;
+				} else if (tuningConstant == 2) {
+					k_i += 0.1;
+				} else if (tuningConstant == 3) {
+					k_d += 0.1;
+				}
+			}
+			if (oi.operator.getButton4()) {
+				if (tuningConstant == 1) {
+					k_p -= 0.1;
+				} else if (tuningConstant == 2) {
+					k_i -= 0.1;
+				} else if (tuningConstant == 3) {
+					k_d -= 0.1;
+				}
+			}
+			if (oi.operator.getButton5()) {
+				if (tuningConstant == 1) {
+					k_p += 0.01;
+				} else if (tuningConstant == 2) {
+					k_i += 0.01;
+				} else if (tuningConstant == 3) {
+					k_d += 0.01;
+				}
+			}
+			if (oi.operator.getButton7()) {
+				if (tuningConstant == 1) {
+					k_p -= 0.01;
+				} else if (tuningConstant == 2) {
+					k_i -= 0.01;
+				} else if (tuningConstant == 3) {
+					k_d -= 0.01;
+				}
+			}
+			if (oi.operator.getButton3()) {
+				if (tuningConstant < 3) {
+					tuningConstant += 1;
+				} else {
+					tuningConstant = 1;
+				}
+			}
+			if (tuningConstant == 1) {
+				SmartDashboard.putString("Currently Tuning", "k_p: " + k_p);
+			} else if (tuningConstant == 2) {
+				SmartDashboard.putString("Currently Tuning", "k_i: " + k_i);
+			} else if (tuningConstant == 3) {
+				SmartDashboard.putString("Currently Tuning", "k_d: " + k_d);
+			}
+		}
 //		// drive.driveFwdRotate(oi.driver.getForward(), -oi.driver.getRotation(), true);
 		updateSmartDashboardTesting();
 	}
