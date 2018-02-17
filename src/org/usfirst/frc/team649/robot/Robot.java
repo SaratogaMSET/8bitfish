@@ -9,6 +9,7 @@ import java.util.logging.SimpleFormatter;
 
 import org.opencv.core.Mat;
 import org.usfirst.frc.team649.autonomous.autoMaster;
+import org.usfirst.frc.team649.robot.commands.ArmMotionProfile;
 import org.usfirst.frc.team649.robot.commands.DrivetrainPIDCommand;
 import org.usfirst.frc.team649.robot.commands.SetCompressorCommand;
 import org.usfirst.frc.team649.robot.subsystems.ArmSubsystem;
@@ -17,6 +18,8 @@ import org.usfirst.frc.team649.robot.subsystems.GyroSubsystem;
 import org.usfirst.frc.team649.robot.subsystems.IntakeSubsystem;
 import org.usfirst.frc.team649.robot.subsystems.LiftSubsystem;
 import org.usfirst.frc.team649.robot.util.Lidar;
+
+import com.ctre.phoenix.motorcontrol.ControlMode;
 
 import edu.wpi.cscore.AxisCamera;
 import edu.wpi.cscore.CvSink;
@@ -46,7 +49,6 @@ public class Robot extends TimedRobot {
 	public static GyroSubsystem gyro;
     public Lidar lidar;
 	public static ArmSubsystem arm;
-	private static final ArmSubsystem ARM2 = arm;
 	public static LiftSubsystem lift;
 	public static Compressor compressor;
 	public static autoMaster automaster;
@@ -68,6 +70,10 @@ public class Robot extends TimedRobot {
 	public Timer accelTimer;
 	public double lidarCount;
 	public double prevWinchVel;
+	public double accel;
+	public double lastAccel;
+	public Timer time;
+	public static boolean isArmPidRunning;
 	// prev state variables leave at bottom
 
 	// these two are for buttons not the actual
@@ -80,23 +86,25 @@ public class Robot extends TimedRobot {
 		prevWinchVel = 0;
 		oi = new OI();
 		lidarCount = 0;
-//		drive = new DrivetrainSubsystem();
-//		gyro = new GyroSubsystem();
-		//arm = new ArmSubsystem();
+		drive = new DrivetrainSubsystem();
+		gyro = new GyroSubsystem();
+		arm = new ArmSubsystem();
 		intake = new IntakeSubsystem();
-//		ARM2 = new ArmSubsystem();
 		intakeTimer = new Timer();
-//		lift = new LiftSubsystem();
+		lift = new LiftSubsystem();
 //		automaster = new autoMaster();
-//		lidar = new Lidar(I2C.Port.kOnboard, 0xC4 >> 1);
+		lidar = new Lidar(I2C.Port.kOnboard, 0xC4 >> 1);
 		compressor = new Compressor(4);
 		isPIDActive = false;
 		accelTimer = new Timer();
-//		k_p = drive.getPIDController().getP();
-//		k_i = drive.getPIDController().getI();
-//		k_d = drive.getPIDController().getD();
+		k_p = drive.getPIDController().getP();
+		k_i = drive.getPIDController().getI();
+		k_d = drive.getPIDController().getD();
 		distance = 50;
 		tuningConstant = 1;
+		accel = 0;
+		lastAccel = 0;
+		time = new Timer();
 //		logger = Logger.getLogger("robotLog");
 //		matchTimer = new Timer();
 //		testForPath1 = new File("/media/sdb1/logdatausb.txt");
@@ -228,12 +236,15 @@ public class Robot extends TimedRobot {
 //		drive.changeBrakeCoast(false);
 		isAutoShift = true;
 		isVPid = true;
-//		autoShiftButtonPrevState = oi.driver.switchToNormalShift();
-//		VPidButtonPrevState = oi.driver.switchToVbus();
-//		drive.resetEncoders();
-//		lift.resetLiftEncoder();
+		isArmPidRunning = false;
+		autoShiftButtonPrevState = oi.driver.switchToNormalShift();
+		VPidButtonPrevState = oi.driver.switchToVbus();
+		arm.resetEncoder();
+		drive.resetEncoders();
+		lift.resetLiftEncoder();
 		accelTimer.start();
-//		new SetCompressorCommand(true).start();
+		time.start();
+		new SetCompressorCommand(true).start();
 //		new Thread(() -> {
 //
 //			AxisCamera camera1 = CameraServer.getInstance().addAxisCamera("greenAxisCamera", RobotMap.Camera.axisPort);
@@ -288,7 +299,11 @@ public class Robot extends TimedRobot {
 		// //auto shift
 		// }
 		SmartDashboard.putBoolean("is VPID runnig", isVPid);
-		
+		if(oi.operatorJoystick.getRawButton(11)){
+			arm.setArmBrake(true);
+		}else if(oi.operatorJoystick.getRawButton(10)){
+			arm.setArmBrake(false);
+		}
 //		lift.getLiftState();
 //		double liftJoy = oi.operator.getOperatorY();
 //		double newLift = liftJoy;
@@ -311,16 +326,57 @@ public class Robot extends TimedRobot {
 //		}else{
 //			intake.setIntakeMotors(0.0, 0.0);
 //		}
-//		double armJoy = oi.operator.getOperatorY();
-//		arm.setArm(armJoy);
-		intake.setIntakeMotors(oi.driveJoystickHorizontal.getY(), oi.driveJoystickVertical.getY());
-//		if(oi.driver.shiftUp()){
-//			drive.shift(true);
-//		}else{
-//			drive.shift(false);
-//		}
 		
+		if(oi.operatorJoystick.getRawButton(1)) {
+			arm.resetEncoder();
+		}
+		SmartDashboard.putNumber("Arm Velocity", arm.getVel());
+		SmartDashboard.putNumber("Arm Angle", arm.getArmAngle());
+		
+		if (arm.getTime() > 0.05) {
+			accel = arm.getVel();
+			SmartDashboard.putNumber("Arm Acceleration", accel-lastAccel);
+			lastAccel = accel;
+			arm.time.reset();
+		}
+		// 
+		if(oi.operatorJoystick.getRawButton(2)) {
+			SmartDashboard.putBoolean("is Here", true);
+			if(!isArmPidRunning){
+				new ArmMotionProfile(160).start();
+			}
+			SmartDashboard.putNumber("Arm Voltage Motion Magic", arm.bottomMotor.getMotorOutputVoltage());
+		} else if (oi.operatorJoystick.getRawButton(3)) {
+			if(!isArmPidRunning){
+				new ArmMotionProfile(2800).start();
+			}
+			SmartDashboard.putNumber("Arm Voltage Motion Magic", arm.bottomMotor.getMotorOutputVoltage());
+		} else {
+			isArmPidRunning = false;
+			double armJoy = oi.operator.getOperatorY();
+			if(armJoy == 0) {
+				if (time.get() > 0.5) {
+					arm.setArmBrake(true);
+				}
+			} else {
+				arm.setArm(armJoy);
+				arm.setArmBrake(false);
+				time.reset();
+			}
+			SmartDashboard.putBoolean("is Here", false);
+		}
+		SmartDashboard.putBoolean("is arm pid runnig", isArmPidRunning);
+//		intake.setIntakeMotors(oi.driveJoystickHorizontal.getY(), oi.driveJoystickVertical.getY());
+		if(oi.driver.shiftUp()){
+			drive.shift(true);
+		}else{
+			drive.shift(false);
+		}
+		if(oi.operator.getIntakeForward()){
 			intake.setIntakePiston(true);
+		}else{
+			intake.setIntakePiston(false);
+		}
 
 		
 //		if(oi.operator.getArmUp()){
@@ -378,7 +434,7 @@ public class Robot extends TimedRobot {
 		// drive.rawDrive(oi.driveJoystickVertical.getY(),
 		// oi.driveJoystickVertical.getY());
 		// drive.rawDrive(0.3, 0.3);
-		// drive.driveFwdRotate(oi.driver.getForward(), oi.driver.getRotation(), true);
+//		 drive.driveFwdRotate(oi.driver.getForward(), oi.driver.getRotation(), true);
 	
 
 //		if (oi.operator.PIDTunePhase()) {
@@ -458,12 +514,12 @@ public class Robot extends TimedRobot {
 //			SmartDashboard.updateValues();
 //
 //		}
-////		 drive.driveFwdRotate(oi.driver.getForward(), -oi.driver.getRotation(), true);
-////		// these are checking the previous state of a variable make sure this is at the
-////		// bottom
-//		autoShiftButtonPrevState = oi.driver.switchToNormalShift();
-//		VPidButtonPrevState = oi.driver.switchToVbus();
-//		updateSmartDashboardTesting();
+//		 drive.driveFwdRotate(oi.driver.getForward(), -oi.driver.getRotation(), true);
+		// these are checking the previous state of a variable make sure this is at the
+		// bottom
+		autoShiftButtonPrevState = oi.driver.switchToNormalShift();
+		VPidButtonPrevState = oi.driver.switchToVbus();
+		updateSmartDashboardTesting();
 		
 //		drive.rawDrive(0.5, 0.5);
 	}
@@ -517,6 +573,9 @@ public class Robot extends TimedRobot {
 		SmartDashboard.putBoolean("is Carriage at Top", lift.isCarriageAtTop());
 		SmartDashboard.putNumber("Lift Raw", lift.getRawLift());
 		SmartDashboard.putNumber("Lift Scaled Distance", lift.getLiftDistance());
+		SmartDashboard.putNumber("Arm Raw", arm.bottomMotor.getSelectedSensorPosition(0));
+		SmartDashboard.putNumber("Vel arm", arm.bottomMotor.getSelectedSensorVelocity(0));
+		SmartDashboard.putNumber("Arm scaled", arm.getArmPosition());
 		if(lidarCount == 12){
 			SmartDashboard.putNumber("Lidar", lidar.getSample());
 			lidarCount = 0;
