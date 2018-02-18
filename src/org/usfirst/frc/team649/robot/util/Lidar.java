@@ -1,3 +1,4 @@
+
 package org.usfirst.frc.team649.robot.util;
 
 import edu.wpi.first.wpilibj.I2C;
@@ -60,13 +61,11 @@ public class Lidar {
 			writeLidar(0x04, 0x08);		// Acquisition Config
 			writeLidar(0x1c, 0x00);		// Threshold Bypass
 			break;
-			
 		case defaultRangeMode:
 			writeLidar(0x02, 0x80);		// Acquisition Count
 			writeLidar(0x04, 0x00);		// Acquisition Config
 			writeLidar(0x1c, 0x00);		// Threshold Bypass
 			break;
-			
 		case maximumRangeMode:
 			writeLidar(0x02, 0xff);		// Acquisition Count
 			writeLidar(0x04, 0x08);		// Acquisition Config

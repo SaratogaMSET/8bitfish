@@ -9,16 +9,16 @@ public class RobotMap {
 	
 	public static class Drivetrain {
 		//change before first use
-		public static final int[] LEFT_SIDE_ENCODER = { 4, 5 };
-		public static final int[] RIGHT_SIDE_ENCODER = { 6, 7 };
+//		public static final int[] LEFT_SIDE_ENCODER = { 4, 5 };
+//		public static final int[] RIGHT_SIDE_ENCODER = { 6, 7 };
 		// FL,BL,BR,FR
 		public static final int[] MOTOR_PORTS = { 12, 13, 18, 19 };
-		public static final int[] RIGHT_DRIVE_SOL = { 2, 0, 1 };
-		public static final int[] LEFT_DRIVE_SOL = { 2, 2, 3 };
+		public static final int[] RIGHT_DRIVE_SOL = {4, 4, 5};
+		public static final int[] LEFT_DRIVE_SOL = { 3,2, 3 };
 	}
 	public static class Lift {
 		//mag srx encoder on 11
-		public static final int LEFT_WINCH_MOTOR = 11;
+		public static final int LEFT_WINCH_MOTOR = 10;
 		public static final int RIGHT_WINCH_MOTOR = 16;
 		public static final int CARRIAGE_HAL_BOT = 0;
 		public static final int CARRIAGE_HAL_TOP = 9;
@@ -27,8 +27,14 @@ public class RobotMap {
 	}
 	public static class Arm {
 		public static final int BOTTOM_ARM_MOTOR = 17;
-		public static final int TOP_ARM_MOTOR = 10;
+		public static final int TOP_ARM_MOTOR = 8;
 		public static final int INFRARED_SENSOR = 6;
+		public static final int[] ARM_BRAKE = {4,6,7};
+	}
+	public static class Intake {
+		public static final int LEFT_INTAKE_MOTOR = 9;
+		public static final int RIGHT_INTAKE_MOTOR = 15;
+		public static final int[] INTAKE_SOL = {3,0,1};
 	}
 
 	public static class Camera{

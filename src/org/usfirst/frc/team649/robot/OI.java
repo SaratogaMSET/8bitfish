@@ -180,16 +180,34 @@ public class OI {
 			return buttonBoard.getRawButton(12);
 		}
 		public double getOperatorY() {
-			if(Math.abs(operatorJoystick.getY()) >= 0.05){
+			if(Math.abs(operatorJoystick.getY()) >= 0.075){
 				return operatorJoystick.getY();
 			}
 			return 0.0;
 		}
-		public boolean getArmUp(){
+		public boolean getIntakeForward(){
+			return operatorJoystick.getRawButton(5);
+		}
+		public boolean getIntakeReverse(){
 			return operatorJoystick.getRawButton(3);
 		}
-		public boolean getArmDown(){
-			return operatorJoystick.getRawButton(2);
+		public double returnSlider() {
+			return operatorJoystick.getRawAxis(3);
+		}
+		public boolean isIntakeOut(){
+			return operatorJoystick.getRawButton(7);
+		}
+		public boolean isIntakeIn(){
+			return operatorJoystick.getRawButton(8);
+		}
+		public boolean getButton2Operator() {
+				boolean value = operatorJoystick.getRawButton(2);
+				if(value == true && oldValue2 == false){
+					oldValue2 = value;
+					return true;
+				}
+				oldValue2 = value;
+				return false;
 		}
 	}
 	public class Driver {
