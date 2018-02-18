@@ -57,6 +57,34 @@ public class OI {
 			oldValue1 = value;
 			return false;
 		}
+		//use prev states
+		public boolean getLiftUpSmall(){
+			return buttonBoard.getRawButton(6);
+		}
+		public boolean getLiftDownSmall(){
+			return buttonBoard.getRawButton(4);
+		}
+		public boolean getArmUpSmall(){
+			return buttonBoard.getRawButton(7);
+		}
+		public boolean getArmDownSmall(){
+			return buttonBoard.getRawButton(5);
+		}
+		public boolean intakeState(){
+			return buttonBoard.getRawButton(1);
+		}
+		public boolean getStoreState(){
+			return buttonBoard.getRawButton(2);
+		}
+		public boolean getExchangeState(){
+			return buttonBoard.getRawButton(3);
+		}
+		public boolean getSwitchState(){
+			return buttonBoard.getRawButton(8);
+		}
+		public boolean getScaleLowState(){
+			return buttonBoard.getRawButton(9);
+		}
 		public boolean getButton2() {
 			if (Robot.isTuningPID) {
 				boolean value = buttonBoard.getRawButton(2);

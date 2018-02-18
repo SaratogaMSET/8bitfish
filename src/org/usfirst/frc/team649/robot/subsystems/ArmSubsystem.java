@@ -47,8 +47,8 @@ public class ArmSubsystem extends Subsystem {
 		bottomMotor.configMotionAcceleration(850, 20);
 		bottomMotor.configMotionCruiseVelocity(700, 20);
 		bottomMotor.config_kP(0, 5, 20);
-		bottomMotor.config_kI(0, 0.003, 20);
-		bottomMotor.config_kD(0, 0.005, 20);
+		bottomMotor.config_kI(0, 0.004, 20);
+		bottomMotor.config_kD(0, 0.01, 20);
 		bottomMotor.config_kF(0, 1.25, 20);
 		bottomMotor.selectProfileSlot(0, 0);
 		topMotor.setInverted(true);
