@@ -63,13 +63,22 @@ public class LiftSubsystem extends PIDSubsystem {
 		followerLiftMotor.configPeakOutputReverse(-1.0, 30);
 		mainLiftMotor.setNeutralMode(NeutralMode.Brake);
 		followerLiftMotor.setNeutralMode(NeutralMode.Brake);
+		mainLiftMotor.configMotionCruiseVelocity(3200, 20);
+		mainLiftMotor.configMotionAcceleration(3450, 20); // 400 actual
+		mainLiftMotor.selectProfileSlot(0, 0);
+		//0.3197
+		mainLiftMotor.config_kF(0, 0.3197, 20);
+		mainLiftMotor.config_kP(0, 3.5, 20);
+		mainLiftMotor.config_kI(0, 0.015, 20);
+		mainLiftMotor.config_kD(0, 0.05, 20);
     	botSecondStageHal = new DigitalInput(RobotMap.Lift.SECOND_STAGE_HAL_BOT);
     	topSecondStageHal = new DigitalInput(RobotMap.Lift.SECOND_STAGE_HAL_TOP);
     	botCarriageHal = new DigitalInput(RobotMap.Lift.CARRIAGE_HAL_BOT);
     	topCarriageHal = new DigitalInput(RobotMap.Lift.CARRIAGE_HAL_TOP);
     }
 //    public double getLidarValue(){
-//    	return lidar.getSample();
+//    	return lidar.getSample()
+    ;
 //    }
     //u have a max height of 2nd stage and u have a translsational value tuned by max heihgt/winch turns. 
     //Then u get total height by lidar + (total winch - lidar portion converted)
@@ -178,6 +187,9 @@ public class LiftSubsystem extends PIDSubsystem {
     			return LiftStateConstants.CARRIAGE_HIGH_SECOND_MID;
     		}
     	}
+    }
+    public double getRawLiftVel(){
+    	return mainLiftMotor.getSelectedSensorVelocity(0);
     }
     public boolean isCarriageAtBottom() {
     	return !botCarriageHal.get();
