@@ -98,6 +98,13 @@ public class DrivetrainSubsystem extends PIDSubsystem {
 		motors[0].configNominalOutputReverse(0, 30);
 		motors[0].configPeakOutputForward(1, 30);
 		motors[0].configPeakOutputReverse(-1, 30);
+		motors[0].configMotionCruiseVelocity(21400, 20);
+		motors[0].configMotionAcceleration(500, 20);
+		motors[0].selectProfileSlot(0, 0);
+		motors[0].config_kP(0, 0.2, 20);
+		motors[0].config_kI(0, 0, 20);
+		motors[0].config_kD(0, 0, 20);
+		motors[0].config_kF(0, 0.3111, 20); // just random
 		
 		motors[1].configNominalOutputForward(0, 30);
 		motors[1].configNominalOutputReverse(0, 30);
@@ -113,6 +120,13 @@ public class DrivetrainSubsystem extends PIDSubsystem {
 		motors[2].configNominalOutputReverse(0, 30);
 		motors[2].configPeakOutputForward(1, 30);
 		motors[2].configPeakOutputReverse(-1, 30);
+		motors[2].configMotionCruiseVelocity(21400, 20);
+		motors[2].configMotionAcceleration(500, 20);
+		motors[2].selectProfileSlot(0, 0);
+		motors[2].config_kP(0, 0.2, 20);
+		motors[2].config_kI(0, 0, 20);
+		motors[2].config_kD(0, 0, 20);
+		motors[2].config_kF(0, 0.3111, 20); // just random
 
 		
 		motors[3].configNominalOutputForward(0, 30);
