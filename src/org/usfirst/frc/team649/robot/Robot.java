@@ -11,6 +11,7 @@ import org.opencv.core.Mat;
 import org.usfirst.frc.team649.autonomous.autoMaster;
 import org.usfirst.frc.team649.robot.commands.ArmMotionProfile;
 import org.usfirst.frc.team649.robot.commands.DrivetrainPIDCommand;
+import org.usfirst.frc.team649.robot.commands.GyroStraightPID;
 import org.usfirst.frc.team649.robot.commands.SetCompressorCommand;
 import org.usfirst.frc.team649.robot.subsystems.ArmSubsystem;
 import org.usfirst.frc.team649.robot.subsystems.DrivetrainSubsystem;
@@ -83,6 +84,7 @@ public class Robot extends TimedRobot {
 	public double driveAccel;
 	public double rightDTMaxVel;
 	public double leftDTMaxVel;
+	public double maxAccelDrive;
 	// prev state variables leave at bottom
 
 	// these two are for buttons not the actual
@@ -164,7 +166,8 @@ public class Robot extends TimedRobot {
 	public void autonomousInit() {
 //		automaster.autoDecider();
 		drive.resetEncoders();
-		new DrivetrainPIDCommand(30.0).start();
+		gyro.resetGyro();
+//		new DrivetrainPIDCommand(30.0).start();
 //		logger.setUseParentHandlers(false);
 	}
 
@@ -174,7 +177,7 @@ public class Robot extends TimedRobot {
 		if (isAutonomous()) {
 			//logNewEvent(returnDifferenceInMatchTime() + " " + "I'm In Autonomous Mode!");
 		}
-		
+		updateSmartDashboardTesting();
 
 	}
 
@@ -182,9 +185,11 @@ public class Robot extends TimedRobot {
 	public void teleopInit() {
 		armVelMax = 0;
 		intakeTimer.start();
+		gyro.resetGyro();
 //		logger.setUseParentHandlers(false);
 //		drive.changeBrakeCoast(false);
 		isAutoShift = true;
+		maxAccelDrive = 0;
 		isVPid = true;
 		isArmPidRunning = false;
 		autoShiftButtonPrevState = oi.driver.switchToNormalShift();
@@ -251,15 +256,56 @@ public class Robot extends TimedRobot {
 		// }else{
 		// //auto shift
 		// }
-//		if(Math.abs(drive.motors[0].getSelectedSensorVelocity(0)) > Math.abs(leftDTMaxVel)) {
-//			leftDTMaxVel = drive.motors[0].getSelectedSensorVelocity(0);
-//		}
-//		if(Math.abs(drive.motors[2].getSelectedSensorVelocity(0)) > Math.abs(leftDTMaxVel)) {
-//			rightDTMaxVel = drive.motors[2].getSelectedSensorVelocity(0);
-//		}
-//		SmartDashboard.putNumber("DT Left Max Vel", leftDTMaxVel);
-//		SmartDashboard.putNumber("DT Right Max Vel", rightDTMaxVel);
-		
+		if(Math.abs(drive.motors[0].getSelectedSensorVelocity(0)) > Math.abs(leftDTMaxVel)) {
+			leftDTMaxVel = drive.motors[0].getSelectedSensorVelocity(0);
+		}
+		if(Math.abs(drive.motors[2].getSelectedSensorVelocity(0)) > Math.abs(leftDTMaxVel)) {
+			rightDTMaxVel = drive.motors[2].getSelectedSensorVelocity(0);
+		}
+		SmartDashboard.putNumber("DT Left Max Vel", leftDTMaxVel);
+		SmartDashboard.putNumber("DT Right Max Vel", rightDTMaxVel);
+		if(oi.operatorJoystick.getRawButton(11)){
+			lift.getLiftState();
+//			
+			if (oi.operatorJoystick.getRawButton(2)) {
+				lift.mainLiftMotor.set(ControlMode.MotionMagic, 41000); // something
+			} else {
+				double liftJoy = oi.operator.getOperatorY();
+				double newLift = liftJoy;
+				if(lift.getLiftState() == LiftSubsystem.LiftStateConstants.LOWEST_STATE){
+					if(liftJoy<0){
+						newLift = 0;
+					}
+				}else if(lift.getLiftState() == LiftSubsystem.LiftStateConstants.CARRIAGE_HIGH_SECOND_HIGH){
+					if(liftJoy>0.185){
+						newLift=0.185;
+					}
+				}else if(liftJoy == 0){
+					newLift = 0.185;
+				}
+				lift.setLift(newLift);
+			}
+
+		}else if(oi.operatorJoystick.getRawButton((12))){
+			isArmPidRunning = false;
+			double armJoy = oi.operator.getOperatorY();
+			if(armJoy == 0) {
+				if (time.get() > 0.3) {
+					arm.setArmBrake(true);
+				}
+			} else {
+				arm.setArm(armJoy/2);
+				arm.setArmBrake(false);
+				time.reset();
+			}
+		}
+		if(oi.operatorJoystick.getRawButton(9)){
+			intake.setIntakeMotors(1.0, 1.0);
+		}else if(oi.operatorJoystick.getRawButton(10)){
+			intake.setIntakeMotors(-1.0, -1.0);
+		}else{
+			intake.setIntakeMotors(0, 0);
+		}
 //		if(lift.getLiftState() == LiftSubsystem.LiftStateConstants.CARRIAGE_LOW_SECOND_MID){
 //			if(lift.getRawLiftVel() > secondStageLiftMaxVel){
 //				secondStageLiftMaxVel = lift.getRawLiftVel();
@@ -285,32 +331,12 @@ public class Robot extends TimedRobot {
 		SmartDashboard.putNumber("arm Vel max", armVelMax);
 		SmartDashboard.putBoolean("is VPID runnig", isVPid);
 
-		if(oi.operatorJoystick.getRawButton(11)){
-			arm.setArmBrake(true);
-		}else if(oi.operatorJoystick.getRawButton(10)){
-			arm.setArmBrake(false);
-		}
-//		lift.getLiftState();
-		
-		if (oi.operatorJoystick.getRawButton(2)) {
-			lift.mainLiftMotor.set(ControlMode.MotionMagic, 41000); // something
-		} else {
-			double liftJoy = oi.operator.getOperatorY();
-			double newLift = liftJoy;
-			if(lift.getLiftState() == LiftSubsystem.LiftStateConstants.LOWEST_STATE){
-				if(liftJoy<0){
-					newLift = 0;
-				}
-			}else if(lift.getLiftState() == LiftSubsystem.LiftStateConstants.CARRIAGE_HIGH_SECOND_HIGH){
-				if(liftJoy>0.185){
-					newLift=0.185;
-				}
-			}else if(liftJoy == 0){
-				newLift = 0.185;
-			}
-			lift.setLift(newLift);
-		}
-
+//		if(oi.operatorJoystick.getRawButton(11)){
+//			arm.setArmBrake(true);
+//		}else if(oi.operatorJoystick.getRawButton(10)){
+//			arm.setArmBrake(false);
+//		}
+//		
 //		
 //		if (timeAccel.get() > 0.05) {
 //			timeAccel.stop();
@@ -369,11 +395,8 @@ public class Robot extends TimedRobot {
 //		}
 		SmartDashboard.putBoolean("is arm pid runnig", isArmPidRunning);
 //		intake.setIntakeMotors(oi.driveJoystickHorizontal.getY(), oi.driveJoystickVertical.getY());
-//		if(oi.driver.shiftUp()){
-//			drive.shift(true);
-//		}else{
-//			drive.shift(false);
-//		}
+		drive.shift(true);
+	
 		if(oi.operator.getIntakeForward()){
 			intake.setIntakePiston(true);
 		}else{
@@ -383,17 +406,18 @@ public class Robot extends TimedRobot {
 		if(lift.getLiftState() == LiftSubsystem.LiftStateConstants.LOWEST_STATE){
 			lift.resetLiftEncoder();
 		}
-		if (oi.operatorJoystick.getPOV() == 0) {
-			intake.setIntakeMotors(oi.operator.returnSlider(), oi.operator.returnSlider());
-		} else if (oi.operatorJoystick.getPOV() == 180) {
-			intake.setIntakeMotors(-oi.operator.returnSlider(), -oi.operator.returnSlider());
-		} else {
-			intake.setIntakeMotors(0, 0);
-		}
+//		if (oi.operatorJoystick.getPOV() == 0) {
+//			intake.setIntakeMotors(oi.operator.returnSlider(), oi.operator.returnSlider());
+//		} else if (oi.operatorJoystick.getPOV() == 180) {
+//			intake.setIntakeMotors(-oi.operator.returnSlider(), -oi.operator.returnSlider());
+//		} else {
+//			intake.setIntakeMotors(0, 0);
+//		}
 		if (oi.operatorJoystick.getRawButton(2)) {
-//			drive.motors[0].set(ControlMode.MotionMagic, 240000);
-//			drive.motors[2].set(ControlMode.MotionMagic, -240000);
+			//new GyroStraightPID(282000, -50, 180000).start();
+
 		} else {
+//			drive.resetEncoders();
 			 drive.driveFwdRotate(oi.driver.getForward(), -oi.driver.getRotation(), true);
 		}
 		SmartDashboard.putNumber("DT Left Talon Raw", drive.motors[0].getSelectedSensorPosition(0));
@@ -611,6 +635,7 @@ public class Robot extends TimedRobot {
 		}
 	}
 	private void updateSmartDashboardTesting(){
+		SmartDashboard.putNumber("Gyro Val", gyro.getGyroAngle());
 		SmartDashboard.putBoolean("PID Tuning?", isTuningPID);
 		SmartDashboard.putNumber("k_p", k_p);
 		SmartDashboard.putNumber("k_i", k_i);
@@ -619,15 +644,17 @@ public class Robot extends TimedRobot {
 //		SmartDashboard.putNumber("TalonRaw", drive.motors[0].getSensorCollection().getQuadraturePosition());
 //		SmartDashboard.putNumber("Talon Enc Distance", drive.getTalonDistanceLeft());
 //		SmartDashboard.putBoolean("Infrared", arm.getInfraredSensor());
-		SmartDashboard.putNumber("Talon Enc Distance Left", drive.getTalonDistanceLeft());
-		SmartDashboard.putNumber("Talon Enc Distance Right", drive.getTalonDistanceRight());
+		SmartDashboard.putNumber("Talon Enc Distance Left", drive.motors[0].getSelectedSensorPosition(0));
+		SmartDashboard.putNumber("Talon Enc Distance Right", drive.motors[2].getSelectedSensorPosition(0));
 		SmartDashboard.putNumber("LiftJoy", oi.operator.getOperatorY());
 		SmartDashboard.putNumber("WINCH RPM", lift.mainLiftMotor.getSelectedSensorVelocity(0));
 		
 		if(accelTimer.get() > 0.1){
+			SmartDashboard.putNumber("drive accel", (drive.motors[0].getSelectedSensorVelocity(0)-prevDriveVel)/accelTimer.get());
 			SmartDashboard.putNumber("winch accel",(lift.mainLiftMotor.getSelectedSensorVelocity(0)-prevWinchVel)/accelTimer.get());
 			accelTimer.reset();
 			prevWinchVel = lift.mainLiftMotor.getSelectedSensorVelocity(0);
+			prevDriveVel = drive.motors[0].getSelectedSensorVelocity(0);
 		}
 //		SmartDashboard.putNumber("PID error", drive.motors[2].getClosedLoopError(0));
 //		SmartDashboard.putNumber("Target Current output", drive.motors[2].getMotorOutputPercent());
