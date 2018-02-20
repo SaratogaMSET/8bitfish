@@ -85,6 +85,36 @@ public class OI {
 		public boolean getScaleLowState(){
 			return buttonBoard.getRawButton(9);
 		}
+		public boolean getScaleMidState(){
+			return buttonBoard.getRawButton(10);
+		}
+		public boolean getScaleHighState(){
+			return buttonBoard.getRawButton(11);
+		}
+		public boolean deployWithWheelsAndOpen(){
+			return operatorJoystick.getRawButton(1);
+		}
+		public boolean runIntakeWithWheelsClosed(){
+			return operatorJoystick.getRawButton(2);
+		}
+		public boolean openIntake(){
+			return operatorJoystick.getRawButton(3);
+		}
+		public boolean deployOnlyWheels(){
+			return operatorJoystick.getRawButton(5);
+		}
+		public boolean flipArm(){
+			return operatorJoystick.getRawButton(6);
+		}
+		public boolean isManual(){
+			return operatorJoystick.getRawButton(11);
+		}
+		public double getManualArm(){
+			return operatorJoystick.getRawAxis(0);
+		}
+		public double getManualLift(){
+			return operatorJoystick.getRawAxis(1);
+		}
 		public boolean getButton2() {
 			if (Robot.isTuningPID) {
 				boolean value = buttonBoard.getRawButton(2);

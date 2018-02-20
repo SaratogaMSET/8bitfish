@@ -331,17 +331,28 @@ public class Robot extends TimedRobot {
 			arm.setArm(0);
 //
 		}else if(oi.operatorJoystick.getRawButton((12))){
-			isArmPidRunning = false;
-			double armJoy = oi.operator.getOperatorY();
-			if(armJoy == 0) {
-				if (time.get() > 0.3) {
-					arm.setArmBrake(true);
+			if(oi.operatorJoystick.getRawButton(2)){
+				if(!isArmPidRunning){
+					new ArmMotionProfile(-4100).start();
 				}
-			} else {
-				arm.setArm(armJoy/1.5);
-				arm.setArmBrake(false);
-				time.reset();
+			}else if(oi.operatorJoystick.getRawButton(3)){
+				if(!isArmPidRunning){
+					new ArmMotionProfile(-400).start();
+				}
+			}else{
+				isArmPidRunning = false;
+				double armJoy = oi.operator.getOperatorY();
+				if(armJoy == 0) {
+					if (time.get() > 0.3) {
+						arm.setArmBrake(true);
+					}
+				} else {
+					arm.setArm(armJoy/1.5);
+					arm.setArmBrake(false);
+					time.reset();
+				}	
 			}
+			
 		}
 		if(oi.operatorJoystick.getRawButton(9)){
 			intake.setIntakeMotors(1, 1);
@@ -540,7 +551,19 @@ public class Robot extends TimedRobot {
 		
 //		drive.rawDrive(0.5, 0.5);
 	}
+	public void teleopRun(){
+		if(oi.driver.shiftUp()){
+			drive.shift(true);
+		}else{
+			drive.shift(false);
+		}
+		drive.driveFwdRotate(oi.driver.getForward(), oi.driver.getRotation(), true);
+		if(oi.operator.getArmUpSmall()){
+			
+		}
 
+		
+	}
 	private void checkAutoShiftToggle() {
 		// on release
 		if (!oi.driver.switchToNormalShift() && autoShiftButtonPrevState) {

@@ -22,7 +22,7 @@ public class ArmSubsystem extends Subsystem {
     // here. Call these from Commands.
 	public static class ArmConstants{
 		public static final double ARM_POWER = 0.6;
-		public static final int RAW_ABS_TOL = 15;
+		public static final int RAW_ABS_TOL = 25;
 	}
 	DigitalInput infraredSensor;
 	public TalonSRX bottomMotor;
@@ -32,7 +32,7 @@ public class ArmSubsystem extends Subsystem {
 	public DoubleSolenoid armBrake;
 	public ArmSubsystem() {
 		bottomMotor = new TalonSRX(RobotMap.Arm.BOTTOM_ARM_MOTOR);
-		bottomMotor.configSelectedFeedbackSensor(FeedbackDevice.Analog, 0, Robot.timeoutMs);
+		bottomMotor.configSelectedFeedbackSensor(FeedbackDevice.CTRE_MagEncoder_Relative, 0, Robot.timeoutMs);
 		topMotor = new TalonSRX(RobotMap.Arm.TOP_ARM_MOTOR);
 		infraredSensor = new DigitalInput(RobotMap.Arm.INFRARED_SENSOR);
 		bottomMotor.configNominalOutputForward(0, Robot.timeoutMs);
@@ -48,7 +48,7 @@ public class ArmSubsystem extends Subsystem {
 		bottomMotor.configMotionAcceleration(850, Robot.timeoutMs);
 		bottomMotor.configMotionCruiseVelocity(700, Robot.timeoutMs);
 		bottomMotor.config_kP(0, 5, Robot.timeoutMs);
-		bottomMotor.config_kI(0, 0.004, Robot.timeoutMs);
+		bottomMotor.config_kI(0, 0.001, Robot.timeoutMs);
 		bottomMotor.config_kD(0, 0.01, Robot.timeoutMs);
 		bottomMotor.config_kF(0, 1.25, Robot.timeoutMs);
 		bottomMotor.selectProfileSlot(0, 0);
@@ -69,7 +69,7 @@ public class ArmSubsystem extends Subsystem {
 		armBrake.set(!isEngaged ? DoubleSolenoid.Value.kForward : DoubleSolenoid.Value.kReverse);
 	}
 	public int getArmRaw() {
-		return bottomMotor.getSensorCollection().getPulseWidthPosition();
+		return bottomMotor.getSelectedSensorPosition(0);
 	}
 	
 	public double getArmPosition() {

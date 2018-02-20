@@ -42,7 +42,7 @@ public class ArmMotionProfile extends Command {
     	if(doneTime.get() > 0.15){
     		return true;
     		
-    	}else if(!(doneTime.get() == 0) && Math.abs(donePos-Robot.arm.getArmRaw()) > 5){
+    	}else if(!(doneTime.get() == 0) && Math.abs(donePos-Robot.arm.getArmRaw()) > 10){
     		doneTime.stop();
     		doneTime.reset();
     	}else if(Math.abs(Robot.arm.getArmRaw() - value)< ArmSubsystem.ArmConstants.RAW_ABS_TOL && doneTime.get() == 0){
