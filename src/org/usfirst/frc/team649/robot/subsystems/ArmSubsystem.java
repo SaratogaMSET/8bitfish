@@ -1,5 +1,6 @@
 package org.usfirst.frc.team649.robot.subsystems;
 
+import org.usfirst.frc.team649.robot.Robot;
 import org.usfirst.frc.team649.robot.RobotMap;
 
 import com.ctre.phoenix.motorcontrol.ControlMode;
@@ -31,25 +32,25 @@ public class ArmSubsystem extends Subsystem {
 	public DoubleSolenoid armBrake;
 	public ArmSubsystem() {
 		bottomMotor = new TalonSRX(RobotMap.Arm.BOTTOM_ARM_MOTOR);
-		bottomMotor.configSelectedFeedbackSensor(FeedbackDevice.Analog, 0, 30);
+		bottomMotor.configSelectedFeedbackSensor(FeedbackDevice.Analog, 0, Robot.timeoutMs);
 		topMotor = new TalonSRX(RobotMap.Arm.TOP_ARM_MOTOR);
 		infraredSensor = new DigitalInput(RobotMap.Arm.INFRARED_SENSOR);
-		bottomMotor.configNominalOutputForward(0, 30);
-		bottomMotor.configNominalOutputReverse(0, 30);
-		bottomMotor.configPeakOutputForward(1.0, 30);
-		bottomMotor.configPeakOutputReverse(-1.0, 30);
+		bottomMotor.configNominalOutputForward(0, Robot.timeoutMs);
+		bottomMotor.configNominalOutputReverse(0, Robot.timeoutMs);
+		bottomMotor.configPeakOutputForward(1.0, Robot.timeoutMs);
+		bottomMotor.configPeakOutputReverse(-1.0, Robot.timeoutMs);
 		bottomMotor.setSensorPhase(false);
 		bottomMotor.setInverted(false);
-		bottomMotor.setStatusFramePeriod(StatusFrameEnhanced.Status_10_MotionMagic, 10, 20);
+		bottomMotor.setStatusFramePeriod(StatusFrameEnhanced.Status_10_MotionMagic, 10, Robot.timeoutMs);
 		lastVal = 0;
 		time = new Timer();
 		time.start();
-		bottomMotor.configMotionAcceleration(850, 20);
-		bottomMotor.configMotionCruiseVelocity(700, 20);
-		bottomMotor.config_kP(0, 5, 20);
-		bottomMotor.config_kI(0, 0.004, 20);
-		bottomMotor.config_kD(0, 0.01, 20);
-		bottomMotor.config_kF(0, 1.25, 20);
+		bottomMotor.configMotionAcceleration(850, Robot.timeoutMs);
+		bottomMotor.configMotionCruiseVelocity(700, Robot.timeoutMs);
+		bottomMotor.config_kP(0, 5, Robot.timeoutMs);
+		bottomMotor.config_kI(0, 0.004, Robot.timeoutMs);
+		bottomMotor.config_kD(0, 0.01, Robot.timeoutMs);
+		bottomMotor.config_kF(0, 1.25, Robot.timeoutMs);
 		bottomMotor.selectProfileSlot(0, 0);
 		topMotor.setInverted(true);
 		topMotor.set(ControlMode.Follower, 17);

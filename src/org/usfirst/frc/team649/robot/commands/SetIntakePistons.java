@@ -2,28 +2,27 @@ package org.usfirst.frc.team649.robot.commands;
 
 import org.usfirst.frc.team649.robot.Robot;
 
-import edu.wpi.first.wpilibj.PIDController;
-import edu.wpi.first.wpilibj.Timer;
 import edu.wpi.first.wpilibj.command.Command;
-import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 
 /**
  *
  */
-public class intakeQ extends Command {	
+public class SetIntakePistons extends Command {
 	
-    public intakeQ() {
+	boolean isOpen;
+    public SetIntakePistons(boolean isOpen) {
+        // Use requires() here to declare subsystem dependencies
+        // eg. requires(chassis);
+    	this.isOpen = isOpen;
     }
 
     // Called just before this Command runs the first time
     protected void initialize() {
-    		Robot.intake.setIntakeMotors(1.0, 1.0);
-    		Robot.intake.setIntakePiston(true);
+    	Robot.intake.setIntakePiston(isOpen);
     }
 
     // Called repeatedly when this Command is scheduled to run
     protected void execute() {
-    		
     }
 
     // Make this return true when this Command no longer needs to run execute()
@@ -33,7 +32,6 @@ public class intakeQ extends Command {
 
     // Called once after isFinished returns true
     protected void end() {
-    
     }
 
     // Called when another command which requires one or more of the same

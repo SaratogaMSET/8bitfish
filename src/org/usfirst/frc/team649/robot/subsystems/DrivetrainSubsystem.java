@@ -92,47 +92,47 @@ public class DrivetrainSubsystem extends PIDSubsystem {
 			motors[i] = new TalonSRX(RobotMap.Drivetrain.MOTOR_PORTS[i]);
 		}
 		
-		motors[0].configSelectedFeedbackSensor(FeedbackDevice.QuadEncoder, 0, 30);
+		motors[0].configSelectedFeedbackSensor(FeedbackDevice.QuadEncoder, 0, Robot.timeoutMs);
 		motors[0].setSensorPhase(false);
-		motors[0].configNominalOutputForward(0, 30);
-		motors[0].configNominalOutputReverse(0, 30);
-		motors[0].configPeakOutputForward(1, 30);
-		motors[0].configPeakOutputReverse(-1, 30);
-		motors[0].configMotionCruiseVelocity(20000, 20);
-		motors[0].configMotionAcceleration(11000, 20); //1360 actual
+		motors[0].configNominalOutputForward(0, Robot.timeoutMs);
+		motors[0].configNominalOutputReverse(0, Robot.timeoutMs);
+		motors[0].configPeakOutputForward(1, Robot.timeoutMs);
+		motors[0].configPeakOutputReverse(-1, Robot.timeoutMs);
+		motors[0].configMotionCruiseVelocity(20000, Robot.timeoutMs);
+		motors[0].configMotionAcceleration(11000, Robot.timeoutMs); //1360 actual
 		motors[0].selectProfileSlot(0, 0);
-		motors[0].config_kP(0, 1.5, 20);
-		motors[0].config_kI(0, 0.01, 20);
-		motors[0].config_kD(0, 1.25, 20);
-		motors[0].config_kF(0, 0.060176, 20);
+		motors[0].config_kP(0, 1.5, Robot.timeoutMs);
+		motors[0].config_kI(0, 0.03, Robot.timeoutMs);
+		motors[0].config_kD(0, 1.25, Robot.timeoutMs);
+		motors[0].config_kF(0, 0.060176, Robot.timeoutMs);
 		
-		motors[1].configNominalOutputForward(0, 30);
-		motors[1].configNominalOutputReverse(0, 30);
-		motors[1].configPeakOutputForward(1, 30);
-		motors[1].configPeakOutputReverse(-1, 30);
+		motors[1].configNominalOutputForward(0, Robot.timeoutMs);
+		motors[1].configNominalOutputReverse(0, Robot.timeoutMs);
+		motors[1].configPeakOutputForward(1, Robot.timeoutMs);
+		motors[1].configPeakOutputReverse(-1, Robot.timeoutMs);
 		
 
 		motors[1].set(ControlMode.Follower,RobotMap.Drivetrain.MOTOR_PORTS[0]);
-		motors[2].configSelectedFeedbackSensor(FeedbackDevice.QuadEncoder, 0, 30);
+		motors[2].configSelectedFeedbackSensor(FeedbackDevice.QuadEncoder, 0, Robot.timeoutMs);
 		motors[2].setSensorPhase(false);
 //		motors[2].setInverted(true);
-		motors[2].configNominalOutputForward(0, 30);
-		motors[2].configNominalOutputReverse(0, 30);
-		motors[2].configPeakOutputForward(1, 30);
-		motors[2].configPeakOutputReverse(-1, 30);
-		motors[2].configMotionCruiseVelocity(20000, 20);
-		motors[2].configMotionAcceleration(11000, 20); //1360 actual
+		motors[2].configNominalOutputForward(0, Robot.timeoutMs);
+		motors[2].configNominalOutputReverse(0, Robot.timeoutMs);
+		motors[2].configPeakOutputForward(1, Robot.timeoutMs);
+		motors[2].configPeakOutputReverse(-1, Robot.timeoutMs);
+		motors[2].configMotionCruiseVelocity(20000, Robot.timeoutMs);
+		motors[2].configMotionAcceleration(11000, Robot.timeoutMs); //1360 actual
 		motors[2].selectProfileSlot(0, 0);
-		motors[2].config_kP(0, 1.5 ,20);
-		motors[2].config_kI(0, 0.01, 20);
-		motors[2].config_kD(0, 1.25, 20);
-		motors[2].config_kF(0, 0.060176, 20);
+		motors[2].config_kP(0, 1.5 , Robot.timeoutMs);
+		motors[2].config_kI(0, 0.03, Robot.timeoutMs);
+		motors[2].config_kD(0, 1.25, Robot.timeoutMs);
+		motors[2].config_kF(0, 0.060176, Robot.timeoutMs);
 
 		
-		motors[3].configNominalOutputForward(0, 30);
-		motors[3].configNominalOutputReverse(0, 30);
-		motors[3].configPeakOutputForward(1, 30);
-		motors[3].configPeakOutputReverse(-1, 30);
+		motors[3].configNominalOutputForward(0, Robot.timeoutMs);
+		motors[3].configNominalOutputReverse(0, Robot.timeoutMs);
+		motors[3].configPeakOutputForward(1, Robot.timeoutMs);
+		motors[3].configPeakOutputReverse(-1, Robot.timeoutMs);
 		motors[3].set(ControlMode.Follower,RobotMap.Drivetrain.MOTOR_PORTS[2]);
 		isLeftVPid = false;
 		isRightVPid = false;
@@ -319,9 +319,9 @@ public class DrivetrainSubsystem extends PIDSubsystem {
 	public double getTalonDistanceRight() {
 		double encPos = -(double) motors[2].getSensorCollection().getQuadraturePosition();
 		if (!isHighGear) {
-			return ((encPos)/4096.0) *(14.0/60.0) * (5.0 * Math.PI) / 8.0 * 2;
+			return ((encPos)/4096.0) *(14.0/60.0) * (5.0 * Math.PI) / 2;
 		} else {
-			return ((encPos)/4096.0) *(24.0/50) * (5.0 * Math.PI) / 8.0 * 2;
+			return ((encPos)/4096.0) *(24.0/50) * (5.0 * Math.PI) / 2;
 		}
 	}
 	public double getAvgTalonDistance() {
@@ -333,6 +333,9 @@ public class DrivetrainSubsystem extends PIDSubsystem {
 		motors[2].getSensorCollection().setQuadraturePosition(0, 20);
 //		leftEncoder.reset();
 	}
+	public double getTranslationDistance(double angle) {
+		return (angle / 45)* (50.0/24.0) * 4096 *2;
+		}
     public void initDefaultCommand() {
     	
     }

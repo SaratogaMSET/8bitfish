@@ -1,5 +1,6 @@
 package org.usfirst.frc.team649.robot.subsystems;
 
+import org.usfirst.frc.team649.robot.Robot;
 import org.usfirst.frc.team649.robot.RobotMap;
 
 import com.ctre.phoenix.motorcontrol.ControlMode;
@@ -24,14 +25,14 @@ public class IntakeSubsystem extends Subsystem {
     	intakeSol = new DoubleSolenoid(RobotMap.Intake.INTAKE_SOL[0],RobotMap.Intake.INTAKE_SOL[1],RobotMap.Intake.INTAKE_SOL[2]);
     	leftIntake = new TalonSRX(RobotMap.Intake.LEFT_INTAKE_MOTOR);
     	rightIntake = new TalonSRX(RobotMap.Intake.RIGHT_INTAKE_MOTOR);
-    	leftIntake.configNominalOutputForward(0, 30);
-    	leftIntake.configNominalOutputReverse(0, 30);
-    	leftIntake.configPeakOutputForward(1, 30);
-    	leftIntake.configPeakOutputReverse(-1, 30);
-    	rightIntake.configNominalOutputForward(0, 30);
-    	rightIntake.configNominalOutputReverse(0, 30);
-    	rightIntake.configPeakOutputForward(1, 30);
-    	rightIntake.configPeakOutputReverse(-1, 30);
+    	leftIntake.configNominalOutputForward(0, Robot.timeoutMs);
+    	leftIntake.configNominalOutputReverse(0, Robot.timeoutMs);
+    	leftIntake.configPeakOutputForward(1, Robot.timeoutMs);
+    	leftIntake.configPeakOutputReverse(-1, Robot.timeoutMs);
+    	rightIntake.configNominalOutputForward(0, Robot.timeoutMs);
+    	rightIntake.configNominalOutputReverse(0, Robot.timeoutMs);
+    	rightIntake.configPeakOutputForward(1, Robot.timeoutMs);
+    	rightIntake.configPeakOutputReverse(-1, Robot.timeoutMs);
     }
     public void setIntakeMotors(double right, double left){
     	leftIntake.set(ControlMode.PercentOutput, left);

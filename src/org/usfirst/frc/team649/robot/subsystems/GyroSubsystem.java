@@ -15,10 +15,13 @@ public class GyroSubsystem extends PIDSubsystem {
     // here. Call these from Commands.
 	
 	public static class GyroPIDConstants {
-    	public static final double GYRO_ABS_TOLERANCE = 3;
-    	public static double k_p = 0.0;
-    	public static double k_i = 0.0;
-    	public static double k_d = 0.0;
+    	public static final double GYRO_ABS_TOLERANCE = 2;
+//    	public static double k_p = .17;
+//    	public static double k_i = 0;  //0.0065
+//    	public static double k_d = .32;
+     	public static double k_p = 1;
+    	public static double k_i = 0;  //0.0065
+    	public static double k_d = 0.5;
     }
 	
 	public double GyroPIDOutput;
@@ -30,6 +33,8 @@ public class GyroSubsystem extends PIDSubsystem {
 		drivingStraight = false;
 		gyro = new ADXRS450_Gyro();
 		GyroPIDOutput = 0;
+		this.getPIDController().setAbsoluteTolerance(GyroPIDConstants.GYRO_ABS_TOLERANCE);
+		this.getPIDController().setOutputRange(-1, 1);
 	}
 	public double getP() {
 		return GyroPIDConstants.k_p;
@@ -87,7 +92,7 @@ public class GyroSubsystem extends PIDSubsystem {
 //			}
 //			Robot.drive.rawDrive(left, right);
 		} else {
-			Robot.drive.rawDrive(output, -output);
+			Robot.drive.rawDrive(-output, output);
 		}
 	}
 	public void setDrivingStraight(boolean straight) {

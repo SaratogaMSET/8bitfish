@@ -1,5 +1,6 @@
 package org.usfirst.frc.team649.robot.subsystems;
 
+import org.usfirst.frc.team649.robot.Robot;
 import org.usfirst.frc.team649.robot.RobotMap;
 import org.usfirst.frc.team649.robot.util.Lidar;
 
@@ -49,28 +50,28 @@ public class LiftSubsystem extends PIDSubsystem {
     public LiftSubsystem(){
     	super(LiftPIDConstants.k_P, LiftPIDConstants.k_I, LiftPIDConstants.k_D);
     	mainLiftMotor = new TalonSRX(RobotMap.Lift.RIGHT_WINCH_MOTOR);
-    	mainLiftMotor.configSelectedFeedbackSensor(FeedbackDevice.CTRE_MagEncoder_Relative, 0, 10);
+    	mainLiftMotor.configSelectedFeedbackSensor(FeedbackDevice.CTRE_MagEncoder_Relative, 0, Robot.timeoutMs);
     	followerLiftMotor = new TalonSRX(RobotMap.Lift.LEFT_WINCH_MOTOR);
     	followerLiftMotor.setInverted(true);
     	followerLiftMotor.set(ControlMode.Follower, RobotMap.Lift.RIGHT_WINCH_MOTOR);
-    	mainLiftMotor.configNominalOutputForward(0, 30);
-		mainLiftMotor.configNominalOutputReverse(0, 30);
-		mainLiftMotor.configPeakOutputForward(1.0, 30);
-		mainLiftMotor.configPeakOutputReverse(-1.0, 30);
-		followerLiftMotor.configNominalOutputForward(0, 30);
-		followerLiftMotor.configNominalOutputReverse(0, 30);
-		followerLiftMotor.configPeakOutputForward(1.0, 30);
-		followerLiftMotor.configPeakOutputReverse(-1.0, 30);
+    	mainLiftMotor.configNominalOutputForward(0, Robot.timeoutMs);
+		mainLiftMotor.configNominalOutputReverse(0, Robot.timeoutMs);
+		mainLiftMotor.configPeakOutputForward(1.0, Robot.timeoutMs);
+		mainLiftMotor.configPeakOutputReverse(-1.0, Robot.timeoutMs);
+		followerLiftMotor.configNominalOutputForward(0, Robot.timeoutMs);
+		followerLiftMotor.configNominalOutputReverse(0, Robot.timeoutMs);
+		followerLiftMotor.configPeakOutputForward(1.0, Robot.timeoutMs);
+		followerLiftMotor.configPeakOutputReverse(-1.0, Robot.timeoutMs);
 		mainLiftMotor.setNeutralMode(NeutralMode.Brake);
 		followerLiftMotor.setNeutralMode(NeutralMode.Brake);
-		mainLiftMotor.configMotionCruiseVelocity(3200, 20);
-		mainLiftMotor.configMotionAcceleration(3450, 20); // 400 actual
+		mainLiftMotor.configMotionCruiseVelocity(3200, Robot.timeoutMs);
+		mainLiftMotor.configMotionAcceleration(3450, Robot.timeoutMs); // 400 actual
 		mainLiftMotor.selectProfileSlot(0, 0);
 		//0.3197
-		mainLiftMotor.config_kF(0, 0.3197, 20);
-		mainLiftMotor.config_kP(0, 3.5, 20);
-		mainLiftMotor.config_kI(0, 0.015, 20);
-		mainLiftMotor.config_kD(0, 0.05, 20);
+		mainLiftMotor.config_kF(0, 0.3197, Robot.timeoutMs);
+		mainLiftMotor.config_kP(0, 3.5, Robot.timeoutMs);
+		mainLiftMotor.config_kI(0, 0.015, Robot.timeoutMs);
+		mainLiftMotor.config_kD(0, 0.05, Robot.timeoutMs);
     	botSecondStageHal = new DigitalInput(RobotMap.Lift.SECOND_STAGE_HAL_BOT);
     	topSecondStageHal = new DigitalInput(RobotMap.Lift.SECOND_STAGE_HAL_TOP);
     	botCarriageHal = new DigitalInput(RobotMap.Lift.CARRIAGE_HAL_BOT);

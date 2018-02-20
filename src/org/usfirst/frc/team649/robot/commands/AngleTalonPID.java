@@ -11,14 +11,14 @@ import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 /**
  *
  */
-public class DistanceTalonPID extends Command {
+public class AngleTalonPID extends Command {
 
 	double setpoint;
 	boolean isFinished;
-    public DistanceTalonPID(double setpoint) {
+    public AngleTalonPID(double angle) {
         // Use requires() here to declare subsystem dependencies
         // eg. requires(chassis);
-    	this.setpoint = setpoint;
+    	this.setpoint = Robot.drive.getTranslationDistance(angle);
     	isFinished = false;
 
     }
@@ -31,6 +31,10 @@ public class DistanceTalonPID extends Command {
     	
     	Robot.drive.motors[0].getSensorCollection().setQuadraturePosition(0, 20);
     	Robot.drive.motors[2].getSensorCollection().setQuadraturePosition(0, 20);
+    	Robot.drive.motors[0].configMotionCruiseVelocity(12000, 20);
+    	Robot.drive.motors[2].configMotionCruiseVelocity(12000, 20);
+    	Robot.drive.motors[0].configMotionAcceleration(8000, 20);
+    	Robot.drive.motors[2].configMotionAcceleration(8000, 20);
     	
 //    	for(int i = 0; i < Robot.drive.motors.length; i++) {
 //    		Robot.drive.motors[i].config_kP(0, 0.02, 20);
@@ -48,7 +52,7 @@ public class DistanceTalonPID extends Command {
     protected void execute() {
     	Robot.drive.motors[0].set(ControlMode.MotionMagic, setpoint );
 		Robot.drive.motors[1].set(ControlMode.Follower, RobotMap.Drivetrain.MOTOR_PORTS[0]);
-		Robot.drive.motors[2].set(ControlMode.MotionMagic, -setpoint);
+		Robot.drive.motors[2].set(ControlMode.MotionMagic, setpoint);
 		Robot.drive.motors[3].set(ControlMode.Follower, RobotMap.Drivetrain.MOTOR_PORTS[2]);
     	SmartDashboard.putNumber("Setpoint", ((setpoint/(4.0*Math.PI))/ (14.0/60.0)) * 4096);
 		
@@ -59,7 +63,7 @@ public class DistanceTalonPID extends Command {
     	
     	SmartDashboard.putNumber("Left Talon Distance", Robot.drive.getTalonDistanceLeft());
     	
-    	if (Math.abs(setpoint - Robot.drive.motors[0].getSelectedSensorPosition(0)) < 100) {//(Math.abs(Robot.drive.getTalonDistanceLeft() - setpoint) < 2) {
+    	if (Math.abs(setpoint - Robot.drive.motors[0].getSelectedSensorPosition(0)) < 50) {//(Math.abs(Robot.drive.getTalonDistanceLeft() - setpoint) < 2) {
 			isFinished = true;
 		}
     }

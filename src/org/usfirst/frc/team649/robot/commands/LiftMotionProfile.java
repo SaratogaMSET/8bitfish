@@ -15,6 +15,7 @@ import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 public class LiftMotionProfile extends Command {
 	int value;
 	Timer doneTime;
+	Timer timeout;
 	int donePos;
     public LiftMotionProfile(int encoderValue) {
     	value = encoderValue;
@@ -24,10 +25,11 @@ public class LiftMotionProfile extends Command {
     // Called just before this Command runs the first time
     protected void initialize() {
     	SmartDashboard.putBoolean("ran is fin", false);
-		Robot.isArmPidRunning = true;
-    	Robot.arm.setArmBrake(false);
+//		Robot.isArmPidRunning = true;
+//    	Robot.arm.setArmBrake(false);
     	doneTime = new Timer();
     	donePos = 0;
+    	timeout.start();
     	
     }
 
@@ -42,12 +44,13 @@ public class LiftMotionProfile extends Command {
     	if(doneTime.get() > 0.15){
     		return true;
     		
-    	}else if(!(doneTime.get() == 0) && Math.abs(donePos-Robot.arm.getArmRaw()) > 5){
+    	}else if(!(doneTime.get() == 0) && Math.abs(donePos-Robot.lift.mainLiftMotor.getSelectedSensorPosition(0)) > 100){
     		doneTime.stop();
     		doneTime.reset();
-    	}else if(Math.abs(Robot.lift.mainLiftMotor.getSelectedSensorPosition(0) - value)< ArmSubsystem.ArmConstants.RAW_ABS_TOL && doneTime.get() == 0){
-    		donePos = Robot.arm.getArmRaw();
+    	}else if(Math.abs(Robot.lift.mainLiftMotor.getSelectedSensorPosition(0) - value)< 100 && doneTime.get() == 0){
     		doneTime.start();
+    	} else if (timeout.get() > 5) {
+    		return true;
     	}
     	return false;
     }
