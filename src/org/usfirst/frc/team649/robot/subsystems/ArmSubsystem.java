@@ -53,7 +53,7 @@ public class ArmSubsystem extends Subsystem {
 		bottomMotor.config_kF(0, 1.25, Robot.timeoutMs);
 		bottomMotor.selectProfileSlot(0, 0);
 		topMotor.setInverted(true);
-		topMotor.set(ControlMode.Follower, 17);
+		topMotor.set(ControlMode.Follower, RobotMap.Arm.BOTTOM_ARM_MOTOR);
 		armBrake = new DoubleSolenoid(RobotMap.Arm.ARM_BRAKE[0],RobotMap.Arm.ARM_BRAKE[1],RobotMap.Arm.ARM_BRAKE[2]);
 		
 

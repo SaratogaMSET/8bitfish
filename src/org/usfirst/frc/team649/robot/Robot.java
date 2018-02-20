@@ -223,18 +223,18 @@ public class Robot extends TimedRobot {
 		arm.bottomMotor.setSelectedSensorPosition(0, 0, 20);
 //		new Thread(() -> {
 //
-//			AxisCamera camera1 = CameraServer.getInstance().addAxisCamera("greenAxisCamera", RobotMap.Camera.axisPort);
-//			camera1.setResolution(RobotMap.Camera.axisResWidth, RobotMap.Camera.axisResWidth);
+			//AxisCamera camera1 = CameraServer.getInstance().addAxisCamera(RobotMap.Camera.axisName,	RobotMap.Camera.axisPort);
+		//	camera1.setResolution(RobotMap.Camera.axisResWidth, RobotMap.Camera.axisResWidth);
 //			camera1.setFPS(RobotMap.Camera.axisFPS);
-//			AxisCamera camera2 = CameraServer.getInstance().addAxisCamera("blackAxisCamera", RobotMap.Camera.axis2Port);
-//			camera2.setResolution(RobotMap.Camera.axis2ResWidth, RobotMap.Camera.axis2ResHeight);
+	//	AxisCamera camera2 = CameraServer.getInstance().addAxisCamera(RobotMap.Camera.axis2Name,RobotMap.Camera.axis2Port);
+		//			camera2.setResolution(RobotMap.Camera.axis2ResWidth, RobotMap.Camera.axis2ResHeight);
 //			camera2.setFPS(RobotMap.Camera.axis2FPS);
-//			AxisCamera camera3 = CameraServer.getInstance().addAxisCamera("whiteAxisCamera", RobotMap.Camera.axis3Port);
-//			camera3.setResolution(RobotMap.Camera.axis3ResWidth, RobotMap.Camera.axis3ResHeight);
+		//AxisCamera camera3 = CameraServer.getInstance().addAxisCamera(RobotMap.Camera.axis3Name,RobotMap.Camera.axis3Port);
+		//			camera3.setResolution(RobotMap.Camera.axis3ResWidth, RobotMap.Camera.axis3ResHeight);
 //			camera3.setFPS(RobotMap.Camera.axis3FPS);
 //
-//			CvSink cvSink = CameraServer.getInstance().getVideo("greenAxisCamera");
-//			CvSource outputStream = CameraServer.getInstance().putVideo("Switcher", 320, 240);
+//			CvSink cvSink = CameraServer.getInstance().getVideo(RobotMap.Camera.axisName);
+//			CvSource outputStream = CameraServer.getInstance().putVideo("Switcher", 320, 480);
 //
 //			Mat frame = new Mat();
 //
@@ -242,16 +242,19 @@ public class Robot extends TimedRobot {
 //
 //				if (oi.operator.switchToCamera1()) {
 //					System.out.println("Switching to camera 1");
-//					cvSink = CameraServer.getInstance().getVideo("greenAxisCamera");
+//					cvSink = CameraServer.getInstance().getVideo(RobotMap.Camera.axisName);
 //				} else if (oi.operator.switchToCamera2()) {
 //					System.out.println("Switching to camera 2");
-//					cvSink = CameraServer.getInstance().getVideo("blackAxisCamera");
+//					cvSink = CameraServer.getInstance().getVideo(RobotMap.Camera.axis2Name);
 //				} else if (oi.operator.switchToCamera3()) {
 //					System.out.println("Switching to camera 3");
 //					cvSink = CameraServer.getInstance().getVideo("whiteAxisCamera");
+//					cvSink = CameraServer.getInstance().getVideo(RobotMap.Camera.axis3Name);
+		 //	}
+//				if (cvSink.grabFrame(frame) == 0) {
+		//					continue;
 //				}
 //
-//				cvSink.grabFrame(frame);
 //				outputStream.putFrame(frame);
 //
 //			}
