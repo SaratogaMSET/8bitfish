@@ -16,9 +16,11 @@ public class ArmMotionProfile extends Command {
 	int value;
 	Timer doneTime;
 	int donePos;
-    public ArmMotionProfile(int encoderValue) {
+	int state;
+    public ArmMotionProfile(int encoderValue,int state) {
     	value = encoderValue;
-        
+    	
+        this.state = state;
     }
 
     // Called just before this Command runs the first time
@@ -39,21 +41,30 @@ public class ArmMotionProfile extends Command {
 
     // Make this return true when this Command no longer needs to run execute()
     protected boolean isFinished() {
-    	if(doneTime.get() > 0.15){
-    		return true;
-    		
-    	}else if(!(doneTime.get() == 0) && Math.abs(donePos-Robot.arm.getArmRaw()) > 10){
-    		doneTime.stop();
-    		doneTime.reset();
-    	}else if(Math.abs(Robot.arm.getArmRaw() - value)< ArmSubsystem.ArmConstants.RAW_ABS_TOL && doneTime.get() == 0){
-    		donePos = Robot.arm.getArmRaw();
-    		doneTime.start();
-    	}
+//    	if(doneTime.get() > 0.15){
+//    		return true;
+//    		
+//    	}else if(!(doneTime.get() == 0) && Math.abs(donePos-Robot.arm.getArmRaw()) > 20){
+//    		doneTime.stop();
+//    		doneTime.reset();
+//    	}else if(Math.abs(Robot.arm.getArmRaw() - value)< ArmSubsystem.ArmConstants.RAW_ABS_TOL && doneTime.get() == 0){
+//    		donePos = Robot.arm.getArmRaw();
+//    		doneTime.start();
+//    	}
     	return false;
     }
 
     // Called once after isFinished returns true
     protected void end() {
+    	if(Robot.armState > 0){
+    		if(Robot.armState == ArmSubsystem.ArmStateConstants.HEADING_CUSTOM_UP){
+    			Robot.armState--;
+    		}else{
+    			Robot.armState++;
+    		}
+    	}else{
+    			Robot.armState--;
+    	}
     	SmartDashboard.putBoolean("ran is fin", true);
 		Robot.isArmPidRunning = false;
     	Robot.arm.setArmBrake(true);

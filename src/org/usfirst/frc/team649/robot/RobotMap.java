@@ -26,8 +26,8 @@ public class RobotMap {
 		public static final int SECOND_STAGE_HAL_TOP = 1;
 	}
 	public static class Arm {
-		public static final int BOTTOM_ARM_MOTOR = 17;
-		public static final int TOP_ARM_MOTOR = 8;
+		public static final int BOTTOM_ARM_MOTOR = 8;
+		public static final int TOP_ARM_MOTOR = 17;
 		public static final int INFRARED_SENSOR = 6;
 		public static final int[] ARM_BRAKE = {4,6,7};
 	}

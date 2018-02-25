@@ -2,6 +2,7 @@ package org.usfirst.frc.team649.robot.commands;
 
 import org.usfirst.frc.team649.robot.Robot;
 import org.usfirst.frc.team649.robot.subsystems.ArmSubsystem;
+import org.usfirst.frc.team649.robot.subsystems.LiftSubsystem;
 
 import com.ctre.phoenix.motorcontrol.ControlMode;
 
@@ -17,9 +18,11 @@ public class LiftMotionProfile extends Command {
 	Timer doneTime;
 	Timer timeout;
 	int donePos;
-    public LiftMotionProfile(int encoderValue) {
+	int state;
+    public LiftMotionProfile(int encoderValue, int state) {
     	value = encoderValue;
-        
+        this.state = state;
+        SmartDashboard.putNumber("Val", value);
     }
 
     // Called just before this Command runs the first time
@@ -27,38 +30,67 @@ public class LiftMotionProfile extends Command {
     	SmartDashboard.putBoolean("ran is fin", false);
 //		Robot.isArmPidRunning = true;
 //    	Robot.arm.setArmBrake(false);
+    	timeout = new Timer();
     	doneTime = new Timer();
     	donePos = 0;
     	timeout.start();
+    	if(value > Robot.lift.getRawLift()){
+    		Robot.lift.mainLiftMotor.configMotionCruiseVelocity(3200, Robot.timeoutMs);
+			Robot.lift.mainLiftMotor.configMotionAcceleration(3650, Robot.timeoutMs); // 400 actual
+			Robot.lift.mainLiftMotor.selectProfileSlot(0, 0);
+			Robot.lift.mainLiftMotor.config_kF(0, 0.307, Robot.timeoutMs);
+			Robot.lift.mainLiftMotor.config_kP(0, 5.5, Robot.timeoutMs);
+			Robot.lift.mainLiftMotor.config_kI(0, 0, Robot.timeoutMs);
+			Robot.lift.mainLiftMotor.config_kD(0, 0.05, Robot.timeoutMs);
+    	}else{
+    		Robot.lift.mainLiftMotor.configMotionCruiseVelocity(4200, Robot.timeoutMs);
+			Robot.lift.mainLiftMotor.configMotionAcceleration(4000, Robot.timeoutMs); // 400 actual
+			Robot.lift.mainLiftMotor.selectProfileSlot(0, 0);
+			Robot.lift.mainLiftMotor.config_kF(0, 0.3197, Robot.timeoutMs);
+			Robot.lift.mainLiftMotor.config_kP(0, 4, Robot.timeoutMs);
+			Robot.lift.mainLiftMotor.config_kI(0, 0, Robot.timeoutMs);
+			Robot.lift.mainLiftMotor.config_kD(0, 0, Robot.timeoutMs);
+    	}
     	
     }
 
     // Called repeatedly when this Command is scheduled to run
     protected void execute() {
+    	SmartDashboard.putBoolean("running", true);
     	Robot.lift.mainLiftMotor.set(ControlMode.MotionMagic, value);
 		
     }
 
     // Make this return true when this Command no longer needs to run execute()
     protected boolean isFinished() {
-    	if(doneTime.get() > 0.15){
-    		return true;
-    		
-    	}else if(!(doneTime.get() == 0) && Math.abs(donePos-Robot.lift.mainLiftMotor.getSelectedSensorPosition(0)) > 100){
-    		doneTime.stop();
-    		doneTime.reset();
-    	}else if(Math.abs(Robot.lift.mainLiftMotor.getSelectedSensorPosition(0) - value)< 100 && doneTime.get() == 0){
-    		doneTime.start();
-    	} else if (timeout.get() > 5) {
-    		return true;
-    	}
+//    	if(doneTime.get() > 0.15){
+//    		return true;
+//    		
+//    	}else if(!(doneTime.get() == 0) && Math.abs(donePos-Robot.lift.mainLiftMotor.getSelectedSensorPosition(0)) > 100){
+//    		doneTime.stop();
+//    		doneTime.reset();
+//    	}else if(Math.abs(Robot.lift.mainLiftMotor.getSelectedSensorPosition(0) - value)< 100 && doneTime.get() == 0){
+//    		doneTime.start();
+//    	} else if (timeout.get() > 5) {
+//    		return true;
+//    	}
+//    	else if(state != Robot.liftState ){
+//    		return true; 
+//    	}
     	return false;
     }
 
     // Called once after isFinished returns true
     protected void end() {
+    	if(state == LiftSubsystem.LiftStateConstants.HEADING_CUSTOM_STATE_UP){
+    		Robot.liftState--;
+    	}else{
+    		Robot.liftState++;
+    	}
     	SmartDashboard.putBoolean("ran is fin", true);
     	Robot.lift.mainLiftMotor.set(ControlMode.PercentOutput, 0);
+    	SmartDashboard.putBoolean("ran is fin", true);
+
     }
 
     // Called when another command which requires one or more of the same

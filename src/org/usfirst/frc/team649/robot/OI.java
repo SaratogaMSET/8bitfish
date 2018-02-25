@@ -47,6 +47,7 @@ public class OI {
 		oldValue8 = false;
 		oldValue9 = false;
 	}
+	
 	public class Operator {
 		public boolean PIDTunePhase() {
 			boolean value = buttonBoard.getRawButton(1);
@@ -70,7 +71,7 @@ public class OI {
 		public boolean getArmDownSmall(){
 			return buttonBoard.getRawButton(5);
 		}
-		public boolean intakeState(){
+		public boolean getIntakeState(){
 			return buttonBoard.getRawButton(1);
 		}
 		public boolean getStoreState(){
@@ -93,6 +94,9 @@ public class OI {
 		}
 		public boolean deployWithWheelsAndOpen(){
 			return operatorJoystick.getRawButton(1);
+		}
+		public boolean closeIntake(){
+			return operatorJoystick.getRawButton(5);
 		}
 		public boolean runIntakeWithWheelsClosed(){
 			return operatorJoystick.getRawButton(2);
