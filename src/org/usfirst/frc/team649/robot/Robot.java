@@ -8,6 +8,7 @@ import java.util.logging.Logger;
 import java.util.logging.SimpleFormatter;
 
 import org.opencv.core.Mat;
+import org.usfirst.frc.team649.autonomous.AutoTest;
 import org.usfirst.frc.team649.autonomous.autoMaster;
 import org.usfirst.frc.team649.robot.CommandGroups.DeployWithWheelsAndIntake;
 import org.usfirst.frc.team649.robot.CommandGroups.IntakeWithWheelsAndClose;
@@ -63,6 +64,7 @@ public class Robot extends TimedRobot {
 	public static LiftSubsystem lift;
 	public static Compressor compressor;
 	public static autoMaster automaster;
+	public static AutoTest autoTest;
 	public static boolean drivePIDRunning;
 	public Logger logger;
 	public FileHandler local;
@@ -98,6 +100,7 @@ public class Robot extends TimedRobot {
 	public double maxAccelDrive;
 	public static int timeoutMs = 20;
 	public double maxLiftVel;
+	public static double robotLength = 25; // idk
 	
 	public static boolean isArmPidRunning;
 	public static boolean isLiftPidRunning;
@@ -109,6 +112,7 @@ public class Robot extends TimedRobot {
 	public static int armState;
 	public static int customArmPos;
 	public static boolean armIsFront;
+	public static boolean isTestingAuto = false;
 	// prev state variables leave at bottom
 
 	// these two are for buttons not the actual
@@ -137,6 +141,7 @@ public class Robot extends TimedRobot {
 		lidar = new Lidar(I2C.Port.kOnboard, 0xC4 >> 1);
 		compressor = new Compressor(4);
 		isPIDActive = false;
+		autoTest = new AutoTest();
 		accelTimer = new Timer();
 		k_p = drive.getPIDController().getP();
 		k_i = drive.getPIDController().getI();
