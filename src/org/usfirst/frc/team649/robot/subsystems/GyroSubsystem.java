@@ -15,13 +15,11 @@ public class GyroSubsystem extends PIDSubsystem {
     // here. Call these from Commands.
 	
 	public static class GyroPIDConstants {
-    	public static final double GYRO_ABS_TOLERANCE = 2;
-//    	public static double k_p = .17;
-//    	public static double k_i = 0;  //0.0065
-//    	public static double k_d = .32;
-     	public static double k_p = 1;
-    	public static double k_i = 0;  //0.0065
-    	public static double k_d = 0.5;
+		public static double k_p = 0.2;
+		public static double k_i = 0;
+		public static double k_d = 0.2;
+		
+		public static final double GYRO_ABS_TOLERANCE = 2;
     }
 	
 	public double GyroPIDOutput;
@@ -34,7 +32,7 @@ public class GyroSubsystem extends PIDSubsystem {
 		gyro = new ADXRS450_Gyro();
 		GyroPIDOutput = 0;
 		this.getPIDController().setAbsoluteTolerance(GyroPIDConstants.GYRO_ABS_TOLERANCE);
-		this.getPIDController().setOutputRange(-1, 1);
+		this.getPIDController().setOutputRange(-0.8, 0.8);
 	}
 	public double getP() {
 		return GyroPIDConstants.k_p;

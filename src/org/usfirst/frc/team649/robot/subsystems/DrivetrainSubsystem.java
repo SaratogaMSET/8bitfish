@@ -26,6 +26,8 @@ public class DrivetrainSubsystem extends PIDSubsystem {
 	private static boolean isLeftVPid;
 	private static boolean isRightVPid;
 	private static boolean isHighGear;
+	public double wheelSize=5;
+	public int scalingFactor=2;
 
 	//don't save pid stuff here this is for distances and angles etc
     public static class AutoConstants{
@@ -374,6 +376,19 @@ public class DrivetrainSubsystem extends PIDSubsystem {
 	}
 	public void setD(double d) {
 		AutoPIDConstants.k_D += d;
+	}
+	
+	public int convert(double d){
+		int i = (int)((scalingFactor*d*50*4096)/(Math.PI*wheelSize*24));
+		return i;
+	}
+	public void changeScale(int x){
+		if(scalingFactor+x!=0)
+		scalingFactor+=x;
+	}
+	public void changeWheel(double x){
+		if(wheelSize+x!=0)
+		wheelSize+=x;
 	}
 	
 }

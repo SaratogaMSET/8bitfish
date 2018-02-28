@@ -13,14 +13,16 @@ import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
  */
 public class GyroPID extends Command {
 	
-	double angle;
-	Timer time;
-	Timer timeout;
-	boolean isFinished;
+	public PIDController drivePID;
+	public double encoderRight;
+	public double encoderLeft;
+	public double gyroVal;
+	public Timer time;
+	public Timer timeout;
 	boolean isTimeout;
+	boolean isFinished;
+	double angle;
 	String actuallyFinished;
-	double gyroFinal;
-	PIDController drivePID;
 	
     public GyroPID(double angle) {
         // Use requires() here to declare subsystem dependencies
@@ -32,70 +34,74 @@ public class GyroPID extends Command {
     	isFinished = false;
     	isTimeout = false;
     	actuallyFinished = "false";
-    	gyroFinal = 0;
-    	
-    	if(angle == 0) {
-    		Robot.gyro.setDrivingStraight(true);
-    	} else {
-    		Robot.gyro.setDrivingStraight(false);
-    	}
     }
 
     // Called just before this Command runs the first time
     protected void initialize() {
-    	drivePID.enable();
-    	Robot.drivePIDRunning = true;
     	Robot.gyro.resetGyro();
-    	double setpoint =  angle;
-    	
-    	
-    	drivePID.setAbsoluteTolerance(GyroSubsystem.GyroPIDConstants.GYRO_ABS_TOLERANCE);
-    	
+
+    	double setpoint = Robot.gyro.getGyroAngle() + angle;
+    	Robot.isDrivePIDRunning = true;
+    	Robot.gyro.setDrivingStraight(false);
+//    	drivePID.setPID(Robot.gyro.getP(), Robot.gyro.getI(), Robot.gyro.getD());
+    	    	    	
     	drivePID.setSetpoint(setpoint);
     	SmartDashboard.putNumber("Setpoint", setpoint);
     	time.start();
     	timeout.start();
     	//drivePIDRight.setSetpoint(setpoint);
-    	SmartDashboard.putString("Current Command", getName());
+    	System.out.println("DT PID: setpoint = " + setpoint);
+    	drivePID.enable();
+
+    	
     }
 
     // Called repeatedly when this Command is scheduled to run
     protected void execute() {
-    	
-    	
-    	
+    	if(drivePID.onTarget() && time.get() < 0.01){
+    		time.start();
+    	}else if(time.get() > 0.01 && !drivePID.onTarget()){
+    		time.stop();
+    		time.reset();
+    	}
+    	if(time.get() > 0.2){
+    		isFinished = true;
+    		gyroVal = Robot.gyro.getGyroAngle();
+    		actuallyFinished = "true";
+    	}
+    	if (timeout.get() > 2) {
+    		isFinished = true;
+    		isTimeout = true;
+    	}
+//    	if (Robot.gyro.isOscillating()) {
+//    		Robot.isCountingOscillations = true;
+//    	}
+    	//distanceTraveled = Robot.drive.getDistanceDTBoth();
+    	SmartDashboard.putBoolean("DrivePID on Target?", drivePID.onTarget());
+    	SmartDashboard.putBoolean("is done", drivePID.onTarget());
+    	SmartDashboard.putString("DT Current Command", this.getName());
     }
 
     // Make this return true when this Command no longer needs to run execute()
     protected boolean isFinished() {
-//    	if(((Math.abs(Robot.gyro.getGyroAngle() - angle))<GyroSubsystem.GyroPIDConstants.GYRO_ABS_TOLERANCE) && time.get() == 0){
-//    		time.start();
-//    	}else if(time.get() > 0.01 && !((Math.abs(Robot.gyro.getGyroAngle() - angle))<GyroSubsystem.GyroPIDConstants.GYRO_ABS_TOLERANCE)){
-//    		time.stop();
-//    		time.reset();
-//    	}else if(time.get()> 0.1){
-//    		SmartDashboard.putNumber("Gyro Final", Robot.gyro.getGyroAngle());
-//    		return true;
-//    	}
-//    	if(((Math.abs(Robot.gyro.getGyroAngle() - angle))<GyroSubsystem.GyroPIDConstants.GYRO_ABS_TOLERANCE)) {
-//    		SmartDashboard.putNumber("Gyro Final", Robot.gyro.getGyroAngle());
-//    		return true;
-//    	}
-    	return false;
+        return isFinished;
     }
 
     // Called once after isFinished returns true
     protected void end() {
-    	Robot.drivePIDRunning = false;
     	drivePID.disable();
+    	Robot.isDrivePIDRunning = false;
+    	SmartDashboard.putNumber("Gyro Final Reading", gyroVal);
     	SmartDashboard.putBoolean("Timeout", isTimeout);
     	SmartDashboard.putBoolean("End", true);
     	SmartDashboard.putBoolean("pid done", true);
     	Robot.drive.rawDrive(0, 0);
 //    	Robot.gyro.resetGyro();
-    	Robot.gyro.setDrivingStraight(false);
+    	//drivePIDRight.disable();
+    	time.stop();
+    	time.reset();
     }
-    
+
     // Called when another command which requires one or more of the same
     // subsystems is scheduled to run
     protected void interrupted() {
