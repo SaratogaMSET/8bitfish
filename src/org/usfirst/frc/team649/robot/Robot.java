@@ -8,7 +8,10 @@ import java.util.logging.Logger;
 import java.util.logging.SimpleFormatter;
 
 import org.opencv.core.Mat;
+import org.usfirst.frc.team649.autonomous.AutoTest;
 import org.usfirst.frc.team649.autonomous.autoMaster;
+import org.usfirst.frc.team649.robot.CommandGroups.DeployWithWheelsAndIntake;
+import org.usfirst.frc.team649.robot.CommandGroups.IntakeWithWheelsAndClose;
 import org.usfirst.frc.team649.robot.commands.AngleTalonPID;
 import org.usfirst.frc.team649.robot.commands.ArmMotionProfile;
 import org.usfirst.frc.team649.robot.commands.Diagnostic;
@@ -21,6 +24,7 @@ import org.usfirst.frc.team649.robot.commands.GyroStraightPID;
 import org.usfirst.frc.team649.robot.commands.LiftMotionProfile;
 import org.usfirst.frc.team649.robot.commands.RunIntakeWheels;
 import org.usfirst.frc.team649.robot.commands.SetCompressorCommand;
+import org.usfirst.frc.team649.robot.commands.SetIntakePistons;
 import org.usfirst.frc.team649.robot.commands.SimpleAuto;
 import org.usfirst.frc.team649.robot.commands.Square;
 import org.usfirst.frc.team649.robot.subsystems.ArmSubsystem;
@@ -42,6 +46,7 @@ import edu.wpi.first.wpilibj.I2C;
 import edu.wpi.first.wpilibj.TimedRobot;
 import edu.wpi.first.wpilibj.Timer;
 import edu.wpi.first.wpilibj.command.Scheduler;
+import edu.wpi.first.wpilibj.hal.PDPJNI;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 
 public class Robot extends TimedRobot {
@@ -63,6 +68,7 @@ public class Robot extends TimedRobot {
 	public static LiftSubsystem lift;
 	public static Compressor compressor;
 	public static autoMaster automaster;
+	public static AutoTest autoTest;
 	public static boolean drivePIDRunning;
 	public Logger logger;
 	public FileHandler local;
@@ -87,7 +93,8 @@ public class Robot extends TimedRobot {
 	public Timer time;
 	public Timer timeAccel;
 	public static boolean isArmPidRunning;
-	public static boolean isDrivePIDRunning;
+	public static boolean isDrivePIDRunning;	
+
 	public double armVelMax;
 	public double secondStageLiftMaxVel;
 	public double carriageStageMaxVel;
@@ -99,12 +106,30 @@ public class Robot extends TimedRobot {
 	public double maxAccelDrive;
 	public static int timeoutMs = 20;
 	public double maxLiftVel;
+
+	public static double robotLength = 25; // idk
 	
+	public static boolean isArmPidRunning;
+	public static boolean isLiftPidRunning;
+	public static boolean isLiftStall;	
+	public static int liftState;
+	public static int liftHalState;
+	public static int customLiftPos;
+	int timesCalled;
+	public static int armState;
+	public static int customArmPos;
+	public static boolean armIsFront;
+	public static boolean isTestingAuto = false;
+
 	// prev state variables leave at bottom
 
 	// these two are for buttons not the actual
 	public static boolean autoShiftButtonPrevState;
 	public static boolean VPidButtonPrevState;
+	
+	public static boolean liftManualPrevState;
+	public static boolean armManualPrevState;
+	public static boolean prevStateFlipArm;
 
 	@Override
 	public void robotInit() {
@@ -113,7 +138,7 @@ public class Robot extends TimedRobot {
 		oi = new OI();
 		lidarCount = 0;
 		drive = new DrivetrainSubsystem();
-		gyro = new GyroSubsystem();
+//		gyro = new GyroSubsystem();
 		arm = new ArmSubsystem();
 		intake = new IntakeSubsystem();
 		intakeTimer = new Timer();
@@ -124,6 +149,7 @@ public class Robot extends TimedRobot {
 		lidar = new Lidar(I2C.Port.kOnboard, 0xC4 >> 1);
 		compressor = new Compressor(4);
 		isPIDActive = false;
+		autoTest = new AutoTest();
 		accelTimer = new Timer();
 		k_p = drive.getPIDController().getP();
 		k_i = drive.getPIDController().getI();
@@ -139,8 +165,11 @@ public class Robot extends TimedRobot {
 		driveAccel = 0;
 		driveVel = 0;
 		prevDriveVel = 0;
+		liftState = 2;
+		armState = ArmSubsystem.ArmStateConstants.INTAKE_FRONT;
 		rightDTMaxVel = 0;
 		leftDTMaxVel = 0;
+		timesCalled = 0;
 //		logger = Logger.getLogger("robotLog");
 //		matchTimer = new Timer();
 //		testForPath1 = new File("/media/sdb1/logdatausb.txt");
@@ -182,20 +211,9 @@ public class Robot extends TimedRobot {
 	@Override
 	public void autonomousInit() {
 //		automaster.autoDecider();
+		arm.setArmBrake(false);
 		drive.resetEncoders();
-//		gyro.resetGyro();
-//		new DrivetrainPIDCommand(30.0).start();
-//		new DistanceTalonPID(180000).start();
-//		new LiftMotionProfile(41000).start();
-//		logger.setUseParentHandlers(false);
-//		?new RunIntakeWheels(-1).start();
-//		new SimpleAuto().start();
-//		new GyroPID(90).start();
-//		new AngleTalonPID(90).start();
-//		new DrivetrainMotionProfile(27160).start();
-		drive.shift(true);
-		new Square().start();
-//		new DrivetrainMotionProfileIn(50).start();
+
 	}
 
 	@Override
@@ -204,7 +222,9 @@ public class Robot extends TimedRobot {
 		if (isAutonomous()) {
 			//logNewEvent(returnDifferenceInMatchTime() + " " + "I'm In Autonomous Mode!");
 		}
-		updateSmartDashboardTesting();
+//		updateSmartDashboardTesting();
+		SmartDashboard.putNumber("arm", arm.getArmRaw());
+
 
 	}
 
@@ -229,12 +249,33 @@ public class Robot extends TimedRobot {
 		timeAccel.start();
 		rightDTMaxVel = 0;
 		leftDTMaxVel = 0;
+
 //		new SetCompressorCommand(true).start();
 		SmartDashboard.putBoolean("Diag?", false);
 //		arm.bottomMotor.setSelectedSensorPosition(0, 0, 20);
 		isDrivePIDRunning = false;
 //		new Diagnostic().start();
+		isArmPidRunning = false;
+		isLiftPidRunning = false;
+		isLiftStall  = false;	
+		liftState = LiftSubsystem.LiftStateConstants.INTAKE_EXCHANGE_STORE_STATE;
+		customLiftPos = (int) lift.getRawLift();
 		
+		customArmPos = (int) arm.getArmRaw();
+		armIsFront = true;
+		// prev state variables leave at bottom
+
+		// these two are for buttons not the actual
+		autoShiftButtonPrevState = false;
+		VPidButtonPrevState = false;
+		
+		liftManualPrevState = false;
+		armManualPrevState = false;
+		prevStateFlipArm = false;
+//		new SetCompressorCommand(true).start();
+		arm.bottomMotor.setSelectedSensorPosition(0, 0, 20);
+		drive.changeBrakeCoast(false);
+		new AutoTestCommand().start();
 //		new Thread(() -> {
 //
 			//AxisCamera camera1 = CameraServer.getInstance().addAxisCamera(RobotMap.Camera.axisName,	RobotMap.Camera.axisPort);
@@ -279,6 +320,7 @@ public class Robot extends TimedRobot {
 	@Override
 	public void teleopPeriodic() {
 		Scheduler.getInstance().run();
+
 //		if (oi.driveJoystickHorizontal.getRawButton(1))
 //		{
 //			logNewEvent(returnDifferenceInMatchTime() + " " + "Button Test!");
@@ -297,6 +339,25 @@ public class Robot extends TimedRobot {
 //		if(Math.abs(drive.motors[2].getSelectedSensorVelocity(0)) > Math.abs(leftDTMaxVel)) {
 //			rightDTMaxVel = drive.motors[2].getSelectedSensorVelocity(0);
 //		}
+
+////		if (oi.driveJoystickHorizontal.getRawButton(1))
+////		{
+////			logNewEvent(returnDifferenceInMatchTime() + " " + "Button Test!");
+////		}
+//		checkAutoShiftToggle();
+//		checkVbusToggle();
+//
+//		// if(!isAutoShift || oi.driver.forceLowGear()){
+//		// //manual shift
+//		// }else{
+//		// //auto shift
+//		// }
+////		if(Math.abs(drive.motors[0].getSelectedSensorVelocity(0)) > Math.abs(leftDTMaxVel)) {
+////			leftDTMaxVel = drive.motors[0].getSelectedSensorVelocity(0);
+////		}
+////		if(Math.abs(drive.motors[2].getSelectedSensorVelocity(0)) > Math.abs(leftDTMaxVel)) {
+////			rightDTMaxVel = drive.motors[2].getSelectedSensorVelocity(0);
+////		}
 //		SmartDashboard.putNumber("DT Left Max Vel", leftDTMaxVel);
 //		SmartDashboard.putNumber("DT Right Max Vel", rightDTMaxVel);
 //		if(oi.operatorJoystick.getRawButton(11)){
@@ -310,6 +371,7 @@ public class Robot extends TimedRobot {
 //				SmartDashboard.putNumber("motor current", lift.mainLiftMotor.getOutputCurrent());
 //				//0.3197
 //				lift.mainLiftMotor.config_kF(0, 0.307, Robot.timeoutMs);
+
 //				lift.mainLiftMotor.config_kP(0, 5.5, Robot.timeoutMs);
 //				lift.mainLiftMotor.config_kI(0, 0, Robot.timeoutMs);
 //				lift.mainLiftMotor.config_kD(0, 0.05, Robot.timeoutMs);
@@ -327,11 +389,19 @@ public class Robot extends TimedRobot {
 //			} else {
 //				double liftJoy = oi.operator.getOperatorY();
 //				double newLift = liftJoy;
+
 //				if(lift.getLiftState() == LiftSubsystem.LiftStateConstants.LOWEST_STATE){
 //					if(liftJoy<0){
 //						newLift = 0;
 //					}
 //				}else if(lift.getLiftState() == LiftSubsystem.LiftStateConstants.CARRIAGE_HIGH_SECOND_HIGH){
+=======
+//				if(lift.getLiftState() == LiftSubsystem.LiftHalConstants.LOWEST_STATE){
+//					if(liftJoy<0){
+//						newLift = 0;
+//					}
+//				}else if(lift.getLiftState() == LiftSubsystem.LiftHalConstants.CARRIAGE_HIGH_SECOND_HIGH){
+
 //					if(liftJoy>0.185){
 //						newLift=0.185;
 //					}
@@ -341,6 +411,7 @@ public class Robot extends TimedRobot {
 //					newLift = liftJoy;
 //				}
 //				lift.setLift(newLift);
+
 //			}
 //			arm.setArm(0);
 ////
@@ -352,6 +423,42 @@ public class Robot extends TimedRobot {
 //			}else if(oi.operatorJoystick.getRawButton(3)){
 //				if(!isArmPidRunning){
 //					new ArmMotionProfile(-400).start();
+//				}
+//			}else{
+//				isArmPidRunning = false;
+//				double armJoy = oi.operator.getOperatorY();
+//				if(armJoy == 0) {
+//					if (time.get() > 0.3) {
+//						arm.setArmBrake(true);
+//					}
+//				} else {
+//					arm.setArm(armJoy/1.5);
+//					arm.setArmBrake(false);
+//					time.reset();
+//				}	
+//			}
+//			
+//		}
+//		if(oi.operatorJoystick.getRawButton(9)){
+//			intake.setIntakeMotors(1, 1);
+//		}else if(oi.operatorJoystick.getRawButton(10)){
+//			intake.setIntakeMotors(-1, -1);
+//		}else{
+//			intake.setIntakeMotors(0, 0);
+//		}
+
+//				SmartDashboard.putNumber("lift encoder", lift.getRawLift());
+//			}
+//			arm.setArm(0);
+////
+//		}else if(oi.operatorJoystick.getRawButton((12))){
+//			if(oi.operatorJoystick.getRawButton(2)){
+//				if(!isArmPidRunning){
+////					new ArmMotionProfile(-4100).start();
+//				}
+//			}else if(oi.operatorJoystick.getRawButton(3)){
+//				if(!isArmPidRunning){
+////					new ArmMotionProfile(-400).start();
 //				}
 //			}else{
 //				isArmPidRunning = false;
@@ -497,6 +604,27 @@ public class Robot extends TimedRobot {
 ////			drive.resetEncoders();
 //			 drive.driveFwdRotate(oi.driver.getForward(), oi.driver.getRotation(), true);
 //		}
+//
+//		if(lift.getLiftState() == LiftSubsystem.LiftHalConstants.LOWEST_STATE){
+//			lift.resetLiftEncoder();
+//		}
+////		if (oi.operatorJoystick.getPOV() == 0) {
+////			intake.setIntakeMotors(oi.operator.returnSlider(), oi.operator.returnSlider());
+////		} else if (oi.operatorJoystick.getPOV() == 180) {
+////			intake.setIntakeMotors(-oi.operator.returnSlider(), -oi.operator.returnSlider());
+////		} else {
+////			intake.setIntakeMotors(0, 0);
+////		}
+////		if (oi.operatorJoystick.getRawButton(2)) {
+////			drive.motors[0].set(ControlMode.MotionMagic, 23500);
+////			drive.motors[2].set(ControlMode.MotionMagic, 23500);
+////
+////		} else if (oi.operator.getButton4()){
+//////			new DistanceTalonPID(180000).start();
+////		}else {
+//////			drive.resetEncoders();
+//			 drive.driveFwdRotate(oi.driver.getForward(), -oi.driver.getRotation(), true);
+////		}
 //		
 //
 ////		if(!drivePIDRunning){
@@ -562,62 +690,74 @@ public class Robot extends TimedRobot {
 //		// bottom
 //		autoShiftButtonPrevState = oi.driver.switchToNormalShift();
 //		VPidButtonPrevState = oi.driver.switchToVbus();
-		int length;
-		if (!isDrivePIDRunning) {
-			if(oi.operatorJoystick.getRawButton(2)){
-				SmartDashboard.putBoolean("Is in First IF", true);
-				length = 13581 * drive.scalingFactor;
+
+
+
+//		int length;
+//		if (!isDrivePIDRunning) {
+//			if(oi.operatorJoystick.getRawButton(2)){
+//				SmartDashboard.putBoolean("Is in First IF", true);
+//				length = 13581 * drive.scalingFactor;
+////				new DrivetrainMotionProfile(length).start();
+//				new GyroPID(90).start();
+//			}
+//			else if(oi.operatorJoystick.getRawButton(3)){
+//				length = 27162 * drive.scalingFactor;
 //				new DrivetrainMotionProfile(length).start();
-				new GyroPID(90).start();
-			}
-			else if(oi.operatorJoystick.getRawButton(3)){
-				length = 27162 * drive.scalingFactor;
-				new DrivetrainMotionProfile(length).start();
-//				new GyroPID(-90).start();
-			}
-			else if(oi.operatorJoystick.getRawButton(4)){
-				length = 54324 * drive.scalingFactor;
-				new DrivetrainMotionProfile(length).start();
-			}
-			else if(oi.driveJoystickHorizontal.getRawButton(1) || oi.driveJoystickVertical.getRawButton(1)){
-				drive.driveFwdRotate(oi.driver.getForward(), oi.driver.getRotation(), true);
-			}
-		}
-		
-		if(oi.operator.getButton2()&&time.get() > 0.2){
-			
-			gyro.setP(.1);
-			
-			time.reset();
-		}
-		else if(oi.operator.getButton3()&&time.get()>0.2){
-			
-			gyro.setP(-.1);
-			time.reset();
-		}
-		else if(oi.operator.getButton5()&&time.get()>0.2){
-			
-			gyro.setD(.1);
-			time.reset();
-		}
-		else if(oi.operator.getButton6()&&time.get()>.2){
-		
-			gyro.setD(-.1);
-			time.reset();
-		}
-		
-		if(oi.operator.getButton4()&&time.get()>0.2){
-			gyro.setI(.1);
-			time.reset();
-		}
-		else if(oi.operator.getButton5()&&time.get()>0.2){
-			gyro.setI(-.1);
-			time.reset();
-		}
-		updateSmartDashboardTesting();
+////				new GyroPID(-90).start();
+//			}
+//			else if(oi.operatorJoystick.getRawButton(4)){
+//				length = 54324 * drive.scalingFactor;
+//				new DrivetrainMotionProfile(length).start();
+//			}
+//			else if(oi.driveJoystickHorizontal.getRawButton(1) || oi.driveJoystickVertical.getRawButton(1)){
+//				drive.driveFwdRotate(oi.driver.getForward(), oi.driver.getRotation(), true);
+//			}
+//		}
+//		
+//		if(oi.operator.getButton2()&&time.get() > 0.2){
+//			
+//			gyro.setP(.1);
+//			
+//			time.reset();
+//		}
+//		else if(oi.operator.getButton3()&&time.get()>0.2){
+//			
+//			gyro.setP(-.1);
+//			time.reset();
+//		}
+//		else if(oi.operator.getButton5()&&time.get()>0.2){
+//			
+//			gyro.setD(.1);
+//			time.reset();
+//		}
+//		else if(oi.operator.getButton6()&&time.get()>.2){
+//		
+//			gyro.setD(-.1);
+//			time.reset();
+//		}
+//		
+//		if(oi.operator.getButton4()&&time.get()>0.2){
+//			gyro.setI(.1);
+//			time.reset();
+//		}
+//		else if(oi.operator.getButton5()&&time.get()>0.2){
+//			gyro.setI(-.1);
+//			time.reset();
+//		}
+//		updateSmartDashboardTesting();
 //		teleopRun();
 //		
 ////		drive.rawDrive(0.5, 0.5);
+//		updateSmartDashboardTesting();
+//		
+//		drive.rawDrive(0.5, 0.5);
+		teleopRun();
+//		if(lidarCount == 12){
+//			SmartDashboard.putNumber("Lidar", lidar.getSample());
+//			lidarCount = 0;
+//		}
+//		lidarCount ++;
 	}
 	public void teleopRun(){
 		if(oi.driver.shiftUp()){
@@ -625,12 +765,298 @@ public class Robot extends TimedRobot {
 		}else{
 			drive.shift(false);
 		}
-		drive.driveFwdRotate(oi.driver.getForward(), oi.driver.getRotation(), true);
-		if(oi.operator.getArmUpSmall()){
-			
+		double rot = -oi.driver.getRotation();
+		if(rot > 0){
+			rot = Math.pow(rot, 2);
+		}else{
+			rot = -Math.pow(Math.abs(rot), 2);
 		}
-
+		drive.driveFwdRotate(oi.driver.getForward(), rot, true);
 		
+
+		if(oi.operator.getIntakeState()){
+			if(liftState != LiftSubsystem.LiftStateConstants.HEADING_INTAKE_EXCHANGE_STORE_STATE && liftState != LiftSubsystem.LiftStateConstants.INTAKE_EXCHANGE_STORE_STATE){
+				liftState = LiftSubsystem.LiftStateConstants.HEADING_INTAKE_EXCHANGE_STORE_STATE;
+				new LiftMotionProfile(LiftSubsystem.LiftEncoderConstants.LOW_STATE,liftState).start();
+			}
+			if(armState != ArmSubsystem.ArmStateConstants.HEADING_INTAKE_FRONT && armState != ArmSubsystem.ArmStateConstants.HEADING_INTAKE_REAR && armState != ArmSubsystem.ArmStateConstants.INTAKE_FRONT && armState != ArmSubsystem.ArmStateConstants.INTAKE_REAR){
+				if(armIsFront){
+					armState = ArmSubsystem.ArmStateConstants.HEADING_INTAKE_FRONT;
+					new ArmMotionProfile(ArmSubsystem.ArmEncoderConstants.INTAKE_FRONT,armState).start();
+				}else{
+					armState = ArmSubsystem.ArmStateConstants.HEADING_INTAKE_REAR;
+					new ArmMotionProfile(ArmSubsystem.ArmEncoderConstants.INTAKE_REAR,armState).start();
+
+				}
+			}
+		}else if(oi.operator.getStoreState()){
+			if(liftState != LiftSubsystem.LiftStateConstants.HEADING_INTAKE_EXCHANGE_STORE_STATE && liftState != LiftSubsystem.LiftStateConstants.INTAKE_EXCHANGE_STORE_STATE){
+				liftState = LiftSubsystem.LiftStateConstants.HEADING_INTAKE_EXCHANGE_STORE_STATE;
+				new LiftMotionProfile(LiftSubsystem.LiftEncoderConstants.LOW_STATE,liftState).start();
+			}
+			if(armState != ArmSubsystem.ArmStateConstants.HEADING_STORE_FRONT && armState != ArmSubsystem.ArmStateConstants.HEADING_STORE_REAR && armState != ArmSubsystem.ArmStateConstants.STORE_FRONT && armState != ArmSubsystem.ArmStateConstants.STORE_REAR){
+				if(armIsFront){
+					timesCalled++;
+					SmartDashboard.putNumber("times Call", timesCalled);
+					armState = ArmSubsystem.ArmStateConstants.HEADING_STORE_FRONT;
+					new ArmMotionProfile(ArmSubsystem.ArmEncoderConstants.STORE_FRONT,armState).start();
+
+				}else{
+					armState = ArmSubsystem.ArmStateConstants.HEADING_STORE_REAR;
+					new ArmMotionProfile(ArmSubsystem.ArmEncoderConstants.STORE_REAR,armState).start();
+
+				}
+			}
+			
+		}else if(oi.operator.getSwitchState()){
+			if(liftState != LiftSubsystem.LiftStateConstants.HEADING_SWITCH_STATE && liftState != LiftSubsystem.LiftStateConstants.SWITCH_STATE){
+				liftState = LiftSubsystem.LiftStateConstants.HEADING_SWITCH_STATE;
+				new LiftMotionProfile(LiftSubsystem.LiftEncoderConstants.SWITCH_STATE,liftState);
+			}
+			if(armState != ArmSubsystem.ArmStateConstants.HEADING_MID_DROP_FRONT && armState != ArmSubsystem.ArmStateConstants.HEADING_MID_DROP_REAR && armState != ArmSubsystem.ArmStateConstants.MID_DROP_FRONT && armState != ArmSubsystem.ArmStateConstants.MID_DROP_REAR){
+				if(armIsFront){
+					armState = ArmSubsystem.ArmStateConstants.HEADING_MID_DROP_FRONT;
+					new ArmMotionProfile(ArmSubsystem.ArmEncoderConstants.MID_DROP_FRONT,armState).start();
+
+				}else{
+					armState = ArmSubsystem.ArmStateConstants.HEADING_MID_DROP_REAR;
+					new ArmMotionProfile(ArmSubsystem.ArmEncoderConstants.MID_DROP_REAR,armState).start();
+
+				}
+			}
+		}else if(oi.operator.getScaleLowState()){
+			if(liftState != LiftSubsystem.LiftStateConstants.HEADING_LOW_SCALE_STATE && liftState != LiftSubsystem.LiftStateConstants.LOW_SCALE_STATE){
+				liftState = LiftSubsystem.LiftStateConstants.HEADING_LOW_SCALE_STATE;
+				new LiftMotionProfile(LiftSubsystem.LiftEncoderConstants.LOW_SCALE_STATE,liftState).start();
+				SmartDashboard.putBoolean("got in", true);
+			}
+			if(armState != ArmSubsystem.ArmStateConstants.HEADING_MID_DROP_FRONT && armState != ArmSubsystem.ArmStateConstants.HEADING_MID_DROP_REAR && armState != ArmSubsystem.ArmStateConstants.MID_DROP_FRONT && armState != ArmSubsystem.ArmStateConstants.MID_DROP_REAR){
+				if(armIsFront){
+					armState = ArmSubsystem.ArmStateConstants.HEADING_MID_DROP_FRONT;
+					new ArmMotionProfile(ArmSubsystem.ArmEncoderConstants.MID_DROP_FRONT,armState).start();
+
+				}else{
+					armState = ArmSubsystem.ArmStateConstants.HEADING_MID_DROP_REAR;
+					new ArmMotionProfile(ArmSubsystem.ArmEncoderConstants.MID_DROP_REAR,armState).start();
+
+				}
+			}
+		}else if(oi.operator.getScaleMidState()){
+			if(liftState != LiftSubsystem.LiftStateConstants.HEADING_MID_SCALE_STATE && liftState != LiftSubsystem.LiftStateConstants.MID_SCALE_STATE){
+				liftState = LiftSubsystem.LiftStateConstants.HEADING_MID_SCALE_STATE;
+				new LiftMotionProfile(LiftSubsystem.LiftEncoderConstants.MID_SCALE_STATE,liftState).start();
+
+			}
+			if(armState != ArmSubsystem.ArmStateConstants.HEADING_MID_DROP_FRONT && armState != ArmSubsystem.ArmStateConstants.HEADING_MID_DROP_REAR && armState != ArmSubsystem.ArmStateConstants.MID_DROP_FRONT && armState != ArmSubsystem.ArmStateConstants.MID_DROP_REAR){
+				if(armIsFront){
+					armState = ArmSubsystem.ArmStateConstants.HEADING_MID_DROP_FRONT;
+					new ArmMotionProfile(ArmSubsystem.ArmEncoderConstants.MID_DROP_FRONT,armState).start();
+
+				}else{
+					armState = ArmSubsystem.ArmStateConstants.HEADING_MID_DROP_REAR;
+					new ArmMotionProfile(ArmSubsystem.ArmEncoderConstants.MID_DROP_REAR,armState).start();
+
+				}
+			}
+		}else if(oi.operator.getScaleHighState()){
+			if(liftState != LiftSubsystem.LiftStateConstants.HEADING_HIGH_SCALE_STATE && liftState != LiftSubsystem.LiftStateConstants.HIGH_SCALE_STATE){
+				liftState = LiftSubsystem.LiftStateConstants.HEADING_HIGH_SCALE_STATE;
+				new LiftMotionProfile(LiftSubsystem.LiftEncoderConstants.HIGH_SCALE_STATE,liftState).start();
+			}
+			if(armState != ArmSubsystem.ArmStateConstants.HEADING_HIGH_DROP_FRONT && armState != ArmSubsystem.ArmStateConstants.HEADING_HIGH_DROP_REAR && armState != ArmSubsystem.ArmStateConstants.HIGH_DROP_FRONT && armState != ArmSubsystem.ArmStateConstants.HIGH_DROP_REAR){
+				if(armIsFront){
+					armState = ArmSubsystem.ArmStateConstants.HEADING_HIGH_DROP_FRONT;
+					new ArmMotionProfile(ArmSubsystem.ArmEncoderConstants.HIGH_DROP_FRONT,armState).start();
+
+				}else{
+					armState = ArmSubsystem.ArmStateConstants.HEADING_HIGH_DROP_REAR;
+					new ArmMotionProfile(ArmSubsystem.ArmEncoderConstants.HIGH_DROP_REAR,armState).start();
+
+				}
+			}
+			
+		}else if(oi.operator.getArmUpSmall()){
+			if(armState != ArmSubsystem.ArmStateConstants.HEADING_CUSTOM_UP && arm.getArmRaw() + ArmSubsystem.ArmEncoderConstants.ADJ < 0){
+				armState = ArmSubsystem.ArmStateConstants.HEADING_CUSTOM_UP;
+				if(arm.getArmRaw() + ArmSubsystem.ArmEncoderConstants.ADJ > ArmSubsystem.ArmEncoderConstants.MID){
+					armIsFront = true;
+				
+				}else { 
+					armIsFront = false;
+				}
+				customArmPos = arm.getArmRaw() + ArmSubsystem.ArmEncoderConstants.ADJ;
+				new ArmMotionProfile(customArmPos,armState).start();
+
+			}
+		}else if(oi.operator.getArmDownSmall()){
+			if(armState != ArmSubsystem.ArmStateConstants.HEADING_CUSTOM_DOWN && arm.getArmRaw() - ArmSubsystem.ArmEncoderConstants.ADJ > ArmSubsystem.ArmEncoderConstants.INTAKE_REAR){
+				armState = ArmSubsystem.ArmStateConstants.HEADING_CUSTOM_DOWN;
+				if(arm.getArmRaw() - ArmSubsystem.ArmEncoderConstants.ADJ > ArmSubsystem.ArmEncoderConstants.MID){
+					armIsFront = true;
+				}else { 
+					armIsFront = false;
+				}
+				customArmPos = arm.getArmRaw() - ArmSubsystem.ArmEncoderConstants.ADJ;
+				new ArmMotionProfile(customArmPos,armState).start();
+			}
+		}else if(oi.operator.getLiftUpSmall()){
+			if(liftState != LiftSubsystem.LiftStateConstants.HEADING_CUSTOM_STATE_UP && lift.getRawLift() + LiftSubsystem.LiftEncoderConstants.ADJ_DIST < LiftSubsystem.LiftEncoderConstants.HIGH_SCALE_STATE){
+				liftState = LiftSubsystem.LiftStateConstants.HEADING_CUSTOM_STATE_UP;
+				customLiftPos = (int)lift.getRawLift() + LiftSubsystem.LiftEncoderConstants.ADJ_DIST;
+				new LiftMotionProfile(customLiftPos,liftState).start();
+			}
+			
+		}else if(oi.operator.getLiftDownSmall()){
+			if(liftState != LiftSubsystem.LiftStateConstants.HEADING_CUSTOM_STATE_DOWN && lift.getRawLift() - LiftSubsystem.LiftEncoderConstants.ADJ_DIST > 0){
+				liftState = LiftSubsystem.LiftStateConstants.HEADING_CUSTOM_STATE_DOWN;
+				customLiftPos = (int)lift.getRawLift() - LiftSubsystem.LiftEncoderConstants.ADJ_DIST;
+				new LiftMotionProfile(customLiftPos ,liftState).start();
+			}
+		}else if(oi.operator.getExchangeState()){
+			if(liftState != LiftSubsystem.LiftStateConstants.HEADING_INTAKE_EXCHANGE_STORE_STATE && liftState != LiftSubsystem.LiftStateConstants.INTAKE_EXCHANGE_STORE_STATE){
+				liftState = LiftSubsystem.LiftStateConstants.HEADING_INTAKE_EXCHANGE_STORE_STATE;
+				new LiftMotionProfile(LiftSubsystem.LiftEncoderConstants.LOW_STATE,liftState).start();
+			}
+			if(armState != ArmSubsystem.ArmStateConstants.HEADING_EXCHANGE_FRONT && armState != ArmSubsystem.ArmStateConstants.HEADING_EXCHANGE_REAR && armState != ArmSubsystem.ArmStateConstants.EXCHANGE_FRONT && armState != ArmSubsystem.ArmStateConstants.EXCHANGE_REAR){
+				if(armIsFront){
+					armState = ArmSubsystem.ArmStateConstants.HEADING_EXCHANGE_FRONT;
+					new ArmMotionProfile(ArmSubsystem.ArmEncoderConstants.EXCHANGE_FRONT,armState).start();
+				}else{
+					armState = ArmSubsystem.ArmStateConstants.HEADING_EXCHANGE_REAR;
+					new ArmMotionProfile(ArmSubsystem.ArmEncoderConstants.EXCHANGE_REAR,armState).start();
+
+				}
+			}
+		}else if(oi.operator.flipArm()){
+//			if(lift.isCarriageAtBottom()){ //temp
+				if(!prevStateFlipArm && lift.getRawLift() < LiftSubsystem.LiftEncoderConstants.LOW_SCALE_STATE){
+					if(armIsFront){
+						if(armState == ArmSubsystem.ArmStateConstants.EXCHANGE_FRONT ||armState == ArmSubsystem.ArmStateConstants.HEADING_EXCHANGE_FRONT){
+							armState = ArmSubsystem.ArmStateConstants.HEADING_EXCHANGE_REAR;
+							new ArmMotionProfile(ArmSubsystem.ArmEncoderConstants.EXCHANGE_REAR,armState).start();
+						}else if(armState == ArmSubsystem.ArmStateConstants.HEADING_CUSTOM_UP || armState == ArmSubsystem.ArmStateConstants.CUSTOM){
+							armState = ArmSubsystem.ArmStateConstants.HEADING_CUSTOM_DOWN;
+							new ArmMotionProfile(ArmSubsystem.ArmEncoderConstants.INTAKE_REAR - customArmPos,armState).start();
+						}else if(armState == ArmSubsystem.ArmStateConstants.HEADING_HIGH_DROP_FRONT||armState == ArmSubsystem.ArmStateConstants.HIGH_DROP_FRONT){
+							armState = ArmSubsystem.ArmStateConstants.HEADING_HIGH_DROP_REAR;
+							new ArmMotionProfile(ArmSubsystem.ArmEncoderConstants.HIGH_DROP_REAR,armState).start();
+						}else if(armState == ArmSubsystem.ArmStateConstants.MID_DROP_FRONT||armState == ArmSubsystem.ArmStateConstants.HEADING_MID_DROP_FRONT){
+							armState = ArmSubsystem.ArmStateConstants.HEADING_MID_DROP_REAR;
+							new ArmMotionProfile(ArmSubsystem.ArmEncoderConstants.MID_DROP_REAR,armState).start();
+						}else if(armState == ArmSubsystem.ArmStateConstants.STORE_FRONT || armState == ArmSubsystem.ArmStateConstants.HEADING_STORE_FRONT){
+							armState = ArmSubsystem.ArmStateConstants.HEADING_STORE_REAR;
+							new ArmMotionProfile(ArmSubsystem.ArmEncoderConstants.STORE_REAR,armState).start();
+						}else if(armState == ArmSubsystem.ArmStateConstants.INTAKE_FRONT || armState == ArmSubsystem.ArmStateConstants.HEADING_INTAKE_FRONT){
+							armState = ArmSubsystem.ArmStateConstants.HEADING_INTAKE_REAR;
+							new ArmMotionProfile(ArmSubsystem.ArmEncoderConstants.INTAKE_REAR,armState).start();
+						}
+					}else{
+						if(armState == ArmSubsystem.ArmStateConstants.EXCHANGE_REAR ||armState == ArmSubsystem.ArmStateConstants.HEADING_EXCHANGE_REAR){
+							armState = ArmSubsystem.ArmStateConstants.HEADING_EXCHANGE_FRONT;
+							new ArmMotionProfile(ArmSubsystem.ArmEncoderConstants.EXCHANGE_FRONT,armState).start();
+						}else if(armState == ArmSubsystem.ArmStateConstants.HEADING_CUSTOM_DOWN || armState == ArmSubsystem.ArmStateConstants.CUSTOM){
+							armState = ArmSubsystem.ArmStateConstants.HEADING_CUSTOM_UP;
+							new ArmMotionProfile(ArmSubsystem.ArmEncoderConstants.INTAKE_REAR - customArmPos,armState).start();
+
+						}else if(armState == ArmSubsystem.ArmStateConstants.HEADING_HIGH_DROP_REAR||armState == ArmSubsystem.ArmStateConstants.HIGH_DROP_REAR){
+							armState = ArmSubsystem.ArmStateConstants.HEADING_HIGH_DROP_FRONT;
+							new ArmMotionProfile(ArmSubsystem.ArmEncoderConstants.HIGH_DROP_FRONT,armState).start();
+
+						}else if(armState == ArmSubsystem.ArmStateConstants.MID_DROP_REAR||armState == ArmSubsystem.ArmStateConstants.HEADING_MID_DROP_REAR){
+							armState = ArmSubsystem.ArmStateConstants.HEADING_MID_DROP_FRONT;
+							new ArmMotionProfile(ArmSubsystem.ArmEncoderConstants.MID_DROP_FRONT,armState).start();
+
+						}else if(armState == ArmSubsystem.ArmStateConstants.STORE_REAR || armState == ArmSubsystem.ArmStateConstants.HEADING_STORE_REAR){
+							armState = ArmSubsystem.ArmStateConstants.HEADING_STORE_FRONT;
+							new ArmMotionProfile(ArmSubsystem.ArmEncoderConstants.STORE_FRONT,armState).start();
+
+						}else if(armState == ArmSubsystem.ArmStateConstants.INTAKE_REAR || armState == ArmSubsystem.ArmStateConstants.HEADING_INTAKE_REAR){
+							armState = ArmSubsystem.ArmStateConstants.HEADING_INTAKE_FRONT;
+							new ArmMotionProfile(ArmSubsystem.ArmEncoderConstants.INTAKE_FRONT,armState).start();
+
+						}
+					}
+				}
+//			}
+		}else if(oi.operator.isManual()){
+			liftState = LiftSubsystem.LiftStateConstants.CUSTOM_STATE;
+			armState = ArmSubsystem.ArmStateConstants.CUSTOM;
+			customLiftPos = (int) lift.getRawLift();
+			customArmPos = (int) arm.getArmRaw();
+			double liftJoy = oi.operator.getManualLift();
+			double newLift = liftJoy;
+			if(lift.getLiftState() == LiftSubsystem.LiftHalConstants.LOWEST_STATE){
+				if(liftJoy<0){
+					newLift = 0;
+				}
+				liftState = LiftSubsystem.LiftStateConstants.INTAKE_EXCHANGE_STORE_STATE;
+
+			}else if(lift.getLiftState() == LiftSubsystem.LiftHalConstants.CARRIAGE_HIGH_SECOND_HIGH){
+				if(liftJoy>0.185){
+					newLift=0.185;
+				}
+			}else if(liftJoy == 0){
+				newLift = 0.185;
+			}else {
+				newLift = liftJoy;
+			}
+			lift.setLift(newLift);
+			double armJoy = oi.operator.getManualArm();
+			if(armJoy == 0) {
+				if (time.get() > 0.3) {
+					arm.setArmBrake(true);
+				}
+			} else {
+				arm.setArm(armJoy/1.5);
+				arm.setArmBrake(false);
+				time.reset();
+			}				
+		}else{
+			if(liftState == LiftSubsystem.LiftStateConstants.INTAKE_EXCHANGE_STORE_STATE){
+				lift.setLift(0);
+			}else if(liftState == LiftSubsystem.LiftStateConstants.SWITCH_STATE){
+				lift.setLiftMotion(LiftSubsystem.LiftEncoderConstants.SWITCH_STATE);
+			}else if(liftState == LiftSubsystem.LiftStateConstants.LOW_SCALE_STATE){
+				lift.setLiftMotion(LiftSubsystem.LiftEncoderConstants.LOW_SCALE_STATE);
+			}else if(liftState == LiftSubsystem.LiftStateConstants.MID_SCALE_STATE){
+				lift.setLiftMotion(LiftSubsystem.LiftEncoderConstants.MID_SCALE_STATE);
+			}else if(liftState == LiftSubsystem.LiftStateConstants.HIGH_SCALE_STATE){
+				lift.setLiftMotion(LiftSubsystem.LiftEncoderConstants.HIGH_SCALE_STATE);
+			}else if(liftState == LiftSubsystem.LiftStateConstants.CUSTOM_STATE){
+				lift.setLiftMotion(customLiftPos);
+			}
+			if(!isArmPidRunning){
+				arm.setArmBrake(true);
+			}
+		}
+		if(oi.operator.deployOnlyWheels()){
+			new RunIntakeWheels(-1).start();
+		}else if(oi.operator.deployWithWheelsAndOpen()){
+			new DeployWithWheelsAndIntake().start();;
+		}else if(oi.operator.openIntake()){
+			new SetIntakePistons(true).start();
+		}else if(oi.operator.runIntakeWithWheelsClosed()){
+			new IntakeWithWheelsAndClose().start();
+		}else if(oi.operator.closeIntake()){
+			new SetIntakePistons(false).start();
+		}else{
+			intake.setIntakeMotors(0, 0);
+		}
+		prevStateFlipArm = oi.operator.flipArm();
+		if(arm.getArmRaw() > (ArmSubsystem.ArmEncoderConstants.INTAKE_FRONT +ArmSubsystem.ArmEncoderConstants.INTAKE_REAR)/2){
+			armIsFront = true;
+		}else{
+			armIsFront = false;
+		}
+		if(lift.getLiftState() == LiftSubsystem.LiftHalConstants.LOWEST_STATE){
+			lift.resetLiftEncoder();
+		}
+		SmartDashboard.putNumber("State", liftState);
+		SmartDashboard.putNumber("arm state", armState);
+		SmartDashboard.putBoolean("isarmfront", armIsFront);
+		SmartDashboard.putNumber("Lift Raw", lift.getRawLift());
+		SmartDashboard.putNumber("arm raw", arm.getArmRaw());
+		SmartDashboard.putBoolean("isCarriageAtBot", lift.isCarriageAtBottom());
 	}
 	private void checkAutoShiftToggle() {
 		// on release
@@ -719,6 +1145,41 @@ public class Robot extends TimedRobot {
 		SmartDashboard.putNumber("P", gyro.getP());
 		SmartDashboard.putNumber("I", gyro.getI());
 		SmartDashboard.putNumber("D", gyro.getD());
+		SmartDashboard.putBoolean("is Second Stage at Bottom", lift.isSecondStageAtBottom());
+		SmartDashboard.putBoolean("is Second Stage at Top", lift.isSecondStageAtTop());
+		SmartDashboard.putBoolean("is Carriage at Bottom", lift.isCarriageAtBottom());
+		SmartDashboard.putBoolean("is Carriage at Top", lift.isCarriageAtTop());
+		SmartDashboard.putNumber("Lift Raw", lift.getRawLift());
+		SmartDashboard.putNumber("Lift Scaled Distance", lift.getLiftDistance());
+		SmartDashboard.putNumber("Arm Raw", arm.getArmRaw());
+		SmartDashboard.putNumber("Vel arm", arm.bottomMotor.getSelectedSensorVelocity(0));
+//		SmartDashboard.putNumber("Arm scaled", arm.getArmPosition());
+		if(lidarCount == 12){
+			SmartDashboard.putNumber("Lidar", lidar.getSample());
+			lidarCount = 0;
+		}
+//		SmartDashboard.putNumber("Current 11", PDPJNI.getPDPChannelCurrent(11, 0));
+		lidarCount ++;
+//		SmartDashboard.putNumber("curr", drive.motors[0].getOutputCurrent());
+//		SmartDashboard.putNumber("pDP", p.getTotalCurrent());
+		int state = lift.getLiftState();
+		if(state == 1){
+			SmartDashboard.putString("Lift State (carriage/second)", "Low Low");
+		}else if(state == 2){
+			SmartDashboard.putString("Lift State (carriage/second)", "Low Mid");
+		}else if(state == 3){
+			SmartDashboard.putString("Lift State (carriage/second)", "Low High");
+		}else if(state == 4){
+			SmartDashboard.putString("Lift State (carriage/second)", "Mid High");
+		}else if(state == 5){
+			SmartDashboard.putString("Lift State (carriage/second)", "High High");
+		}else if(state == 6){
+			SmartDashboard.putString("Lift State (carriage/second)", "High Mid");
+		}else if(state == 7){
+			SmartDashboard.putString("Lift State (carriage/second)", "High Low");
+		}else if(state == 8){
+			SmartDashboard.putString("Lift State (carriage/second)", "Mid Low");
+		}
 	}
 
 	private void updateSmartDashboardComp() {

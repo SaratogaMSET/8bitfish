@@ -32,6 +32,7 @@ public class DrivetrainSubsystem extends PIDSubsystem {
 	//don't save pid stuff here this is for distances and angles etc
     public static class AutoConstants{
     	
+    	
     }
     
     public static class AutoPIDConstants{

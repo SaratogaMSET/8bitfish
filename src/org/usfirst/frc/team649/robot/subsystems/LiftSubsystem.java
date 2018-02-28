@@ -33,7 +33,7 @@ public class LiftSubsystem extends PIDSubsystem {
     public static class LiftPowerValues{
     	public static double LIFT_POWER = 0.5;
     }
-    public static class LiftStateConstants{
+    public static class LiftHalConstants{
     	public static int LOWEST_STATE = 1;
     	public static int CARRIAGE_LOW_SECOND_MID = 2;
     	public static int CARRIAGE_LOW_SECOND_HIGH = 3;
@@ -42,6 +42,30 @@ public class LiftSubsystem extends PIDSubsystem {
     	public static int CARRIAGE_HIGH_SECOND_MID = 6;
     	public static int CARRIAGE_HIGH_SECOND_LOW = 7;
     	public static int CARRIAGE_MID_SECOND_LOW = 8;
+    }
+    public static class LiftStateConstants{
+    	public static int INTAKE_EXCHANGE_STORE_STATE = 2;
+    	public static int HEADING_INTAKE_EXCHANGE_STORE_STATE = 1;
+    	public static int SWITCH_STATE = 4;
+    	public static int HEADING_SWITCH_STATE = 3;
+    	public static int LOW_SCALE_STATE = 6;
+    	public static int HEADING_LOW_SCALE_STATE = 5;
+    	public static int MID_SCALE_STATE = 8;
+    	public static int HEADING_MID_SCALE_STATE = 7;
+    	public static int HIGH_SCALE_STATE = 10;
+    	public static int HEADING_HIGH_SCALE_STATE = 9;
+    	public static int CUSTOM_STATE = 12;
+    	public static int HEADING_CUSTOM_STATE_UP = 13;
+    	public static int HEADING_CUSTOM_STATE_DOWN = 11;
+    	
+    }
+    public static class LiftEncoderConstants{
+    	public static int LOW_STATE = 0;
+    	public static int SWITCH_STATE = 20000;
+    	public static int LOW_SCALE_STATE = 36500;
+    	public static int MID_SCALE_STATE = 42500;
+    	public static int HIGH_SCALE_STATE = 48100;
+    	public static int ADJ_DIST = 4000;
     }
     public TalonSRX mainLiftMotor,followerLiftMotor;
     public DigitalInput botSecondStageHal, topSecondStageHal, botCarriageHal, topCarriageHal;
@@ -119,6 +143,9 @@ public class LiftSubsystem extends PIDSubsystem {
     public void setLift(double power){
     	mainLiftMotor.set(ControlMode.PercentOutput, power);
     }
+    public void setLiftMotion(int pos){
+    	mainLiftMotor.set(ControlMode.MotionMagic, pos);
+    }
     public void setLiftWithSafety(double power, boolean override) {
     	if (!override) {	
     		if (isCarriageAtBottom() && isSecondStageAtBottom()) {
@@ -149,43 +176,43 @@ public class LiftSubsystem extends PIDSubsystem {
     		if(isCarriageAtBottom()){
     			SmartDashboard.putString("Carriage Position", "Bottom");
     			SmartDashboard.putString("Lift Position", "Bottom");
-    			return LiftStateConstants.LOWEST_STATE;
+    			return LiftHalConstants.LOWEST_STATE;
     		}else if(isCarriageAtTop()){
     			SmartDashboard.putString("Carriage Position", "High");
     			SmartDashboard.putString("Lift Position", "Bottom");
-    			return LiftStateConstants.CARRIAGE_HIGH_SECOND_LOW;
+    			return LiftHalConstants.CARRIAGE_HIGH_SECOND_LOW;
     		}else{
     			SmartDashboard.putString("Carriage Position", "Mid");
     			SmartDashboard.putString("Lift Position", "Bottom");
-    			return LiftStateConstants.CARRIAGE_MID_SECOND_LOW;
+    			return LiftHalConstants.CARRIAGE_MID_SECOND_LOW;
     		}
     	}else if(isSecondStageAtTop()){
     		if(isCarriageAtBottom()){
     			SmartDashboard.putString("Carriage Position", "Bottom");
     			SmartDashboard.putString("Lift Position", "High");
-    			return LiftStateConstants.CARRIAGE_HIGH_SECOND_HIGH;
+    			return LiftHalConstants.CARRIAGE_HIGH_SECOND_HIGH;
     		}else if(isCarriageAtTop()){
     			SmartDashboard.putString("Carriage Position", "Top");
     			SmartDashboard.putString("Lift Position", "High");
-    			return LiftStateConstants.CARRIAGE_HIGH_SECOND_HIGH;
+    			return LiftHalConstants.CARRIAGE_HIGH_SECOND_HIGH;
     		}else{
     			SmartDashboard.putString("Carriage Position", "Mid");
     			SmartDashboard.putString("Lift Position", "High");
-    			return LiftStateConstants.CARRIAGE_MID_SECOND_HIGH;
+    			return LiftHalConstants.CARRIAGE_MID_SECOND_HIGH;
     		}
     	}else{
     		if(isCarriageAtBottom()){
     			SmartDashboard.putString("Carriage Position", "Bottom");
     			SmartDashboard.putString("Lift Position", "Mid");
-    			return LiftStateConstants.CARRIAGE_LOW_SECOND_MID;
+    			return LiftHalConstants.CARRIAGE_LOW_SECOND_MID;
     		}else if(isCarriageAtTop()){
     			SmartDashboard.putString("Carriage Position", "High");
     			SmartDashboard.putString("Lift Position", "Mid");
-    			return LiftStateConstants.CARRIAGE_HIGH_SECOND_MID;
+    			return LiftHalConstants.CARRIAGE_HIGH_SECOND_MID;
     		}else{
     			SmartDashboard.putString("Carriage Position", "Mid");
     			SmartDashboard.putString("Lift Position", "Mid");
-    			return LiftStateConstants.CARRIAGE_HIGH_SECOND_MID;
+    			return LiftHalConstants.CARRIAGE_HIGH_SECOND_MID;
     		}
     	}
     }

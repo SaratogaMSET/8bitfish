@@ -3,6 +3,7 @@ package org.usfirst.frc.team649.robot.util;
 
 import edu.wpi.first.wpilibj.I2C;
 import edu.wpi.first.wpilibj.Timer;
+import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 
 enum LidarMode {
 	balancedPerformanceMode,
@@ -104,8 +105,12 @@ public class Lidar {
 		}
 		
 		// Send a "start acquisition" command to the sensor.
-		if (writeLidar(0,4) == false) {
+		if (writeLidar(0,4) == true) {
+			SmartDashboard.putBoolean("lidarkey", true);
 			return 0.0;
+		}
+		else{
+			SmartDashboard.putBoolean("lidarkey", false);
 		}
 				
 		//if (waitReady() == false) {

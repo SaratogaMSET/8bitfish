@@ -22,7 +22,46 @@ public class ArmSubsystem extends Subsystem {
     // here. Call these from Commands.
 	public static class ArmConstants{
 		public static final double ARM_POWER = 0.6;
-		public static final int RAW_ABS_TOL = 25;
+		public static final int RAW_ABS_TOL = 35;
+	}
+	public static class ArmStateConstants{
+		public static final int HEADING_INTAKE_FRONT = 1;
+		public static final int INTAKE_FRONT = 2;
+		public static final int HEADING_EXCHANGE_FRONT = 3;
+		public static final int EXCHANGE_FRONT = 4;
+		public static final int HEADING_STORE_FRONT = 5;
+		public static final int STORE_FRONT = 6;
+		public static final int HEADING_MID_DROP_FRONT = 7;
+		public static final int MID_DROP_FRONT = 8;
+		public static final int HEADING_HIGH_DROP_FRONT = 9;
+		public static final int HIGH_DROP_FRONT = 10;
+		public static final int HEADING_CUSTOM_UP = 13;
+		public static final int CUSTOM = 12;
+		public static final int HEADING_CUSTOM_DOWN = 11;
+		public static final int HEADING_INTAKE_REAR = -1;
+		public static final int INTAKE_REAR = -2;
+		public static final int HEADING_EXCHANGE_REAR = -3;
+		public static final int EXCHANGE_REAR = -4;
+		public static final int HEADING_STORE_REAR = -5;
+		public static final int STORE_REAR = -6;
+		public static final int HEADING_MID_DROP_REAR = -7;
+		public static final int MID_DROP_REAR = -8;
+		public static final int HEADING_HIGH_DROP_REAR = -9;
+		public static final int HIGH_DROP_REAR = -10;
+	}
+	public static class ArmEncoderConstants{
+		public static final int INTAKE_FRONT = 0;
+		public static final int INTAKE_REAR = -4250;
+		public static final int EXCHANGE_FRONT = 0;
+		public static final int EXCHANGE_REAR = -4250;
+		public static final int MID_DROP_FRONT = -385;
+		public static final int MID_DROP_REAR = -3865;
+		public static final int HIGH_DROP_FRONT = -800;
+		public static final int HIGH_DROP_REAR = -3450;
+		public static final int STORE_FRONT = -1625;
+		public static final int STORE_REAR = -2625;
+		public static final int ADJ = 150;
+		public static final int MID = (INTAKE_FRONT + INTAKE_REAR)/2;
 	}
 	DigitalInput infraredSensor;
 	public TalonSRX bottomMotor;
@@ -39,20 +78,20 @@ public class ArmSubsystem extends Subsystem {
 		bottomMotor.configNominalOutputReverse(0, Robot.timeoutMs);
 		bottomMotor.configPeakOutputForward(1.0, Robot.timeoutMs);
 		bottomMotor.configPeakOutputReverse(-1.0, Robot.timeoutMs);
-		bottomMotor.setSensorPhase(false);
-		bottomMotor.setInverted(false);
+		bottomMotor.setSensorPhase(true);
+		bottomMotor.setInverted(true);
 		bottomMotor.setStatusFramePeriod(StatusFrameEnhanced.Status_10_MotionMagic, 10, Robot.timeoutMs);
 		lastVal = 0;
 		time = new Timer();
 		time.start();
-		bottomMotor.configMotionAcceleration(850, Robot.timeoutMs);
+		bottomMotor.configMotionAcceleration(900, Robot.timeoutMs);
 		bottomMotor.configMotionCruiseVelocity(700, Robot.timeoutMs);
-		bottomMotor.config_kP(0, 5, Robot.timeoutMs);
-		bottomMotor.config_kI(0, 0.001, Robot.timeoutMs);
-		bottomMotor.config_kD(0, 0.01, Robot.timeoutMs);
+		bottomMotor.config_kP(0, 4, Robot.timeoutMs);
+		bottomMotor.config_kI(0, 0, Robot.timeoutMs);
+		bottomMotor.config_kD(0, 0.03, Robot.timeoutMs);
 		bottomMotor.config_kF(0, 1.25, Robot.timeoutMs);
 		bottomMotor.selectProfileSlot(0, 0);
-		topMotor.setInverted(true);
+		topMotor.setInverted(false);
 		topMotor.set(ControlMode.Follower, RobotMap.Arm.BOTTOM_ARM_MOTOR);
 		armBrake = new DoubleSolenoid(RobotMap.Arm.ARM_BRAKE[0],RobotMap.Arm.ARM_BRAKE[1],RobotMap.Arm.ARM_BRAKE[2]);
 		
