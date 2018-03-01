@@ -74,7 +74,7 @@ public class AutoTest {
 	public AutoTest() {
 		currentlyTuningProgram = 1;
 		tuningVarValue = 0;
-		tuningIncrement = 0;
+		tuningIncrement = 1;
 		currentlyTuningSegment = 1;
 	}
 	
@@ -88,8 +88,15 @@ public class AutoTest {
 	
 	public void changeCurrentlyTuningProgram(boolean next) {
 		if (next) {
-			currentlyTuningProgram++;
+			if(currentlyTuningProgram != 6) {
+				currentlyTuningProgram++;
+			} else {
+				currentlyTuningProgram = 1;
+			}
 		} else {
+			if(currentlyTuningProgram == 1) {
+				currentlyTuningProgram = 6;
+			}
 			currentlyTuningProgram--;
 		}
 	}
@@ -102,9 +109,16 @@ public class AutoTest {
 	}
 	public void changeCurrentlyTuningSegment(boolean next) {
 		if (next) {
-			currentlyTuningSegment++;
+			if(currentlyTuningSegment != 5) {
+				currentlyTuningSegment++;
+			} else {
+				currentlyTuningSegment = 1;
+			}
 			selectSegmentForTuning();
 		} else {
+			if(currentlyTuningSegment == 1) {
+				currentlyTuningSegment = 5;
+			}
 			currentlyTuningSegment--;
 			selectSegmentForTuning();
 		}

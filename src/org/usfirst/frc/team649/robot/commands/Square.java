@@ -24,20 +24,21 @@ public class Square extends CommandGroup {
         // e.g. if Command1 requires chassis, and Command2 requires arm,
         // a CommandGroup containing them would require both the chassis and the
         // arm.
-    	addSequential(new DrivetrainMotionProfile(80000));
-    	addSequential(new Delay(0.2));
+    	addSequential(new DrivetrainMotionProfileIn(75));
     	addSequential(new GyroPID(90));
-    	addSequential(new Delay(0.2));
-    	addSequential(new DrivetrainMotionProfile(80000));
-    	addSequential(new Delay(0.2));
+    	addSequential(new DrivetrainMotionProfileIn(75));
     	addSequential(new GyroPID(90));
-    	addSequential(new Delay(0.2));
-    	addSequential(new DrivetrainMotionProfile(80000));
-    	addSequential(new Delay(0.2));
+    	addSequential(new DrivetrainMotionProfileIn(75));
     	addSequential(new GyroPID(90));
-    	addSequential(new Delay(0.2));
-    	addSequential(new DrivetrainMotionProfile(80000));
-    	addSequential(new Delay(0.2));
+    	addSequential(new DrivetrainMotionProfileIn(75));
     	addSequential(new GyroPID(90));
+    	addSequential(new DrivetrainMotionProfileIn(75));
+    	addSequential(new GyroPID(-90));
+    	addSequential(new DrivetrainMotionProfileIn(75));
+    	addSequential(new GyroPID(-90));
+    	addSequential(new DrivetrainMotionProfileIn(75));
+    	addSequential(new GyroPID(-90));
+    	addSequential(new DrivetrainMotionProfileIn(75));
+    	addSequential(new GyroPID(-90));
     }
 }

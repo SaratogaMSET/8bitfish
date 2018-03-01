@@ -25,33 +25,43 @@ public class AutoTestCommand extends Command {
 
     // Called repeatedly when this Command is scheduled to run
     protected void execute() {
-    	if(Robot.oi.operator.getButton4() && time.get()>0.2) {
+    	if(Robot.oi.buttonBoard.getRawButton(4) && time.get()>0.2) {
     		Robot.autoTest.incrementTuningVarValue(true);
+    		time.reset();
     	}
-    	if(Robot.oi.operator.getButton6() && time.get()>0.2) {
+    	if(Robot.oi.buttonBoard.getRawButton(6) && time.get()>0.2) {
     		Robot.autoTest.incrementTuningVarValue(false);
+    		time.reset();
     	}
-    	if(Robot.oi.operator.getButton5() && time.get()>0.2) {
+    	if(Robot.oi.buttonBoard.getRawButton(5) && time.get()>0.2) {
     		Robot.autoTest.changeTuningIncrement(true);
+    		time.reset();
     	}
-    	if(Robot.oi.operator.getButton7() && time.get()>0.2) {
+    	if(Robot.oi.buttonBoard.getRawButton(7) && time.get()>0.2) {
     		Robot.autoTest.changeTuningIncrement(false);
+    		time.reset();
     	}
-    	if(Robot.oi.operator.getButton2() && time.get()>0.2) {
+    	if(Robot.oi.buttonBoard.getRawButton(2) && time.get()>0.2) {
     		Robot.autoTest.changeCurrentlyTuningProgram(true);
+    		time.reset();
     	}
-    	if(Robot.oi.operator.getButton3() && time.get()>0.2) {
+    	if(Robot.oi.buttonBoard.getRawButton(3) && time.get()>0.2) {
     		Robot.autoTest.changeCurrentlyTuningProgram(true);
+    		time.reset();
     	}
-    	if(Robot.oi.operator.getButton8() && time.get()>0.2) {
+    	if(Robot.oi.buttonBoard.getRawButton(8) && time.get()>0.2) {
     		Robot.autoTest.changeCurrentlyTuningSegment(true);
+    		time.reset();
     	}
-    	if(Robot.oi.operator.getButton9() && time.get()>0.2) {
+    	if(Robot.oi.buttonBoard.getRawButton(9) && time.get()>0.2) {
     		Robot.autoTest.changeCurrentlyTuningSegment(false);
+    		time.reset();
     	}
     	if(Robot.oi.operatorJoystick.getRawButton(2) && time.get()>0.2) {
     		Robot.autoTest.startProgram();
+    		time.reset();
     	}
+    	Robot.drive.driveFwdRotate(Robot.oi.driver.getForward(), Robot.oi.driver.getRotation(), true);
     	Robot.autoTest.SmartDashboard();
     }
 

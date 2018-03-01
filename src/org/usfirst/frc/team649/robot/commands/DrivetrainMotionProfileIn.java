@@ -15,7 +15,7 @@ public class DrivetrainMotionProfileIn extends Command {
 
 	double setpoint;
 	boolean isFinished;
-	int converted;
+	double converted;
     public DrivetrainMotionProfileIn(double setpoint) {
         // Use requires() here to declare subsystem dependencies
         // eg. requires(chassis);
@@ -45,9 +45,9 @@ public class DrivetrainMotionProfileIn extends Command {
 
     // Called repeatedly when this Command is scheduled to run
     protected void execute() {
-    	Robot.drive.motors[0].set(ControlMode.MotionMagic, converted );
+    	Robot.drive.motors[0].set(ControlMode.MotionMagic,(int) converted );
 		Robot.drive.motors[1].set(ControlMode.Follower, RobotMap.Drivetrain.MOTOR_PORTS[0]);
-		Robot.drive.motors[2].set(ControlMode.MotionMagic, -converted);
+		Robot.drive.motors[2].set(ControlMode.MotionMagic, -(int)converted);
 		Robot.drive.motors[3].set(ControlMode.Follower, RobotMap.Drivetrain.MOTOR_PORTS[2]);
 //		SmartDashboard.putNumber("Setpoint", ((setpoint/(4.0*Math.PI))/ (14.0/60.0)) * 4096);
 		
@@ -57,7 +57,7 @@ public class DrivetrainMotionProfileIn extends Command {
     	SmartDashboard.putBoolean("Is Here in Execute", true);
     	SmartDashboard.putNumber("Left Talon Distance", Robot.drive.getTalonDistanceLeft());
     	
-    	if (Math.abs(setpoint - Robot.drive.motors[0].getSelectedSensorPosition(0)) < 100) {//(Math.abs(Robot.drive.getTalonDistanceLeft() - setpoint) < 2) {
+    	if (Math.abs(converted - Robot.drive.motors[0].getSelectedSensorPosition(0)) < 100) {//(Math.abs(Robot.drive.getTalonDistanceLeft() - setpoint) < 2) {
 			isFinished = true;
 		}
     }

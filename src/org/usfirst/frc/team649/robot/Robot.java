@@ -9,6 +9,7 @@ import java.util.logging.SimpleFormatter;
 
 import org.opencv.core.Mat;
 import org.usfirst.frc.team649.autonomous.AutoTest;
+import org.usfirst.frc.team649.autonomous.CenterSwitchRight;
 import org.usfirst.frc.team649.autonomous.autoMaster;
 import org.usfirst.frc.team649.robot.CommandGroups.DeployWithWheelsAndIntake;
 import org.usfirst.frc.team649.robot.CommandGroups.IntakeWithWheelsAndClose;
@@ -27,6 +28,7 @@ import org.usfirst.frc.team649.robot.commands.SetCompressorCommand;
 import org.usfirst.frc.team649.robot.commands.SetIntakePistons;
 import org.usfirst.frc.team649.robot.commands.SimpleAuto;
 import org.usfirst.frc.team649.robot.commands.Square;
+import org.usfirst.frc.team649.robot.commands.AutoTestCommand;
 import org.usfirst.frc.team649.robot.subsystems.ArmSubsystem;
 import org.usfirst.frc.team649.robot.subsystems.DrivetrainSubsystem;
 import org.usfirst.frc.team649.robot.subsystems.GyroSubsystem;
@@ -107,9 +109,7 @@ public class Robot extends TimedRobot {
 	public static int timeoutMs = 20;
 	public double maxLiftVel;
 
-	public static double robotLength = 25; // idk
-	
-	public static boolean isArmPidRunning;
+	public static double robotLength = 32; // idk
 	public static boolean isLiftPidRunning;
 	public static boolean isLiftStall;	
 	public static int liftState;
@@ -138,7 +138,7 @@ public class Robot extends TimedRobot {
 		oi = new OI();
 		lidarCount = 0;
 		drive = new DrivetrainSubsystem();
-//		gyro = new GyroSubsystem();
+		gyro = new GyroSubsystem();
 		arm = new ArmSubsystem();
 		intake = new IntakeSubsystem();
 		intakeTimer = new Timer();
@@ -213,6 +213,8 @@ public class Robot extends TimedRobot {
 //		automaster.autoDecider();
 		arm.setArmBrake(false);
 		drive.resetEncoders();
+		new DrivetrainMotionProfileIn(50.0).start();
+//		new CenterSwitchRight().start();
 
 	}
 
@@ -275,7 +277,7 @@ public class Robot extends TimedRobot {
 //		new SetCompressorCommand(true).start();
 		arm.bottomMotor.setSelectedSensorPosition(0, 0, 20);
 		drive.changeBrakeCoast(false);
-		new AutoTestCommand().start();
+//		 new AutoTestCommand().start();
 //		new Thread(() -> {
 //
 			//AxisCamera camera1 = CameraServer.getInstance().addAxisCamera(RobotMap.Camera.axisName,	RobotMap.Camera.axisPort);
@@ -395,7 +397,6 @@ public class Robot extends TimedRobot {
 //						newLift = 0;
 //					}
 //				}else if(lift.getLiftState() == LiftSubsystem.LiftStateConstants.CARRIAGE_HIGH_SECOND_HIGH){
-=======
 //				if(lift.getLiftState() == LiftSubsystem.LiftHalConstants.LOWEST_STATE){
 //					if(liftJoy<0){
 //						newLift = 0;
@@ -693,66 +694,67 @@ public class Robot extends TimedRobot {
 
 
 
-//		int length;
-//		if (!isDrivePIDRunning) {
-//			if(oi.operatorJoystick.getRawButton(2)){
-//				SmartDashboard.putBoolean("Is in First IF", true);
+		int length;
+		if (!isDrivePIDRunning) {
+			if(oi.operatorJoystick.getRawButton(2)){
+				SmartDashboard.putBoolean("Is in First IF", true);
 //				length = 13581 * drive.scalingFactor;
-////				new DrivetrainMotionProfile(length).start();
+//				new DrivetrainMotionProfileIn(25).start();
 //				new GyroPID(90).start();
-//			}
-//			else if(oi.operatorJoystick.getRawButton(3)){
-//				length = 27162 * drive.scalingFactor;
-//				new DrivetrainMotionProfile(length).start();
-////				new GyroPID(-90).start();
-//			}
-//			else if(oi.operatorJoystick.getRawButton(4)){
-//				length = 54324 * drive.scalingFactor;
-//				new DrivetrainMotionProfile(length).start();
-//			}
-//			else if(oi.driveJoystickHorizontal.getRawButton(1) || oi.driveJoystickVertical.getRawButton(1)){
-//				drive.driveFwdRotate(oi.driver.getForward(), oi.driver.getRotation(), true);
-//			}
-//		}
-//		
-//		if(oi.operator.getButton2()&&time.get() > 0.2){
-//			
-//			gyro.setP(.1);
-//			
-//			time.reset();
-//		}
-//		else if(oi.operator.getButton3()&&time.get()>0.2){
-//			
-//			gyro.setP(-.1);
-//			time.reset();
-//		}
-//		else if(oi.operator.getButton5()&&time.get()>0.2){
-//			
-//			gyro.setD(.1);
-//			time.reset();
-//		}
-//		else if(oi.operator.getButton6()&&time.get()>.2){
-//		
-//			gyro.setD(-.1);
-//			time.reset();
-//		}
-//		
-//		if(oi.operator.getButton4()&&time.get()>0.2){
-//			gyro.setI(.1);
-//			time.reset();
-//		}
-//		else if(oi.operator.getButton5()&&time.get()>0.2){
-//			gyro.setI(-.1);
-//			time.reset();
-//		}
-//		updateSmartDashboardTesting();
+				new Square().start();
+			}
+			else if(oi.operatorJoystick.getRawButton(3)){
+				length = 27162 * drive.scalingFactor;
+//				new DrivetrainMotionProfileIn(50).start();
+				new GyroPID(-90).start();
+			}
+			else if(oi.operatorJoystick.getRawButton(4)){
+				length = 54324 * drive.scalingFactor;
+				new DrivetrainMotionProfileIn(100).start();
+			}
+			else if(oi.driveJoystickHorizontal.getRawButton(1) || oi.driveJoystickVertical.getRawButton(1)){
+				drive.driveFwdRotate(oi.driver.getForward(), oi.driver.getRotation(), true);
+			}
+		}
+		
+		if(oi.operator.getButton2()&&time.get() > 0.2){
+			
+			gyro.setP(.1);
+			
+			time.reset();
+		}
+		else if(oi.operator.getButton3()&&time.get()>0.2){
+			
+			gyro.setP(-.1);
+			time.reset();
+		}
+		else if(oi.operator.getButton5()&&time.get()>0.2){
+			
+			gyro.setD(.1);
+			time.reset();
+		}
+		else if(oi.operator.getButton6()&&time.get()>.2){
+		
+			gyro.setD(-.1);
+			time.reset();
+		}
+		
+		if(oi.operator.getButton4()&&time.get()>0.2){
+			gyro.setI(.1);
+			time.reset();
+		}
+		else if(oi.operator.getButton5()&&time.get()>0.2){
+			gyro.setI(-.1);
+			time.reset();
+		}
+		updateSmartDashboardTesting();
 //		teleopRun();
 //		
 ////		drive.rawDrive(0.5, 0.5);
 //		updateSmartDashboardTesting();
 //		
 //		drive.rawDrive(0.5, 0.5);
-		teleopRun();
+//		teleopRun();
 //		if(lidarCount == 12){
 //			SmartDashboard.putNumber("Lidar", lidar.getSample());
 //			lidarCount = 0;
@@ -1140,46 +1142,46 @@ public class Robot extends TimedRobot {
 //			SmartDashboard.putString("Lift State (carriage/second)", "Mid Low");
 //		}
 //		
-		SmartDashboard.putNumber("Scaling Factor", drive.scalingFactor);
-		SmartDashboard.putNumber("Wheel Size", drive.wheelSize);
-		SmartDashboard.putNumber("P", gyro.getP());
-		SmartDashboard.putNumber("I", gyro.getI());
-		SmartDashboard.putNumber("D", gyro.getD());
-		SmartDashboard.putBoolean("is Second Stage at Bottom", lift.isSecondStageAtBottom());
-		SmartDashboard.putBoolean("is Second Stage at Top", lift.isSecondStageAtTop());
-		SmartDashboard.putBoolean("is Carriage at Bottom", lift.isCarriageAtBottom());
-		SmartDashboard.putBoolean("is Carriage at Top", lift.isCarriageAtTop());
-		SmartDashboard.putNumber("Lift Raw", lift.getRawLift());
-		SmartDashboard.putNumber("Lift Scaled Distance", lift.getLiftDistance());
-		SmartDashboard.putNumber("Arm Raw", arm.getArmRaw());
-		SmartDashboard.putNumber("Vel arm", arm.bottomMotor.getSelectedSensorVelocity(0));
-//		SmartDashboard.putNumber("Arm scaled", arm.getArmPosition());
-		if(lidarCount == 12){
-			SmartDashboard.putNumber("Lidar", lidar.getSample());
-			lidarCount = 0;
-		}
-//		SmartDashboard.putNumber("Current 11", PDPJNI.getPDPChannelCurrent(11, 0));
-		lidarCount ++;
-//		SmartDashboard.putNumber("curr", drive.motors[0].getOutputCurrent());
-//		SmartDashboard.putNumber("pDP", p.getTotalCurrent());
-		int state = lift.getLiftState();
-		if(state == 1){
-			SmartDashboard.putString("Lift State (carriage/second)", "Low Low");
-		}else if(state == 2){
-			SmartDashboard.putString("Lift State (carriage/second)", "Low Mid");
-		}else if(state == 3){
-			SmartDashboard.putString("Lift State (carriage/second)", "Low High");
-		}else if(state == 4){
-			SmartDashboard.putString("Lift State (carriage/second)", "Mid High");
-		}else if(state == 5){
-			SmartDashboard.putString("Lift State (carriage/second)", "High High");
-		}else if(state == 6){
-			SmartDashboard.putString("Lift State (carriage/second)", "High Mid");
-		}else if(state == 7){
-			SmartDashboard.putString("Lift State (carriage/second)", "High Low");
-		}else if(state == 8){
-			SmartDashboard.putString("Lift State (carriage/second)", "Mid Low");
-		}
+//		SmartDashboard.putNumber("Scaling Factor", drive.scalingFactor);
+//		SmartDashboard.putNumber("Wheel Size", drive.wheelSize);
+//		SmartDashboard.putNumber("P", gyro.getP());
+//		SmartDashboard.putNumber("I", gyro.getI());
+//		SmartDashboard.putNumber("D", gyro.getD());
+//		SmartDashboard.putBoolean("is Second Stage at Bottom", lift.isSecondStageAtBottom());
+//		SmartDashboard.putBoolean("is Second Stage at Top", lift.isSecondStageAtTop());
+//		SmartDashboard.putBoolean("is Carriage at Bottom", lift.isCarriageAtBottom());
+//		SmartDashboard.putBoolean("is Carriage at Top", lift.isCarriageAtTop());
+//		SmartDashboard.putNumber("Lift Raw", lift.getRawLift());
+//		SmartDashboard.putNumber("Lift Scaled Distance", lift.getLiftDistance());
+//		SmartDashboard.putNumber("Arm Raw", arm.getArmRaw());
+//		SmartDashboard.putNumber("Vel arm", arm.bottomMotor.getSelectedSensorVelocity(0));
+////		SmartDashboard.putNumber("Arm scaled", arm.getArmPosition());
+//		if(lidarCount == 12){
+//			SmartDashboard.putNumber("Lidar", lidar.getSample());
+//			lidarCount = 0;
+//		}
+////		SmartDashboard.putNumber("Current 11", PDPJNI.getPDPChannelCurrent(11, 0));
+//		lidarCount ++;
+////		SmartDashboard.putNumber("curr", drive.motors[0].getOutputCurrent());
+////		SmartDashboard.putNumber("pDP", p.getTotalCurrent());
+//		int state = lift.getLiftState();
+//		if(state == 1){
+//			SmartDashboard.putString("Lift State (carriage/second)", "Low Low");
+//		}else if(state == 2){
+//			SmartDashboard.putString("Lift State (carriage/second)", "Low Mid");
+//		}else if(state == 3){
+//			SmartDashboard.putString("Lift State (carriage/second)", "Low High");
+//		}else if(state == 4){
+//			SmartDashboard.putString("Lift State (carriage/second)", "Mid High");
+//		}else if(state == 5){
+//			SmartDashboard.putString("Lift State (carriage/second)", "High High");
+//		}else if(state == 6){
+//			SmartDashboard.putString("Lift State (carriage/second)", "High Mid");
+//		}else if(state == 7){
+//			SmartDashboard.putString("Lift State (carriage/second)", "High Low");
+//		}else if(state == 8){
+//			SmartDashboard.putString("Lift State (carriage/second)", "Mid Low");
+//		}
 	}
 
 	private void updateSmartDashboardComp() {
