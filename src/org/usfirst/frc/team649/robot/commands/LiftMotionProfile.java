@@ -17,22 +17,25 @@ public class LiftMotionProfile extends Command {
 	int value;
 	Timer doneTime;
 	Timer timeout;
-	int donePos;
 	int state;
+	boolean wasCancl;
+	
     public LiftMotionProfile(int encoderValue, int state) {
     	value = encoderValue;
         this.state = state;
         SmartDashboard.putNumber("Val", value);
+        SmartDashboard.putBoolean("started", true);
     }
 
     // Called just before this Command runs the first time
     protected void initialize() {
+    	
     	SmartDashboard.putBoolean("ran is fin", false);
 //		Robot.isArmPidRunning = true;
-//    	Robot.arm.setArmBrake(false);
+    	
     	timeout = new Timer();
     	doneTime = new Timer();
-    	donePos = 0;
+    	wasCancl = false;
     	timeout.start();
     	if(value > Robot.lift.getRawLift()){
     		Robot.lift.mainLiftMotor.configMotionCruiseVelocity(3200, Robot.timeoutMs);
@@ -63,30 +66,36 @@ public class LiftMotionProfile extends Command {
 
     // Make this return true when this Command no longer needs to run execute()
     protected boolean isFinished() {
-//    	if(doneTime.get() > 0.15){
-//    		return true;
-//    		
-//    	}else if(!(doneTime.get() == 0) && Math.abs(donePos-Robot.lift.mainLiftMotor.getSelectedSensorPosition(0)) > 100){
-//    		doneTime.stop();
-//    		doneTime.reset();
-//    	}else if(Math.abs(Robot.lift.mainLiftMotor.getSelectedSensorPosition(0) - value)< 100 && doneTime.get() == 0){
-//    		doneTime.start();
-//    	} else if (timeout.get() > 5) {
-//    		return true;
-//    	}
-//    	else if(state != Robot.liftState ){
-//    		return true; 
-//    	}
+    	if(doneTime.get() > 0.15){
+    		return true;
+    		
+    	}else if(!(doneTime.get() == 0) && Math.abs(value-Robot.lift.mainLiftMotor.getSelectedSensorPosition(0)) > 100){
+    		doneTime.stop();
+    		doneTime.reset();
+    	}else if(Math.abs(Robot.lift.getRawLift() - value)< 100 && doneTime.get() == 0){
+    		doneTime.start();
+    	} else if (timeout.get() > 5) {
+    		return true;
+    	}
+    	else if(state != Robot.liftState ){
+    		wasCancl = true;
+    		return true; 
+    	}else if(Math.abs(Robot.lift.getRawLift()-value)<LiftSubsystem.LiftConstants.absTol){
+    		return true;
+    	}
     	return false;
     }
 
     // Called once after isFinished returns true
     protected void end() {
-    	if(state == LiftSubsystem.LiftStateConstants.HEADING_CUSTOM_STATE_UP){
-    		Robot.liftState--;
-    	}else{
-    		Robot.liftState++;
+    	if(!wasCancl){
+    		if(state == LiftSubsystem.LiftStateConstants.HEADING_CUSTOM_STATE_UP){
+        		Robot.liftState--;
+        	}else{
+        		Robot.liftState++;
+        	}
     	}
+    	
     	SmartDashboard.putBoolean("ran is fin", true);
     	Robot.lift.mainLiftMotor.set(ControlMode.PercentOutput, 0);
     	SmartDashboard.putBoolean("ran is fin", true);

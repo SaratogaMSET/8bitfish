@@ -20,15 +20,17 @@ public class RobotMap {
 		//mag srx encoder on 11
 		public static final int LEFT_WINCH_MOTOR = 10;
 		public static final int RIGHT_WINCH_MOTOR = 16;
-		public static final int CARRIAGE_HAL_BOT = 9;
-		public static final int CARRIAGE_HAL_TOP = 0;
-		public static final int SECOND_STAGE_HAL_BOT = 8;
-		public static final int SECOND_STAGE_HAL_TOP = 1;
+		public static final int LEFT_WINCH_SECOND_MOTOR = 11;
+		public static final int CARRIAGE_HAL_BOT = 0;
+		public static final int CARRIAGE_HAL_TOP = 1;
+		public static final int SECOND_STAGE_HAL_BOT =7;
+		public static final int SECOND_STAGE_HAL_TOP = 6;
+		
 	}
 	public static class Arm {
 		public static final int BOTTOM_ARM_MOTOR = 8;
 		public static final int TOP_ARM_MOTOR = 17;
-		public static final int INFRARED_SENSOR = 6;
+		public static final int INFRARED_SENSOR = 8;
 		public static final int[] ARM_BRAKE = {4,6,7};
 	}
 	public static class Intake {

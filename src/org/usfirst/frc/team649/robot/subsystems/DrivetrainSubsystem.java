@@ -106,11 +106,14 @@ public class DrivetrainSubsystem extends PIDSubsystem {
 		motors[0].config_kI(0, 0.03, Robot.timeoutMs);
 		motors[0].config_kD(0, 1.25, Robot.timeoutMs);
 		motors[0].config_kF(0, 0.060176, Robot.timeoutMs);
+		motors[0].setInverted(false);
 		
 		motors[1].configNominalOutputForward(0, Robot.timeoutMs);
 		motors[1].configNominalOutputReverse(0, Robot.timeoutMs);
 		motors[1].configPeakOutputForward(1, Robot.timeoutMs);
 		motors[1].configPeakOutputReverse(-1, Robot.timeoutMs);
+		motors[1].setInverted(false);
+		
 		
 
 		motors[1].set(ControlMode.Follower,RobotMap.Drivetrain.MOTOR_PORTS[0]);
@@ -128,6 +131,7 @@ public class DrivetrainSubsystem extends PIDSubsystem {
 		motors[2].config_kI(0, 0.03, Robot.timeoutMs);
 		motors[2].config_kD(0, 1.25, Robot.timeoutMs);
 		motors[2].config_kF(0, 0.060176, Robot.timeoutMs);
+		motors[2].setInverted(true);
 
 		
 		motors[3].configNominalOutputForward(0, Robot.timeoutMs);
@@ -135,6 +139,7 @@ public class DrivetrainSubsystem extends PIDSubsystem {
 		motors[3].configPeakOutputForward(1, Robot.timeoutMs);
 		motors[3].configPeakOutputReverse(-1, Robot.timeoutMs);
 		motors[3].set(ControlMode.Follower,RobotMap.Drivetrain.MOTOR_PORTS[2]);
+		motors[3].setInverted(true);
 		isLeftVPid = false;
 		isRightVPid = false;
 		isHighGear = true;
@@ -245,7 +250,7 @@ public class DrivetrainSubsystem extends PIDSubsystem {
 			changeDrivetrainModesLeft(false);
 			changeDrivetrainModesRight(false);
 			motors[0].set(ControlMode.PercentOutput,left);
-			motors[2].set(ControlMode.PercentOutput,-right);
+			motors[2].set(ControlMode.PercentOutput,right);
 		}else{
 			SmartDashboard.putBoolean("isRunning the loops", true);
 			rawDriveVelPidLeft(left);

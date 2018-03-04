@@ -30,6 +30,7 @@ public class ArmMotionProfile extends Command {
     	Robot.arm.setArmBrake(false);
     	doneTime = new Timer();
     	donePos = 0;
+    	doneTime.start();
     	
     }
 
@@ -51,6 +52,11 @@ public class ArmMotionProfile extends Command {
 //    		donePos = Robot.arm.getArmRaw();
 //    		doneTime.start();
 //    	}
+    	if(Math.abs(Robot.arm.getArmRaw()-value) < ArmSubsystem.ArmConstants.RAW_ABS_TOL){
+    		return true;
+    	}else if(doneTime.get()>3){
+    		return true;
+    	}
     	return false;
     }
 

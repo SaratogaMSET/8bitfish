@@ -66,8 +66,16 @@ public class LiftSubsystem extends PIDSubsystem {
     	public static int MID_SCALE_STATE = 42500;
     	public static int HIGH_SCALE_STATE = 48100;
     	public static int ADJ_DIST = 4000;
+    	
     }
-    public TalonSRX mainLiftMotor,followerLiftMotor;
+    public static class LiftConstants{
+    	public static double unitsPerCmSecond = 261.17;
+    	public static double unitsPerCmCarriage = 244;
+    	public static double maxSecondHeight = 103;
+    	public static double flipUpperPos = 45;
+    	public static double absTol = 15;
+    }
+    public TalonSRX mainLiftMotor,followerLiftMotor,followerLiftMotor2;
     public DigitalInput botSecondStageHal, topSecondStageHal, botCarriageHal, topCarriageHal;
     double liftPIDOutPut;
     
@@ -78,6 +86,9 @@ public class LiftSubsystem extends PIDSubsystem {
     	followerLiftMotor = new TalonSRX(RobotMap.Lift.LEFT_WINCH_MOTOR);
     	followerLiftMotor.setInverted(true);
     	followerLiftMotor.set(ControlMode.Follower, RobotMap.Lift.RIGHT_WINCH_MOTOR);
+    	followerLiftMotor2 = new TalonSRX(RobotMap.Lift.LEFT_WINCH_SECOND_MOTOR);
+    	followerLiftMotor2.setInverted(true);
+    	followerLiftMotor2.set(ControlMode.Follower, RobotMap.Lift.RIGHT_WINCH_MOTOR);
     	mainLiftMotor.configNominalOutputForward(0, Robot.timeoutMs);
 		mainLiftMotor.configNominalOutputReverse(0, Robot.timeoutMs);
 		mainLiftMotor.configPeakOutputForward(1.0, Robot.timeoutMs);
@@ -86,7 +97,12 @@ public class LiftSubsystem extends PIDSubsystem {
 		followerLiftMotor.configNominalOutputReverse(0, Robot.timeoutMs);
 		followerLiftMotor.configPeakOutputForward(1.0, Robot.timeoutMs);
 		followerLiftMotor.configPeakOutputReverse(-1.0, Robot.timeoutMs);
+		followerLiftMotor2.configNominalOutputForward(0, Robot.timeoutMs);
+		followerLiftMotor2.configNominalOutputReverse(0, Robot.timeoutMs);
+		followerLiftMotor2.configPeakOutputForward(1.0, Robot.timeoutMs);
+		followerLiftMotor2.configPeakOutputReverse(-1.0, Robot.timeoutMs);
 		mainLiftMotor.setNeutralMode(NeutralMode.Brake);
+		followerLiftMotor.setNeutralMode(NeutralMode.Brake);
 		followerLiftMotor.setNeutralMode(NeutralMode.Brake);
 		mainLiftMotor.configMotionCruiseVelocity(3200, Robot.timeoutMs);
 		mainLiftMotor.configMotionAcceleration(3450, Robot.timeoutMs); // 400 actual
@@ -111,9 +127,7 @@ public class LiftSubsystem extends PIDSubsystem {
     public double getLiftHeight(){
     	return 0.0;
     }
-    public double getCarriageHeight(){
-    	return 0.0;
-    }
+
     public double getLiftHeightNoLidar(){
     	double height = 0;
     	if(getRawLift()/LiftPIDConstants.SECOND_STAGE_TRANSLATION_CONSTANT > LiftPIDConstants.MAX_SECOND_STAGE_HEIGHT){
@@ -136,7 +150,12 @@ public class LiftSubsystem extends PIDSubsystem {
     public double getRawLift(){
     	return (double) mainLiftMotor.getSensorCollection().getQuadraturePosition();
     }
-    
+    public double getCarriageHeight(){
+    	return (getRawLift() - Robot.lidarValue * LiftConstants.unitsPerCmSecond)/LiftConstants.unitsPerCmCarriage;
+    }
+    public boolean canFlip(){
+    	return getCarriageHeight()<LiftSubsystem.LiftConstants.flipUpperPos;
+    }
     public double getLiftDistance() {
     	return (getRawLift()/4096.0 * 1.9 * Math.PI);
     }

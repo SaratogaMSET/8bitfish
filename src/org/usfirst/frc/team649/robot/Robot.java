@@ -10,7 +10,9 @@ import java.util.logging.SimpleFormatter;
 import org.opencv.core.Mat;
 import org.usfirst.frc.team649.autonomous.autoMaster;
 import org.usfirst.frc.team649.robot.CommandGroups.DeployWithWheelsAndIntake;
+import org.usfirst.frc.team649.robot.CommandGroups.FlipRaisedArm;
 import org.usfirst.frc.team649.robot.CommandGroups.IntakeWithWheelsAndClose;
+import org.usfirst.frc.team649.robot.CommandGroups.RightScaleClose;
 import org.usfirst.frc.team649.robot.commands.AngleTalonPID;
 import org.usfirst.frc.team649.robot.commands.ArmMotionProfile;
 import org.usfirst.frc.team649.robot.commands.DistanceTalonPID;
@@ -36,6 +38,7 @@ import edu.wpi.cscore.CvSink;
 import edu.wpi.cscore.CvSource;
 import edu.wpi.first.wpilibj.CameraServer;
 import edu.wpi.first.wpilibj.Compressor;
+import edu.wpi.first.wpilibj.DoubleSolenoid;
 import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.I2C;
 import edu.wpi.first.wpilibj.TimedRobot;
@@ -43,6 +46,11 @@ import edu.wpi.first.wpilibj.Timer;
 import edu.wpi.first.wpilibj.command.Scheduler;
 import edu.wpi.first.wpilibj.hal.PDPJNI;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
+import jaci.pathfinder.Pathfinder;
+import jaci.pathfinder.Trajectory;
+import jaci.pathfinder.Waypoint;
+import jaci.pathfinder.followers.EncoderFollower;
+import jaci.pathfinder.modifiers.TankModifier;
 
 public class Robot extends TimedRobot {
 
@@ -64,6 +72,7 @@ public class Robot extends TimedRobot {
 	public static Compressor compressor;
 	public static autoMaster automaster;
 	public static boolean drivePIDRunning;
+	public static double lidarValue;
 	public Logger logger;
 	public FileHandler local;
 	public FileHandler usb;
@@ -98,6 +107,7 @@ public class Robot extends TimedRobot {
 	public double maxAccelDrive;
 	public static int timeoutMs = 20;
 	public double maxLiftVel;
+	public double lidarOffset;
 	
 	public static boolean isArmPidRunning;
 	public static boolean isLiftPidRunning;
@@ -109,6 +119,26 @@ public class Robot extends TimedRobot {
 	public static int armState;
 	public static int customArmPos;
 	public static boolean armIsFront;
+	
+	
+	public static EncoderFollower left;
+	public static EncoderFollower right;
+	
+	public static Trajectory.Config configRightScaleSingle;
+	public static Trajectory trajectoryRightScaleSingle;
+	public static TankModifier modifierRightScaleSingle;
+	
+	public static Trajectory.Config configLeftScaleSingle;
+	public static Trajectory trajectoryLeftScaleSingle;
+	public static TankModifier modifierLeftScaleSingle;
+	
+	public static Trajectory.Config configMiddleRightSingle;
+	public static Trajectory trajectoryMiddleRightSingle;
+	public static TankModifier modifierMiddleRightSingle;
+	
+	public static Trajectory.Config configMiddleLeftSingle;
+	public static Trajectory trajectoryMiddleLeftSingle;
+	public static TankModifier modifierMiddleLeftSingle;
 	// prev state variables leave at bottom
 
 	// these two are for buttons not the actual
@@ -126,7 +156,7 @@ public class Robot extends TimedRobot {
 		oi = new OI();
 		lidarCount = 0;
 		drive = new DrivetrainSubsystem();
-//		gyro = new GyroSubsystem();
+		gyro = new GyroSubsystem();
 		arm = new ArmSubsystem();
 		intake = new IntakeSubsystem();
 		intakeTimer = new Timer();
@@ -157,6 +187,8 @@ public class Robot extends TimedRobot {
 		rightDTMaxVel = 0;
 		leftDTMaxVel = 0;
 		timesCalled = 0;
+		lidarOffset = 0;
+		lidarValue = lidar.getSample();
 //		logger = Logger.getLogger("robotLog");
 //		matchTimer = new Timer();
 //		testForPath1 = new File("/media/sdb1/logdatausb.txt");
@@ -183,6 +215,44 @@ public class Robot extends TimedRobot {
 //			e.printStackTrace();
 //		}
 
+//		Waypoint[] pointsRightScaleSingle = new Waypoint[] {
+//				new Waypoint(-12.6,-2.9,0),
+//				new Waypoint(-4.3,-2.9,Pathfinder.d2r(45)),
+//				new Waypoint(-2.05,0,0),
+//				new Waypoint(0,0,0)
+//		};
+//
+//		configRightScaleSingle = new Trajectory.Config(Trajectory.FitMethod.HERMITE_CUBIC, Trajectory.Config.SAMPLES_HIGH, 0.02, 4.5, 3.3, 12);
+//		trajectoryRightScaleSingle = Pathfinder.generate(pointsRightScaleSingle, configRightScaleSingle);
+//		modifierRightScaleSingle = new TankModifier(trajectoryRightScaleSingle).modify(0.66);
+//		
+//		Waypoint[] pointsMiddleRightSingle = new Waypoint[] {
+//				new Waypoint(-5.6,0,0),
+//				new Waypoint(0,0,0)
+//		};
+//
+//		configMiddleRightSingle = new Trajectory.Config(Trajectory.FitMethod.HERMITE_CUBIC, Trajectory.Config.SAMPLES_HIGH, 0.02, 4.5, 3.3, 12);
+//		trajectoryMiddleRightSingle = Pathfinder.generate(pointsMiddleRightSingle, configMiddleRightSingle);
+//		modifierMiddleRightSingle = new TankModifier(trajectoryMiddleRightSingle).modify(0.66);
+//		Waypoint[] pointsMiddleLeftSingle = new Waypoint[] {
+//				new Waypoint(-1,-3.75,0),
+//				new Waypoint(-.5,-3.75,Pathfinder.d2r(30)),
+//				new Waypoint(0,0,0),
+//		};
+//		configMiddleLeftSingle = new Trajectory.Config(Trajectory.FitMethod.HERMITE_CUBIC, Trajectory.Config.SAMPLES_HIGH, 0.02, 3, 2.3, 12);
+//		trajectoryMiddleLeftSingle = Pathfinder.generate(pointsMiddleLeftSingle, configMiddleLeftSingle);
+//		modifierMiddleLeftSingle = new TankModifier(trajectoryMiddleLeftSingle).modify(0.66);
+//		
+		Waypoint[] pointsLeftScaleSingle = new Waypoint[] {
+				new Waypoint(-9.2,-9.5,0),
+				new Waypoint(-0.8,-9.5,Pathfinder.d2r(25)),
+				new Waypoint(0,0,0),
+//				new Waypoint(0,0,0)
+		};
+
+		configLeftScaleSingle = new Trajectory.Config(Trajectory.FitMethod.HERMITE_CUBIC, Trajectory.Config.SAMPLES_HIGH, 0.02, 4.5, 3.3, 12);
+		trajectoryLeftScaleSingle = Pathfinder.generate(pointsLeftScaleSingle, configLeftScaleSingle);
+		modifierLeftScaleSingle = new TankModifier(trajectoryLeftScaleSingle).modify(0.66);
 	}
 
 	@Override
@@ -200,6 +270,18 @@ public class Robot extends TimedRobot {
 //		automaster.autoDecider();
 		arm.setArmBrake(false);
 		drive.resetEncoders();
+		gyro.resetGyro();
+		drive.shift(true);
+		drive.changeBrakeCoast(true);
+		liftState = LiftSubsystem.LiftStateConstants.HEADING_HIGH_SCALE_STATE;
+		armState = ArmSubsystem.ArmStateConstants.HEADING_HIGH_DROP_FRONT;
+		left = new EncoderFollower(modifierLeftScaleSingle.getLeftTrajectory());
+		right = new EncoderFollower(modifierLeftScaleSingle.getRightTrajectory());
+		left.configureEncoder(0, 4096*2, 0.127);
+		right.configureEncoder(0, 4096*2, 0.127);
+		left.configurePIDVA(2, 0.0, 0.0, 1 / 4.3, 0);
+		right.configurePIDVA(2, 0.0, 0.0, 1 / 4.3, 0);
+		new RightScaleClose().start();
 //		gyro.resetGyro();
 //		new DrivetrainPIDCommand(30.0).start();
 //		new DistanceTalonPID(180000).start();
@@ -210,7 +292,7 @@ public class Robot extends TimedRobot {
 //		new GyroPID(90).start();
 //		new LiftMotionProfile(36500,2).start();
 //		new AngleTalonPID(90).start();
-		new ArmMotionProfile(-1625,ArmSubsystem.ArmStateConstants.INTAKE_FRONT).start();
+//		new ArmMotionProfile(-3000,ArmSubsystem.ArmStateConstants.INTAKE_FRONT).start();
 	}
 
 	@Override
@@ -266,6 +348,7 @@ public class Robot extends TimedRobot {
 		new SetCompressorCommand(true).start();
 		arm.bottomMotor.setSelectedSensorPosition(0, 0, 20);
 		drive.changeBrakeCoast(false);
+		intake.setIntakePiston(false);
 //		new Thread(() -> {
 //
 			//AxisCamera camera1 = CameraServer.getInstance().addAxisCamera(RobotMap.Camera.axisName,	RobotMap.Camera.axisPort);
@@ -365,10 +448,10 @@ public class Robot extends TimedRobot {
 //					}
 //				}else if(lift.getLiftState() == LiftSubsystem.LiftHalConstants.CARRIAGE_HIGH_SECOND_HIGH){
 //					if(liftJoy>0.185){
-//						newLift=0.185;
+//						newLift=0;
 //					}
 //				}else if(liftJoy == 0){
-//					newLift = 0.185;
+//					newLift = 0;
 //				} else {
 //					newLift = liftJoy;
 //				}
@@ -577,7 +660,7 @@ public class Robot extends TimedRobot {
 //		// drive.rawDrive(oi.driveJoystickVertical.getY(),
 //		// oi.driveJoystickVertical.getY());
 //		// drive.rawDrive(0.3, 0.3);
-////		 drive.driveFwdRotate(oi.driver.getForward(), oi.driver.getRotation(), true);
+//		 drive.driveFwdRotate(oi.driver.getForward(), oi.driver.getRotation(), true);
 //	
 //
 ////		
@@ -654,18 +737,18 @@ public class Robot extends TimedRobot {
 			}
 			
 		}else if(oi.operator.getSwitchState()){
-			if(liftState != LiftSubsystem.LiftStateConstants.HEADING_SWITCH_STATE && liftState != LiftSubsystem.LiftStateConstants.SWITCH_STATE){
-				liftState = LiftSubsystem.LiftStateConstants.HEADING_SWITCH_STATE;
-				new LiftMotionProfile(LiftSubsystem.LiftEncoderConstants.SWITCH_STATE,liftState);
+			if(liftState != LiftSubsystem.LiftStateConstants.HEADING_INTAKE_EXCHANGE_STORE_STATE && liftState != LiftSubsystem.LiftStateConstants.INTAKE_EXCHANGE_STORE_STATE){
+				liftState = LiftSubsystem.LiftStateConstants.HEADING_INTAKE_EXCHANGE_STORE_STATE;
+				new LiftMotionProfile(LiftSubsystem.LiftEncoderConstants.LOW_STATE,liftState).start();
 			}
-			if(armState != ArmSubsystem.ArmStateConstants.HEADING_MID_DROP_FRONT && armState != ArmSubsystem.ArmStateConstants.HEADING_MID_DROP_REAR && armState != ArmSubsystem.ArmStateConstants.MID_DROP_FRONT && armState != ArmSubsystem.ArmStateConstants.MID_DROP_REAR){
+			if(armState != ArmSubsystem.ArmStateConstants.HEADING_SWITCH_FRONT && armState != ArmSubsystem.ArmStateConstants.HEADING_SWITCH_REAR && armState != ArmSubsystem.ArmStateConstants.SWITCH_FRONT && armState != ArmSubsystem.ArmStateConstants.SWITCH_REAR){
 				if(armIsFront){
-					armState = ArmSubsystem.ArmStateConstants.HEADING_MID_DROP_FRONT;
-					new ArmMotionProfile(ArmSubsystem.ArmEncoderConstants.MID_DROP_FRONT,armState).start();
+					armState = ArmSubsystem.ArmStateConstants.HEADING_SWITCH_FRONT;
+					new ArmMotionProfile(ArmSubsystem.ArmEncoderConstants.SWITCH_FRONT,armState).start();
 
 				}else{
-					armState = ArmSubsystem.ArmStateConstants.HEADING_MID_DROP_REAR;
-					new ArmMotionProfile(ArmSubsystem.ArmEncoderConstants.MID_DROP_REAR,armState).start();
+					armState = ArmSubsystem.ArmStateConstants.HEADING_SWITCH_REAR;
+					new ArmMotionProfile(ArmSubsystem.ArmEncoderConstants.SWITCH_REAR,armState).start();
 
 				}
 			}
@@ -774,6 +857,7 @@ public class Robot extends TimedRobot {
 			}
 		}else if(oi.operator.flipArm()){
 //			if(lift.isCarriageAtBottom()){ //temp
+			if(intake.intakeSol.get().equals(DoubleSolenoid.Value.kReverse)){
 				if(!prevStateFlipArm && lift.getRawLift() < LiftSubsystem.LiftEncoderConstants.LOW_SCALE_STATE){
 					if(armIsFront){
 						if(armState == ArmSubsystem.ArmStateConstants.EXCHANGE_FRONT ||armState == ArmSubsystem.ArmStateConstants.HEADING_EXCHANGE_FRONT){
@@ -822,6 +906,8 @@ public class Robot extends TimedRobot {
 						}
 					}
 				}
+			}
+				
 //			}
 		}else if(oi.operator.isManual()){
 			liftState = LiftSubsystem.LiftStateConstants.CUSTOM_STATE;
@@ -856,6 +942,8 @@ public class Robot extends TimedRobot {
 				arm.setArmBrake(false);
 				time.reset();
 			}				
+		}else if(oi.operatorJoystick.getRawButton(7)){
+			new FlipRaisedArm(1).start();
 		}else{
 			if(liftState == LiftSubsystem.LiftStateConstants.INTAKE_EXCHANGE_STORE_STATE){
 				lift.setLift(0);
@@ -902,6 +990,22 @@ public class Robot extends TimedRobot {
 		SmartDashboard.putNumber("Lift Raw", lift.getRawLift());
 		SmartDashboard.putNumber("arm raw", arm.getArmRaw());
 		SmartDashboard.putBoolean("isCarriageAtBot", lift.isCarriageAtBottom());
+		if(intake.intakeSol.get().equals(DoubleSolenoid.Value.kForward)){
+			SmartDashboard.putString("intake","forw");
+		}else if(intake.intakeSol.get().equals(DoubleSolenoid.Value.kReverse)){
+			SmartDashboard.putString("intake","rev");
+
+		}
+		if(lift.isSecondStageAtBottom()){
+			lidarOffset = lidar.getSample();
+		}
+		if(lidarCount == 12){
+			lidarValue = lidar.getSample() - lidarOffset;
+			lidarCount = 0;
+		}
+		lidarCount ++;
+		SmartDashboard.putNumber("adj Lidar", lidarValue);
+		SmartDashboard.putBoolean("Can Flip", lift.canFlip());
 	}
 	private void checkAutoShiftToggle() {
 		// on release
