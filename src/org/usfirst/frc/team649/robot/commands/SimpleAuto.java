@@ -10,7 +10,7 @@ public class SimpleAuto extends CommandGroup {
     public SimpleAuto() {
     	addSequential(new DistanceTalonPID(101000));
 //    	addSequential(new LiftMotionProfile(15600));
-    	addSequential(new SetIntakePistons(false));
+//    	addSequential(new SetIntakePistons(false));
     	addSequential(new RunIntakeWheels(0.5));
         // Add Commands here:
         // e.g. addSequential(new Command1());

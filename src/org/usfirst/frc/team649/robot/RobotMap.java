@@ -36,7 +36,13 @@ public class RobotMap {
 	public static class Intake {
 		public static final int LEFT_INTAKE_MOTOR = 9;
 		public static final int RIGHT_INTAKE_MOTOR = 15;
-		public static final int[] INTAKE_SOL = {3,0,1};
+		public static final int[] INTAKE_SOL = {3,0,1}; //60
+		public static final int[] SECOND_SOL = {4,2,3}; //30
+		
+		//when trying to intake closed, close both
+		//while trying to clamp cube run only 60
+		//open run just 30
+		
 	}
 
 	public static class Camera{

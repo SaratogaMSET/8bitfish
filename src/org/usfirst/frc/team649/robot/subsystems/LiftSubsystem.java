@@ -69,10 +69,10 @@ public class LiftSubsystem extends PIDSubsystem {
     	
     }
     public static class LiftConstants{
-    	public static double unitsPerCmSecond = 261.17;
+    	public static double unitsPerCmSecond = 268;
     	public static double unitsPerCmCarriage = 244;
-    	public static double maxSecondHeight = 103;
-    	public static double flipUpperPos = 45;
+    	public static double maxSecondHeight = 93;
+    	public static double flipUpperPos = 30;
     	public static double absTol = 15;
     }
     public TalonSRX mainLiftMotor,followerLiftMotor,followerLiftMotor2;
@@ -84,11 +84,9 @@ public class LiftSubsystem extends PIDSubsystem {
     	mainLiftMotor = new TalonSRX(RobotMap.Lift.RIGHT_WINCH_MOTOR);
     	mainLiftMotor.configSelectedFeedbackSensor(FeedbackDevice.CTRE_MagEncoder_Relative, 0, Robot.timeoutMs);
     	followerLiftMotor = new TalonSRX(RobotMap.Lift.LEFT_WINCH_MOTOR);
-    	followerLiftMotor.setInverted(true);
+    	followerLiftMotor.setInverted(false);
     	followerLiftMotor.set(ControlMode.Follower, RobotMap.Lift.RIGHT_WINCH_MOTOR);
-    	followerLiftMotor2 = new TalonSRX(RobotMap.Lift.LEFT_WINCH_SECOND_MOTOR);
-    	followerLiftMotor2.setInverted(true);
-    	followerLiftMotor2.set(ControlMode.Follower, RobotMap.Lift.RIGHT_WINCH_MOTOR);
+    	
     	mainLiftMotor.configNominalOutputForward(0, Robot.timeoutMs);
 		mainLiftMotor.configNominalOutputReverse(0, Robot.timeoutMs);
 		mainLiftMotor.configPeakOutputForward(1.0, Robot.timeoutMs);
@@ -97,10 +95,6 @@ public class LiftSubsystem extends PIDSubsystem {
 		followerLiftMotor.configNominalOutputReverse(0, Robot.timeoutMs);
 		followerLiftMotor.configPeakOutputForward(1.0, Robot.timeoutMs);
 		followerLiftMotor.configPeakOutputReverse(-1.0, Robot.timeoutMs);
-		followerLiftMotor2.configNominalOutputForward(0, Robot.timeoutMs);
-		followerLiftMotor2.configNominalOutputReverse(0, Robot.timeoutMs);
-		followerLiftMotor2.configPeakOutputForward(1.0, Robot.timeoutMs);
-		followerLiftMotor2.configPeakOutputReverse(-1.0, Robot.timeoutMs);
 		mainLiftMotor.setNeutralMode(NeutralMode.Brake);
 		followerLiftMotor.setNeutralMode(NeutralMode.Brake);
 		followerLiftMotor.setNeutralMode(NeutralMode.Brake);

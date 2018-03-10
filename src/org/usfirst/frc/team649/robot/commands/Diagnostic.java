@@ -44,7 +44,7 @@ public class Diagnostic extends Command {
     // Called repeatedly when this Command is scheduled to run
     protected void execute() {
     	if (Robot.oi.operator.getButton2()) {
-    		Robot.intake.setIntakePiston(!prevStateIntake);
+//    		Robot.intake.setIntakePiston(!prevStateIntake);
     		prevStateIntake = !prevStateIntake;
     	}
     	if (Robot.oi.operator.getButton3()) {

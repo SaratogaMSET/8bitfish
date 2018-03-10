@@ -96,7 +96,7 @@ public class OI {
 			return operatorJoystick.getRawButton(1);
 		}
 		public boolean closeIntake(){
-			return operatorJoystick.getRawButton(5);
+			return operatorJoystick.getRawButton(4);
 		}
 		public boolean runIntakeWithWheelsClosed(){
 			return operatorJoystick.getRawButton(2);

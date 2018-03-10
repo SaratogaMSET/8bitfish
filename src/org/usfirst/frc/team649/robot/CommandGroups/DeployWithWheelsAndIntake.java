@@ -12,6 +12,6 @@ public class DeployWithWheelsAndIntake extends CommandGroup {
 
     public DeployWithWheelsAndIntake() {
     	addParallel(new RunIntakeWheels(-1));
-    	addParallel(new SetIntakePistons(true));
+    	addParallel(new SetIntakePistons(true,false));
     }
 }

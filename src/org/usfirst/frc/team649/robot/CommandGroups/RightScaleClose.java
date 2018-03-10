@@ -16,9 +16,10 @@ import edu.wpi.first.wpilibj.command.CommandGroup;
 public class RightScaleClose extends CommandGroup {
 
     public RightScaleClose() {
-//    	addParallel(new LiftMotionProfile(LiftSubsystem.LiftEncoderConstants.HIGH_SCALE_STATE,Robot.liftState));
-//    	addParallel(new ArmMotionProfile(ArmSubsystem.ArmEncoderConstants.HIGH_DROP_FRONT,Robot.armState));
+    	addParallel(new LiftMotionProfile(LiftSubsystem.LiftEncoderConstants.HIGH_SCALE_STATE,Robot.liftState));
+    	addParallel(new ArmMotionProfile(ArmSubsystem.ArmEncoderConstants.HIGH_DROP_FRONT,Robot.armState));
     	addSequential(new MotionProfileDrive());
-//    	addSequential(new RunIntakeForTime(1,false));
+//    	addSequential(new SwitchMPModes(Robot.modifierRightScaleSingle2.getLeftTrajectory(),Robot.modifierRightScaleSingle2.getLeftTrajectory()));
+    	addSequential(new RunIntakeForTime(1,false));
     }
 }

@@ -12,6 +12,6 @@ public class IntakeWithWheelsAndClose extends CommandGroup {
 
     public IntakeWithWheelsAndClose() {
     	addParallel(new RunIntakeWheels(1));
-    	addParallel(new SetIntakePistons(false));
+    	addParallel(new SetIntakePistons(false,false));
     }
 }
