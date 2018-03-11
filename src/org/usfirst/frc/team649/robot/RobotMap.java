@@ -32,7 +32,10 @@ public class RobotMap {
 		public static final int TOP_ARM_MOTOR = 17;
 		public static final int INFRARED_SENSOR = 8;
 		public static final int[] ARM_BRAKE = {4,6,7};
+		public static final int ARM_HAL_FRONT = 9;
+		public static final int ARM_HAL_REAR = 1;
 	}
+	
 	public static class Intake {
 		public static final int LEFT_INTAKE_MOTOR = 9;
 		public static final int RIGHT_INTAKE_MOTOR = 15;

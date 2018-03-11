@@ -249,6 +249,11 @@ public class DrivetrainSubsystem extends PIDSubsystem {
 		if(isVBus){
 			changeDrivetrainModesLeft(false);
 			changeDrivetrainModesRight(false);
+//			if(left<-0.95 && right > 0.95){
+//				right = 0.5;
+//			}else if(left>0.95 && right<-0.95){
+//				
+//			}
 			motors[0].set(ControlMode.PercentOutput,left);
 			motors[2].set(ControlMode.PercentOutput,right);
 		}else{

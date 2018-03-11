@@ -5,6 +5,7 @@ import org.usfirst.frc.team649.robot.RobotMap;
 
 import com.ctre.phoenix.motorcontrol.ControlMode;
 import com.ctre.phoenix.motorcontrol.FeedbackDevice;
+import com.ctre.phoenix.motorcontrol.NeutralMode;
 import com.ctre.phoenix.motorcontrol.StatusFrameEnhanced;
 import com.ctre.phoenix.motorcontrol.can.TalonSRX;
 
@@ -56,12 +57,12 @@ public class ArmSubsystem extends Subsystem {
 	public static class ArmEncoderConstants{
 		public static final int INTAKE_FRONT = 0;
 		public static final int INTAKE_REAR = -4250;
-		public static final int SWITCH_FRONT = -1550;
-		public static final int SWITCH_REAR = -2700;
+		public static final int SWITCH_FRONT = -1450;
+		public static final int SWITCH_REAR = -2800;
 		public static final int EXCHANGE_FRONT = 0;
 		public static final int EXCHANGE_REAR = -4250;
-		public static final int MID_DROP_FRONT = -385;
-		public static final int MID_DROP_REAR = -3865;
+		public static final int MID_DROP_FRONT = -500;
+		public static final int MID_DROP_REAR = -3750;
 		public static final int HIGH_DROP_FRONT = -800;
 		public static final int HIGH_DROP_REAR = -3450;
 		public static final int STORE_FRONT = -1625;
@@ -75,6 +76,7 @@ public class ArmSubsystem extends Subsystem {
 	public double lastVal;
 	public Timer time;
 	public DoubleSolenoid armBrake;
+	public DigitalInput frontHal,rearHal;
 	public ArmSubsystem() {
 		bottomMotor = new TalonSRX(RobotMap.Arm.BOTTOM_ARM_MOTOR);
 		bottomMotor.configSelectedFeedbackSensor(FeedbackDevice.CTRE_MagEncoder_Relative, 0, Robot.timeoutMs);
@@ -87,6 +89,8 @@ public class ArmSubsystem extends Subsystem {
 		bottomMotor.setSensorPhase(true);
 		bottomMotor.setInverted(true);
 		bottomMotor.setStatusFramePeriod(StatusFrameEnhanced.Status_10_MotionMagic, 10, Robot.timeoutMs);
+		frontHal = new DigitalInput(RobotMap.Arm.ARM_HAL_FRONT);
+		rearHal = new DigitalInput(RobotMap.Arm.ARM_HAL_REAR);
 		lastVal = 0;
 		time = new Timer();
 		time.start();
@@ -94,9 +98,12 @@ public class ArmSubsystem extends Subsystem {
 		bottomMotor.configMotionCruiseVelocity(700, Robot.timeoutMs);
 		bottomMotor.config_kP(0, 1, Robot.timeoutMs);
 		bottomMotor.config_kI(0, 0, Robot.timeoutMs);
-		bottomMotor.config_kD(0, 0.03, Robot.timeoutMs);
+		bottomMotor.config_kD(0, 0.06, Robot.timeoutMs);
 		bottomMotor.config_kF(0, 1.25, Robot.timeoutMs);
 		bottomMotor.selectProfileSlot(0, 0);
+		bottomMotor.setNeutralMode(NeutralMode.Brake);
+		topMotor.setNeutralMode(NeutralMode.Brake);
+
 		topMotor.setInverted(false);
 		topMotor.set(ControlMode.Follower, RobotMap.Arm.BOTTOM_ARM_MOTOR);
 		armBrake = new DoubleSolenoid(RobotMap.Arm.ARM_BRAKE[0],RobotMap.Arm.ARM_BRAKE[1],RobotMap.Arm.ARM_BRAKE[2]);
@@ -105,10 +112,16 @@ public class ArmSubsystem extends Subsystem {
 	}
 	public void setArm(double power){
 		bottomMotor.set(ControlMode.PercentOutput, -power);
-		topMotor.set(ControlMode.Follower, 17);
+//		topMotor.set(ControlMode.Follower, RobotMap.Arm.BOTTOM_ARM_MOTOR);
 	}
 	public boolean getInfraredSensor() {
 		return infraredSensor.get();
+	}
+	public boolean getArmHalZeroFront(){
+		return !frontHal.get();
+	}
+	public boolean getArmHalZeroBack(){
+		return !rearHal.get();
 	}
 	public void setArmBrake(boolean isEngaged){
 		armBrake.set(!isEngaged ? DoubleSolenoid.Value.kForward : DoubleSolenoid.Value.kReverse);

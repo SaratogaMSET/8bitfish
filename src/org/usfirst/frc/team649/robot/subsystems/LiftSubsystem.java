@@ -62,8 +62,8 @@ public class LiftSubsystem extends PIDSubsystem {
     public static class LiftEncoderConstants{
     	public static int LOW_STATE = 0;
     	public static int SWITCH_STATE = 20000;
-    	public static int LOW_SCALE_STATE = 36500;
-    	public static int MID_SCALE_STATE = 42500;
+    	public static int LOW_SCALE_STATE = 38500;
+    	public static int MID_SCALE_STATE = 43500;
     	public static int HIGH_SCALE_STATE = 48100;
     	public static int ADJ_DIST = 4000;
     	
@@ -72,7 +72,7 @@ public class LiftSubsystem extends PIDSubsystem {
     	public static double unitsPerCmSecond = 268;
     	public static double unitsPerCmCarriage = 244;
     	public static double maxSecondHeight = 93;
-    	public static double flipUpperPos = 30;
+    	public static double flipUpperPos = 25;
     	public static double absTol = 15;
     }
     public TalonSRX mainLiftMotor,followerLiftMotor,followerLiftMotor2;
@@ -105,11 +105,11 @@ public class LiftSubsystem extends PIDSubsystem {
 		mainLiftMotor.config_kF(0, 0.3197, Robot.timeoutMs);
 		mainLiftMotor.config_kP(0, 3.5, Robot.timeoutMs);
 		mainLiftMotor.config_kI(0, 0.015, Robot.timeoutMs);
-		mainLiftMotor.config_kD(0, 0.05, Robot.timeoutMs);
+		mainLiftMotor.config_kD(0, 0.07, Robot.timeoutMs);
     	botSecondStageHal = new DigitalInput(RobotMap.Lift.SECOND_STAGE_HAL_BOT);
     	topSecondStageHal = new DigitalInput(RobotMap.Lift.SECOND_STAGE_HAL_TOP);
     	botCarriageHal = new DigitalInput(RobotMap.Lift.CARRIAGE_HAL_BOT);
-    	topCarriageHal = new DigitalInput(RobotMap.Lift.CARRIAGE_HAL_TOP);
+//    	topCarriageHal = new DigitalInput(RobotMap.Lift.CARRIAGE_HAL_TOP);
     }
 //    public double getLidarValue(){
 //    	return lidar.getSample()
@@ -242,7 +242,7 @@ public class LiftSubsystem extends PIDSubsystem {
     	return !topSecondStageHal.get();
     }
     public boolean isCarriageAtTop() {
-    	return !topCarriageHal.get();
+    	return false;
     }
     public void initDefaultCommand() {
         // Set the default command for a subsystem here.

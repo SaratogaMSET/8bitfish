@@ -54,7 +54,7 @@ public class ArmMotionProfile extends Command {
 //    	}
     	if(Math.abs(Robot.arm.getArmRaw()-value) < ArmSubsystem.ArmConstants.RAW_ABS_TOL){
     		return true;
-    	}else if(doneTime.get()>3){
+    	}else if(doneTime.get()>2){
     		return true;
     	}
     	return false;
