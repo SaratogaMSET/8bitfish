@@ -106,21 +106,22 @@ public class Diagnostic extends Command {
     	switch(state) {
     	case Constants.intakeMotorLeft:
     		Robot.intake.setIntakeMotors(0, Robot.oi.operator.getOperatorY());
-//    		Robot.drive.rawDrive(0, 0);
-//    		Robot.lift.setLift(0);
-//    		Robot.arm.setArm(0);
+    		Robot.drive.rawDrive(0, 0);
+    		Robot.lift.setLift(0);
+    		Robot.arm.setArm(0);
     		SmartDashboard.putString("Currently Running Motor: ", "Intake Left");
     		break;
     	case Constants.intakeMotorRight:
     		Robot.intake.setIntakeMotors(Robot.oi.operator.getOperatorY(), 0);
     		Robot.drive.rawDrive(0, 0);
-    		
     		Robot.lift.setLift(0);
     		Robot.arm.setArm(0);
     		SmartDashboard.putString("Currently Running Motor: ", "Intake Right");
     		break;
     	case Constants.liftMotor:
     		Robot.lift.setLift(Robot.oi.operator.getOperatorY());
+    		SmartDashboard.putBoolean("Direction Correct?", 
+    				checkSign(Robot.oi.operator.getOperatorY(), Robot.lift.getRawLiftVel()));
     		Robot.intake.setIntakeMotors(0, 0);
     		Robot.drive.rawDrive(0, 0);
     		Robot.arm.setArm(0);
@@ -128,6 +129,8 @@ public class Diagnostic extends Command {
     		break;
     	case Constants.drivetrainMotorLeft:
     		Robot.drive.rawDrive(Robot.oi.operator.getOperatorY(), 0);
+    		SmartDashboard.putBoolean("Direction Correct?", 
+    				checkSign(Robot.oi.operator.getOperatorY(), Robot.drive.motors[0].getSelectedSensorVelocity(0)));
     		Robot.intake.setIntakeMotors(0, 0);
     		Robot.lift.setLift(0);
     		Robot.arm.setArm(0);
@@ -135,6 +138,8 @@ public class Diagnostic extends Command {
     		break;
     	case Constants.drivetrainMotorRight:
     		Robot.drive.rawDrive(0, Robot.oi.operator.getOperatorY());
+    		SmartDashboard.putBoolean("Direction Correct?", 
+    				checkSign(-Robot.oi.operator.getOperatorY(), Robot.drive.motors[2].getSelectedSensorVelocity(0)));
     		Robot.intake.setIntakeMotors(0, 0);
     		Robot.lift.setLift(0);
     		Robot.arm.setArm(0);
@@ -142,6 +147,8 @@ public class Diagnostic extends Command {
     		break;
     	case Constants.armMotor:
     		Robot.arm.setArm(Robot.oi.operator.getOperatorY());
+    		SmartDashboard.putBoolean("Direction Correct?", 
+    				checkSign(Robot.oi.operator.getOperatorY(), Robot.arm.bottomMotor.getSelectedSensorVelocity(0)));
     		Robot.intake.setIntakeMotors(0, 0);
     		Robot.drive.rawDrive(0, 0);
     		Robot.lift.setLift(0);
@@ -188,5 +195,11 @@ public class Diagnostic extends Command {
     	SmartDashboard.putNumber("DT Right Side Encoder", Robot.drive.motors[0].getSelectedSensorPosition(0));
     	SmartDashboard.putNumber("DT Left Side Encoder", Robot.drive.motors[2].getSelectedSensorPosition(0));
     	
+    }
+    public boolean checkSign(double a, double b) {
+    	if((a > 0 && b > 0) || (a < 0 && b < 0)) {
+    		return true;
+    	}
+    	return false;
     }
 }

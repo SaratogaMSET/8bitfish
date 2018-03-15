@@ -5,6 +5,13 @@ import org.usfirst.frc.team649.robot.Robot;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 
 public class AutoTest {
+	public static class LongMotionMagicValues {
+		public static final int acceleration = 9000;
+		public static final int velocity = 18000;
+		public static final double k_p = 1.5;
+		public static final double k_i = 0;
+		public static final double k_d = 0.9;
+	}
 	public static class AutoPrograms {
 		public static final int CENTER_RIGHT_SWITCH = 1;
 		public static final int CENTER_LEFT_SWITCH = 2;
@@ -23,47 +30,89 @@ public class AutoTest {
 	}
 	
 	public static class CenterRightSwitch {
-		public static double FIRST_DRIVE = 35.96-Robot.robotLength;
-		public static double FIRST_ANGLE_TURN = -30;
+		public static double FIRST_DRIVE = 35.96-Robot.robotLength/2;
+		public static double FIRST_ANGLE_TURN = 32;
 		public static double SECOND_DRIVE = 95.85;
-		public static double SECOND_ANGLE_TURN = 30;
+		public static double SECOND_ANGLE_TURN = -32;
 	}
 	
 	public static class CenterLeftSwitch {
-		public static double FIRST_DRIVE = 35.96-Robot.robotLength;
-		public static double FIRST_ANGLE_TURN = 35;
-		public static double SECOND_DRIVE = 103.75;
-		public static double SECOND_ANGLE_TURN = -35;
+		public static double FIRST_DRIVE = 35.96-Robot.robotLength/2;
+		public static double FIRST_ANGLE_TURN = -35;
+		public static double SECOND_DRIVE = 102;
+		public static double SECOND_ANGLE_TURN = 35;
 	}
 	
 	public static class RightSwitchVal {
-		public static double FIRST_DRIVE = 230.8-Robot.robotLength;
+		public static double FIRST_DRIVE = 230.8-Robot.robotLength/2;
 		public static double FIRST_ANGLE_TURN = -90;
 		public static double SECOND_DRIVE = 44.6-Robot.robotLength/2;
 		public static double SECOND_ANGLE_TURN = -90;
 		public static double THIRD_DRIVE = 21.2-Robot.robotLength/2;
 	}
 	
+	public static class RightSwitchFarVal {
+		public static double FIRST_DRIVE = 230.8-Robot.robotLength/2;
+		public static double FIRST_ANGLE_TURN = -90;
+		public static double SECOND_DRIVE = 155 + 44.6-Robot.robotLength/2;
+		public static double SECOND_ANGLE_TURN = -90;
+		public static double THIRD_DRIVE = 21.2-Robot.robotLength/2;
+	}
+	
 	public static class LeftSwitchVal {
-		public static double FIRST_DRIVE = 230.8-Robot.robotLength;
+		public static double FIRST_DRIVE = 230.8-Robot.robotLength/2;
 		public static double FIRST_ANGLE_TURN = 90;
 		public static double SECOND_DRIVE = 44.6-Robot.robotLength/2;
 		public static double SECOND_ANGLE_TURN = 90;
 		public static double THIRD_DRIVE = 21.2-Robot.robotLength/2;
 	}
 	
+	public static class LeftSwitchFarVal {
+		public static double FIRST_DRIVE = 230.8-Robot.robotLength/2;
+		public static double FIRST_ANGLE_TURN = 90;
+		public static double SECOND_DRIVE = 155 + 44.6-Robot.robotLength/2;
+		public static double SECOND_ANGLE_TURN = 90;
+		public static double THIRD_DRIVE = 21.2-Robot.robotLength/2;
+	}
+	
 	public static class RightScaleVal {
-		public static double FIRST_DRIVE = 260-Robot.robotLength;
-		public static double FIRST_ANGLE_TURN = -45;
-		public static double SECOND_DRIVE = 42.41-Robot.robotLength/2;
-		public static double SECOND_ANGLE_TURN = 45;
+		public static double FIRST_DRIVE = 230.8-Robot.robotLength/2;
+		public static double FIRST_ANGLE_TURN = -83; // need to tune
+		public static double SECOND_DRIVE = 52.6-Robot.robotLength/2;
+		public static double SECOND_ANGLE_TURN = 90;
+		public static double THIRD_DRIVE = 69.2-Robot.robotLength/2;
+//		public static double FIRST_DRIVE = 250-Robot.robotLength/2;
+//		public static double FIRST_ANGLE_TURN = -45;
+//		public static double SECOND_DRIVE = 42.41-Robot.robotLength/2;
+//		public static double SECOND_ANGLE_TURN = 45;
+	}
+	
+	public static class RightScaleFarVal {
+		public static double FIRST_DRIVE = 230.8-Robot.robotLength/2;
+		public static double FIRST_ANGLE_TURN = -83; // need to tune
+		public static double SECOND_DRIVE = 155+52.6-Robot.robotLength/2;
+		public static double SECOND_ANGLE_TURN = 90;
+		public static double THIRD_DRIVE = 69.2-Robot.robotLength/2;
+//		public static double FIRST_DRIVE = 250-Robot.robotLength/2;
+//		public static double FIRST_ANGLE_TURN = -45;
+//		public static double SECOND_DRIVE = 42.41-Robot.robotLength/2;
+//		public static double SECOND_ANGLE_TURN = 45;
 	}
 	
 	public static class LeftScaleVal {
-		public static double FIRST_DRIVE = 260-Robot.robotLength;
-		public static double FIRST_ANGLE_TURN = 45;
-		public static double SECOND_DRIVE = 42.41-Robot.robotLength/2;
-		public static double SECOND_ANGLE_TURN = -45;
+		public static double FIRST_DRIVE = 230.8-Robot.robotLength/2;
+		public static double FIRST_ANGLE_TURN = 85; // need to tune, should be 90
+		public static double SECOND_DRIVE = 52.6-Robot.robotLength/2;// + 155
+		public static double SECOND_ANGLE_TURN = -90;
+		public static double THIRD_DRIVE = 69.2-Robot.robotLength/2;
+	}
+	
+	public static class LeftScaleFarVal {
+		public static double FIRST_DRIVE = 230.8-Robot.robotLength/2;
+		public static double FIRST_ANGLE_TURN = 85; // need to tune, should be 90
+		public static double SECOND_DRIVE = 155+52.6-Robot.robotLength/2;// + 155
+		public static double SECOND_ANGLE_TURN = -90;
+		public static double THIRD_DRIVE = 69.2-Robot.robotLength/2;
 	}
 	
 	public int currentlyTuningProgram;
@@ -543,5 +592,6 @@ public class AutoTest {
 		SmartDashboard.putString("Current Program", getProgramName());
 		SmartDashboard.putString("Current Segment: ", getSegmentName());
 		SmartDashboard.putNumber("Segment Val", tuningVarValue);
+		SmartDashboard.putNumber("Gyro Val", Robot.gyro.getGyroAngle());
 	}
 }

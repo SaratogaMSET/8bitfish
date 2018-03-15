@@ -1,10 +1,13 @@
 package org.usfirst.frc.team649.autonomous;
 
 import org.usfirst.frc.team649.robot.Robot;
-import org.usfirst.frc.team649.robot.commands.AutoTestCommand;
+import org.usfirst.frc.team649.robot.CommandGroups.DeployWithWheelsAndIntake;
+import org.usfirst.frc.team649.robot.commands.Delay;
 import org.usfirst.frc.team649.robot.commands.DrivetrainMotionProfile;
 import org.usfirst.frc.team649.robot.commands.DrivetrainMotionProfileIn;
 import org.usfirst.frc.team649.robot.commands.GyroPID;
+import org.usfirst.frc.team649.robot.commands.RunIntakeWheels;
+import org.usfirst.frc.team649.test.AutoTestCommand;
 
 import edu.wpi.first.wpilibj.command.CommandGroup;
 
@@ -23,6 +26,9 @@ public class LeftSwitch extends CommandGroup {
     		addSequential(new DrivetrainMotionProfileIn(AutoTest.LeftSwitchVal.SECOND_DRIVE)); // drive forward
     		addSequential(new GyroPID(AutoTest.LeftSwitchVal.SECOND_ANGLE_TURN));
     		addSequential(new DrivetrainMotionProfileIn(AutoTest.LeftSwitchVal.THIRD_DRIVE));
+        	addSequential(new DeployWithWheelsAndIntake()); // deploy
+        	addSequential(new Delay(2));
+        	addSequential(new RunIntakeWheels(0));
     		addSequential(new AutoTestCommand());
       	// drop off block
     	} else {

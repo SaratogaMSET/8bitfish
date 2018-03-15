@@ -43,6 +43,7 @@ public class GyroPID extends Command {
     	double setpoint = Robot.gyro.getGyroAngle() + angle;
     	Robot.isDrivePIDRunning = true;
     	Robot.gyro.setDrivingStraight(false);
+    	Robot.drive.changeBrakeCoast(true);
 //    	drivePID.setPID(Robot.gyro.getP(), Robot.gyro.getI(), Robot.gyro.getD());
     	    	    	
     	drivePID.setSetpoint(setpoint);
@@ -69,7 +70,7 @@ public class GyroPID extends Command {
     		gyroVal = Robot.gyro.getGyroAngle();
     		actuallyFinished = "true";
     	}
-    	if (timeout.get() > 2) {
+    	if (timeout.get() > 1) {
     		isFinished = true;
     		isTimeout = true;
     	}

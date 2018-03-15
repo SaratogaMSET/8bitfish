@@ -73,7 +73,7 @@ public class DrivetrainMotionProfileIn extends Command {
     	Robot.drive.motors[0].set(ControlMode.PercentOutput, 0);
     	Robot.drive.motors[2].set(ControlMode.PercentOutput, 0);
     	Robot.isDrivePIDRunning = false;
-    	Robot.drive.changeBrakeCoast(false);
+    	Robot.drive.changeBrakeCoast(true);
     }
 
     // Called when another command which requires one or more of the same

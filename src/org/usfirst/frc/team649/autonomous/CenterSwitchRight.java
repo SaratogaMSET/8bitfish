@@ -1,10 +1,14 @@
 package org.usfirst.frc.team649.autonomous;
 
 import org.usfirst.frc.team649.robot.Robot;
-import org.usfirst.frc.team649.robot.commands.AutoTestCommand;
+import org.usfirst.frc.team649.robot.CommandGroups.DeployWithWheelsAndIntake;
+import org.usfirst.frc.team649.robot.commands.Delay;
 import org.usfirst.frc.team649.robot.commands.DrivetrainMotionProfileIn;
 import org.usfirst.frc.team649.robot.commands.DrivetrainPIDCommand;
 import org.usfirst.frc.team649.robot.commands.GyroPID;
+import org.usfirst.frc.team649.robot.commands.RunIntakeWheels;
+import org.usfirst.frc.team649.robot.commands.SetMotionMagicParameter;
+import org.usfirst.frc.team649.test.AutoTestCommand;
 
 import edu.wpi.first.wpilibj.command.CommandGroup;
 
@@ -19,19 +23,14 @@ import edu.wpi.first.wpilibj.command.CommandGroup;
 public class CenterSwitchRight extends CommandGroup {
 
     public CenterSwitchRight() {
-    	if(Robot.isTestingAuto) {
-    		addSequential(new DrivetrainMotionProfileIn(AutoTest.CenterRightSwitch.FIRST_DRIVE)); // drive straight
-    		addSequential(new GyroPID(AutoTest.CenterRightSwitch.FIRST_ANGLE_TURN)); // turn ~45 degrees
-    		addSequential(new DrivetrainMotionProfileIn(AutoTest.CenterRightSwitch.SECOND_DRIVE)); // drive straight diagonally
-    		addSequential(new GyroPID(AutoTest.CenterRightSwitch.SECOND_ANGLE_TURN));// turn back to straight
-    		addSequential(new AutoTestCommand());
-    		// deploy
-    	} else {
-    		addSequential(new DrivetrainMotionProfileIn(35.96-Robot.robotLength)); // drive straight
-    		addSequential(new GyroPID(-30)); // turn ~45 degrees
-    		addSequential(new DrivetrainMotionProfileIn(95.85)); // drive straight diagonally
-    		addSequential(new GyroPID(30));// turn back to straight
-    		// deploy
-    	}
+       	addSequential(new DrivetrainMotionProfileIn(AutoTest.CenterRightSwitch.FIRST_DRIVE)); // drive straight
+    	addSequential(new GyroPID(AutoTest.CenterRightSwitch.FIRST_ANGLE_TURN)); // turn ~45 degrees
+    	addSequential(new DrivetrainMotionProfileIn(AutoTest.CenterRightSwitch.SECOND_DRIVE)); // drive straight diagonally
+    	addSequential(new GyroPID(AutoTest.CenterRightSwitch.SECOND_ANGLE_TURN));// turn back to straight
+    	addSequential(new DeployWithWheelsAndIntake()); // deploy
+    	addSequential(new Delay(2));
+    	addSequential(new RunIntakeWheels(0));
+    	addSequential(new AutoTestCommand());
+
     }
 }
