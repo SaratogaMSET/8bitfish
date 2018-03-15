@@ -1,17 +1,13 @@
-package org.usfirst.frc.team649.robot.commands;
+package org.usfirst.frc.team649.robot.CommandGroups;
 
 import edu.wpi.first.wpilibj.command.CommandGroup;
 
 /**
  *
  */
-public class SimpleAuto extends CommandGroup {
+public class DownAndFlipWhenPossible extends CommandGroup {
 
-    public SimpleAuto() {
-    	addSequential(new DistanceTalonPID(101000));
-//    	addSequential(new LiftMotionProfile(15600));
-//    	addSequential(new SetIntakePistons(false));
-    	addSequential(new RunIntakeWheels(0.5));
+    public DownAndFlipWhenPossible() {
         // Add Commands here:
         // e.g. addSequential(new Command1());
         //      addSequential(new Command2());

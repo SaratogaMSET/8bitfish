@@ -62,12 +62,20 @@ public class LiftSubsystem extends PIDSubsystem {
     public static class LiftEncoderConstants{
     	public static int LOW_STATE = 0;
     	public static int SWITCH_STATE = 20000;
-    	public static int LOW_SCALE_STATE = 36500;
-    	public static int MID_SCALE_STATE = 42500;
+    	public static int LOW_SCALE_STATE = 38500;
+    	public static int MID_SCALE_STATE = 43500;
     	public static int HIGH_SCALE_STATE = 48100;
     	public static int ADJ_DIST = 4000;
+    	
     }
-    public TalonSRX mainLiftMotor,followerLiftMotor;
+    public static class LiftConstants{
+    	public static double unitsPerCmSecond = 268;
+    	public static double unitsPerCmCarriage = 244;
+    	public static double maxSecondHeight = 93;
+    	public static double flipUpperPos = 25;
+    	public static double absTol = 15;
+    }
+    public TalonSRX mainLiftMotor,followerLiftMotor,followerLiftMotor2;
     public DigitalInput botSecondStageHal, topSecondStageHal, botCarriageHal, topCarriageHal;
     double liftPIDOutPut;
     
@@ -76,8 +84,9 @@ public class LiftSubsystem extends PIDSubsystem {
     	mainLiftMotor = new TalonSRX(RobotMap.Lift.RIGHT_WINCH_MOTOR);
     	mainLiftMotor.configSelectedFeedbackSensor(FeedbackDevice.CTRE_MagEncoder_Relative, 0, Robot.timeoutMs);
     	followerLiftMotor = new TalonSRX(RobotMap.Lift.LEFT_WINCH_MOTOR);
-    	followerLiftMotor.setInverted(true);
+    	followerLiftMotor.setInverted(false);
     	followerLiftMotor.set(ControlMode.Follower, RobotMap.Lift.RIGHT_WINCH_MOTOR);
+    	
     	mainLiftMotor.configNominalOutputForward(0, Robot.timeoutMs);
 		mainLiftMotor.configNominalOutputReverse(0, Robot.timeoutMs);
 		mainLiftMotor.configPeakOutputForward(1.0, Robot.timeoutMs);
@@ -88,6 +97,7 @@ public class LiftSubsystem extends PIDSubsystem {
 		followerLiftMotor.configPeakOutputReverse(-1.0, Robot.timeoutMs);
 		mainLiftMotor.setNeutralMode(NeutralMode.Brake);
 		followerLiftMotor.setNeutralMode(NeutralMode.Brake);
+		followerLiftMotor.setNeutralMode(NeutralMode.Brake);
 		mainLiftMotor.configMotionCruiseVelocity(3200, Robot.timeoutMs);
 		mainLiftMotor.configMotionAcceleration(3450, Robot.timeoutMs); // 400 actual
 		mainLiftMotor.selectProfileSlot(0, 0);
@@ -95,11 +105,11 @@ public class LiftSubsystem extends PIDSubsystem {
 		mainLiftMotor.config_kF(0, 0.3197, Robot.timeoutMs);
 		mainLiftMotor.config_kP(0, 3.5, Robot.timeoutMs);
 		mainLiftMotor.config_kI(0, 0.015, Robot.timeoutMs);
-		mainLiftMotor.config_kD(0, 0.05, Robot.timeoutMs);
+		mainLiftMotor.config_kD(0, 0.07, Robot.timeoutMs);
     	botSecondStageHal = new DigitalInput(RobotMap.Lift.SECOND_STAGE_HAL_BOT);
     	topSecondStageHal = new DigitalInput(RobotMap.Lift.SECOND_STAGE_HAL_TOP);
     	botCarriageHal = new DigitalInput(RobotMap.Lift.CARRIAGE_HAL_BOT);
-    	topCarriageHal = new DigitalInput(RobotMap.Lift.CARRIAGE_HAL_TOP);
+//    	topCarriageHal = new DigitalInput(RobotMap.Lift.CARRIAGE_HAL_TOP);
     }
 //    public double getLidarValue(){
 //    	return lidar.getSample()
@@ -111,9 +121,7 @@ public class LiftSubsystem extends PIDSubsystem {
     public double getLiftHeight(){
     	return 0.0;
     }
-    public double getCarriageHeight(){
-    	return 0.0;
-    }
+
     public double getLiftHeightNoLidar(){
     	double height = 0;
     	if(getRawLift()/LiftPIDConstants.SECOND_STAGE_TRANSLATION_CONSTANT > LiftPIDConstants.MAX_SECOND_STAGE_HEIGHT){
@@ -136,7 +144,12 @@ public class LiftSubsystem extends PIDSubsystem {
     public double getRawLift(){
     	return (double) mainLiftMotor.getSensorCollection().getQuadraturePosition();
     }
-    
+    public double getCarriageHeight(){
+    	return (getRawLift() - Robot.lidarValue * LiftConstants.unitsPerCmSecond)/LiftConstants.unitsPerCmCarriage;
+    }
+    public boolean canFlip(){
+    	return getCarriageHeight()<LiftSubsystem.LiftConstants.flipUpperPos;
+    }
     public double getLiftDistance() {
     	return (getRawLift()/4096.0 * 1.9 * Math.PI);
     }
@@ -229,7 +242,7 @@ public class LiftSubsystem extends PIDSubsystem {
     	return !topSecondStageHal.get();
     }
     public boolean isCarriageAtTop() {
-    	return !topCarriageHal.get();
+    	return false;
     }
     public void initDefaultCommand() {
         // Set the default command for a subsystem here.

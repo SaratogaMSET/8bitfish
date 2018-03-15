@@ -80,11 +80,11 @@ public class AutoTestCommand extends Command {
 		}else if(Robot.oi.operator.deployWithWheelsAndOpen()){
 			new DeployWithWheelsAndIntake().start();;
 		}else if(Robot.oi.operator.openIntake()){
-			new SetIntakePistons(true).start();
+			new SetIntakePistons(true, true).start();
 		}else if(Robot.oi.operator.runIntakeWithWheelsClosed()){
 			new IntakeWithWheelsAndClose().start();
 		}else if(Robot.oi.operator.closeIntake()){
-			new SetIntakePistons(false).start();
+			new SetIntakePistons(false, false).start();
 		}else{
 			Robot.intake.setIntakeMotors(0, 0);
 		}

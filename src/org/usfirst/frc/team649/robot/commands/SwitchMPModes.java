@@ -1,41 +1,20 @@
 package org.usfirst.frc.team649.robot.commands;
 
-import org.usfirst.frc.team649.robot.Robot;
-
-import edu.wpi.first.wpilibj.DoubleSolenoid;
 import edu.wpi.first.wpilibj.command.Command;
+import jaci.pathfinder.Trajectory;
 
 /**
  *
  */
-public class SetIntakePistons extends Command {
-	
-	boolean isOpen;
-	boolean isClamp;
-    public SetIntakePistons(boolean isOpen, boolean isClamp) {
+public class SwitchMPModes extends Command {
+	Trajectory trajL,trajR;
+    public SwitchMPModes(Trajectory trajL, Trajectory trajR) {
         // Use requires() here to declare subsystem dependencies
         // eg. requires(chassis);
-    	this.isOpen = isOpen;
-    	this.isClamp = isClamp;
     }
 
     // Called just before this Command runs the first time
     protected void initialize() {
-    	
-    	if(isOpen){
-    		Robot.intake.setIntakePiston60(false);
-    		Robot.intake.setIntakePiston30(true);
-    	}else{
-    		if(isClamp){
-    			Robot.intake.setIntakePiston60(true);
-        		Robot.intake.setIntakePiston30(false);
-
-    		}else{
-    			Robot.intake.setIntakePiston60(true);
-
-    			Robot.intake.setIntakePiston30(true);
-    		}
-    	}
     }
 
     // Called repeatedly when this Command is scheduled to run
@@ -44,7 +23,7 @@ public class SetIntakePistons extends Command {
 
     // Make this return true when this Command no longer needs to run execute()
     protected boolean isFinished() {
-        return true;
+        return false;
     }
 
     // Called once after isFinished returns true

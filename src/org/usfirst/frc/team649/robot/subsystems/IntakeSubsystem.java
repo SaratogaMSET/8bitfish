@@ -15,14 +15,21 @@ import edu.wpi.first.wpilibj.command.Subsystem;
 public class IntakeSubsystem extends Subsystem {
 
     public TalonSRX leftIntake, rightIntake;
-    public DoubleSolenoid intakeSol;
+    public DoubleSolenoid intakeSol; //60
+    public DoubleSolenoid intakeSol2; //30
+
+    public boolean isIntakeRunning;
 
     public void initDefaultCommand() {
         // Set the default command for a subsystem here.
         //setDefaultCommand(new MySpecialCommand());
     }
+    	//when trying to intake closed, close both
+  		//while trying to clamp cube run only 60
+  		//open run just 30
     public IntakeSubsystem(){
     	intakeSol = new DoubleSolenoid(RobotMap.Intake.INTAKE_SOL[0],RobotMap.Intake.INTAKE_SOL[1],RobotMap.Intake.INTAKE_SOL[2]);
+    	intakeSol2 = new DoubleSolenoid(RobotMap.Intake.SECOND_SOL[0],RobotMap.Intake.SECOND_SOL[1],RobotMap.Intake.SECOND_SOL[2]);
     	leftIntake = new TalonSRX(RobotMap.Intake.LEFT_INTAKE_MOTOR);
     	rightIntake = new TalonSRX(RobotMap.Intake.RIGHT_INTAKE_MOTOR);
     	leftIntake.configNominalOutputForward(0, Robot.timeoutMs);
@@ -33,13 +40,21 @@ public class IntakeSubsystem extends Subsystem {
     	rightIntake.configNominalOutputReverse(0, Robot.timeoutMs);
     	rightIntake.configPeakOutputForward(1, Robot.timeoutMs);
     	rightIntake.configPeakOutputReverse(-1, Robot.timeoutMs);
+    	isIntakeRunning = false;
     }
     public void setIntakeMotors(double right, double left){
     	leftIntake.set(ControlMode.PercentOutput, left);
     	rightIntake.set(ControlMode.PercentOutput, right);
+    	if(right >= 0 && left >=0 && left<=0 && right<=0)
+    	{
+    		isIntakeRunning = true;
+    	}
     }
-    public void setIntakePiston(boolean isOut){
+    public void setIntakePiston60(boolean isOut){
 		intakeSol.set(isOut ? DoubleSolenoid.Value.kForward : DoubleSolenoid.Value.kReverse);
+    }
+    public void setIntakePiston30(boolean isOut){
+  		intakeSol2.set(isOut ? DoubleSolenoid.Value.kForward : DoubleSolenoid.Value.kReverse);
     }
     public void setIntakePulse(double time, double period,boolean isForward){
     	double powerLeft = Math.abs(Math.sin(2*Math.PI*(time/period)));
@@ -50,6 +65,10 @@ public class IntakeSubsystem extends Subsystem {
         	setIntakeMotors(-powerLeft,-powerRight);
     	}
     	
+    }
+    public boolean isRunning()
+    {
+    	return isIntakeRunning;
     }
     
 }

@@ -2,40 +2,22 @@ package org.usfirst.frc.team649.robot.commands;
 
 import org.usfirst.frc.team649.robot.Robot;
 
-import edu.wpi.first.wpilibj.DoubleSolenoid;
 import edu.wpi.first.wpilibj.command.Command;
 
 /**
  *
  */
-public class SetIntakePistons extends Command {
-	
-	boolean isOpen;
-	boolean isClamp;
-    public SetIntakePistons(boolean isOpen, boolean isClamp) {
+public class ChangeRobotLiftState extends Command {
+	int changeTo;
+    public ChangeRobotLiftState(int liftState) {
         // Use requires() here to declare subsystem dependencies
         // eg. requires(chassis);
-    	this.isOpen = isOpen;
-    	this.isClamp = isClamp;
+    	changeTo = liftState;
     }
 
     // Called just before this Command runs the first time
     protected void initialize() {
-    	
-    	if(isOpen){
-    		Robot.intake.setIntakePiston60(false);
-    		Robot.intake.setIntakePiston30(true);
-    	}else{
-    		if(isClamp){
-    			Robot.intake.setIntakePiston60(true);
-        		Robot.intake.setIntakePiston30(false);
-
-    		}else{
-    			Robot.intake.setIntakePiston60(true);
-
-    			Robot.intake.setIntakePiston30(true);
-    		}
-    	}
+    	Robot.liftState = changeTo;
     }
 
     // Called repeatedly when this Command is scheduled to run

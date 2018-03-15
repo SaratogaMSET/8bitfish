@@ -57,9 +57,8 @@ public class Diagnostic extends Command {
 
     // Called repeatedly when this Command is scheduled to run
     protected void execute() {
-    	SmartDashboard();
-    	if (Robot.oi.operator.getButton2() && time1.get() > 0.2) {
-    		Robot.intake.setIntakePiston(!prevStateIntake);
+    	if (Robot.oi.operator.getButton2()) {
+    		Robot.intake.setIntakePiston30(!prevStateIntake);
     		prevStateIntake = !prevStateIntake;
     		time1.reset();
     		time1.start();

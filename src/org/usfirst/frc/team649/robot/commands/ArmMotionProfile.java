@@ -27,16 +27,25 @@ public class ArmMotionProfile extends Command {
     protected void initialize() {
     	SmartDashboard.putBoolean("ran is fin", false);
 		Robot.isArmPidRunning = true;
-    	Robot.arm.setArmBrake(false);
     	doneTime = new Timer();
     	donePos = 0;
+//    	doneTime.start();
+//    	if(state == ArmSubsystem.ArmStateConstants.HEADING_INTAKE_FRONT|| state == ArmSubsystem.ArmStateConstants.HEADING_INTAKE_REAR){
+//    		Robot.intake.setIntakeMotors(-0.7, -0.7);
+//    	}
     	
     }
 
     // Called repeatedly when this Command is scheduled to run
     protected void execute() {
-    	Robot.arm.bottomMotor.set(ControlMode.MotionMagic, value);
-		
+    	if(Robot.isZero){
+    		if(doneTime.get() == 0){
+    			doneTime.start();
+    	    	Robot.arm.setArmBrake(false);
+
+    		}
+    		Robot.arm.bottomMotor.set(ControlMode.MotionMagic, value);
+    	}
     }
 
     // Make this return true when this Command no longer needs to run execute()
@@ -51,6 +60,24 @@ public class ArmMotionProfile extends Command {
 //    		donePos = Robot.arm.getArmRaw();
 //    		doneTime.start();
 //    	}
+    	if(Robot.isZero){
+    		if(Math.abs(Robot.arm.getArmRaw()-value) < ArmSubsystem.ArmConstants.RAW_ABS_TOL){
+        		return true;
+        	}
+//        	else if(Math.abs(Robot.arm.getArmAngle()) > Math.abs(value)){
+//        		return true;
+//        	}
+        	else if(Robot.arm.getArmHalZeroBack() && state == ArmSubsystem.ArmStateConstants.HEADING_INTAKE_REAR){
+        		return true;
+        	}else if(doneTime.get()>2){
+        	
+        	
+        		return true;
+        	}else if(Robot.arm.getArmHalZeroFront() && state == ArmSubsystem.ArmStateConstants.HEADING_INTAKE_FRONT){
+        		return true;
+        	}
+        	return false;
+    	}
     	return false;
     }
 
@@ -68,7 +95,11 @@ public class ArmMotionProfile extends Command {
     	SmartDashboard.putBoolean("ran is fin", true);
 		Robot.isArmPidRunning = false;
     	Robot.arm.setArmBrake(true);
-    	Robot.arm.bottomMotor.set(ControlMode.PercentOutput, 0);
+    	Robot.intake.setIntakeMotors(0, 0);
+    	if(Robot.armState == ArmSubsystem.ArmStateConstants.EXCHANGE_FRONT ||Robot.armState == ArmSubsystem.ArmStateConstants.EXCHANGE_REAR || Robot.armState == ArmSubsystem.ArmStateConstants.INTAKE_FRONT   || Robot.armState == ArmSubsystem.ArmStateConstants.INTAKE_REAR){
+        	Robot.arm.bottomMotor.set(ControlMode.PercentOutput, 0);
+
+    	}
     }
 
     // Called when another command which requires one or more of the same

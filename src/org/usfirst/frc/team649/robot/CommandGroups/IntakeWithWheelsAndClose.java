@@ -11,7 +11,7 @@ import edu.wpi.first.wpilibj.command.CommandGroup;
 public class IntakeWithWheelsAndClose extends CommandGroup {
 
     public IntakeWithWheelsAndClose() {
-    	addParallel(new RunIntakeWheels(0.5));
-    	addParallel(new SetIntakePistons(false));
+    	addParallel(new RunIntakeWheels(1));
+    	addParallel(new SetIntakePistons(false,false));
     }
 }

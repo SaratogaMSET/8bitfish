@@ -2,57 +2,64 @@ package org.usfirst.frc.team649.robot.commands;
 
 import org.usfirst.frc.team649.robot.Robot;
 
-import edu.wpi.first.wpilibj.DoubleSolenoid;
+import edu.wpi.first.wpilibj.Timer;
 import edu.wpi.first.wpilibj.command.Command;
 
 /**
  *
  */
-public class SetIntakePistons extends Command {
+public class RunIntakeForTime extends Command {
+
+	double time;
+	boolean isIntake;
+	Timer timeOf;
 	
-	boolean isOpen;
-	boolean isClamp;
-    public SetIntakePistons(boolean isOpen, boolean isClamp) {
+    public RunIntakeForTime(double time,boolean isIntake) {
         // Use requires() here to declare subsystem dependencies
         // eg. requires(chassis);
-    	this.isOpen = isOpen;
-    	this.isClamp = isClamp;
+    	this.time = time;
+    	this.isIntake = isIntake;
+    	timeOf = new Timer();
     }
 
     // Called just before this Command runs the first time
     protected void initialize() {
     	
-    	if(isOpen){
-    		Robot.intake.setIntakePiston60(false);
-    		Robot.intake.setIntakePiston30(true);
-    	}else{
-    		if(isClamp){
-    			Robot.intake.setIntakePiston60(true);
-        		Robot.intake.setIntakePiston30(false);
-
-    		}else{
-    			Robot.intake.setIntakePiston60(true);
-
-    			Robot.intake.setIntakePiston30(true);
-    		}
-    	}
     }
 
     // Called repeatedly when this Command is scheduled to run
     protected void execute() {
+    	if(!Robot.isMPRunning){
+    		if(timeOf.get() == 0){
+    			if(isIntake){
+            		Robot.intake.setIntakeMotors(-1, -1);
+            	}else{
+            		Robot.intake.setIntakeMotors(1, 1);
+            	}
+            	timeOf.start();
+    		}
+    		
+    	}
     }
 
     // Make this return true when this Command no longer needs to run execute()
     protected boolean isFinished() {
-        return true;
+    	if(timeOf.get() > time){
+    		return true;
+    	}
+    	return false;
     }
 
     // Called once after isFinished returns true
     protected void end() {
+    	timeOf.stop();
+    	timeOf.reset();
+    	Robot.intake.setIntakeMotors(0, 0);
     }
 
     // Called when another command which requires one or more of the same
     // subsystems is scheduled to run
     protected void interrupted() {
+    	end();
     }
 }
