@@ -6,6 +6,7 @@ public class RobotMap {
 	public static final int OPERATOR_JOYSTICK = 2;
 	public static final int DRIVE_JOYSTICK_HORIZONTAL = 1;
 	public static final int DRIVE_JOYSTICK_VERTICAL = 0;
+
 	
 	public static class Drivetrain {
 		//change before first use
@@ -49,6 +50,7 @@ public class RobotMap {
 	}
 
 	public static class Camera{
+		public static final boolean practiceBot = false;
 		public static final String axisPort = "10.6.49.15";
 		public static final String axisName = "greenAxisCamera";
 		public static final int axisResWidth = 320;
@@ -59,10 +61,25 @@ public class RobotMap {
 		public static final int axis2ResWidth = 320;
 		public static final int axis2ResHeight = 480;
 		public static final int axis2FPS = 30;
-		public static final String axis3Port = "10.6.49.13";
-		public static final String axis3Name = "whiteAxisCamera";
-		public static final int axis3ResWidth = 320;
-		public static final int axis3ResHeight = 480;
-		public static final int axis3FPS = 30;
+//		public static final String axis3Port = "10.6.49.13";
+//		public static final String axis3Name = "whiteAxisCamera";
+//		public static final int axis3ResWidth = 320;
+//		public static final int axis3ResHeight = 480;
+//		public static final int axis3FPS = 30;
+		public static final String axis4Port = "10.6.49.15";
+		public static final String axis4Name = "greenAxisCamera";
+		public static final int axis4ResWidth = 320;
+		public static final int axis4ResHeight = 480;
+		public static final int axis4FPS = 30;
+		public static final String axis5Port = "10.6.49.15";
+		public static final String axis5Name = "greenAxisCamera";
+		public static final int axis5ResWidth = 320;
+		public static final int axis5ResHeight = 480;
+		public static final int axis5FPS = 30;
+//		public static final String axis6Port = "10.6.49.15";
+//		public static final String axis6Name = "greenAxisCamera";
+//		public static final int axis6ResWidth = 320;
+//		public static final int axis6ResHeight = 480;
+//		public static final int axis6FPS = 30;
 	}
 }

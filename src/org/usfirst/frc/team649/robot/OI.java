@@ -268,127 +268,177 @@ public class OI {
 			}
 		}
 
-	
+		// public boolean switchToCamera3() {
+		// if(RobotMap.Camera.practiceBot) {
+		// return operatorJoystick.getRawButton(12);
+		// }
+		// else {
+		// return false;
+		// }
+		// }
+		public boolean switchToCamera4() {
+			if (RobotMap.Camera.practiceBot == false) {
+				return buttonBoard.getRawButton(10);
 
-	// public boolean switchToCamera3() {
-	// if(RobotMap.Camera.practiceBot) {
-	// return operatorJoystick.getRawButton(12);
-	// }
-	// else {
-	// return false;
-	// }
-	// }
-	public boolean switchToCamera4() {
-		if (RobotMap.Camera.practiceBot == false) {
-			return buttonBoard.getRawButton(10);
-
-		} else {
-			return false;
+			} else {
+				return false;
+			}
 		}
-	}
 
-	public boolean switchToCamera2() {
-		return buttonBoard.getRawButton(11);
-	}
-
-	public boolean switchToCamera5() {
-		if (RobotMap.Camera.practiceBot == false) {
+		public boolean switchToCamera2() {
 			return buttonBoard.getRawButton(11);
+		}
 
-		} else {
+		public boolean switchToCamera5() {
+			if (RobotMap.Camera.practiceBot == false) {
+				return buttonBoard.getRawButton(11);
+
+			} else {
+				return false;
+			}
+		}
+
+		// public boolean switchToCamera6() {
+		// if(RobotMap.Camera.practiceBot == false)
+		// {
+		// return buttonBoard.getRawButton(12);
+		//
+		// }
+		// else {
+		// return false;
+		// }
+		// }
+		public double getOperatorY() {
+			if (Math.abs(operatorJoystick.getY()) >= 0.1) {
+				return operatorJoystick.getY();
+			}
+			return 0.0;
+		}
+
+		public boolean getIntakeForward() {
+			return operatorJoystick.getRawButton(5);
+		}
+
+		public boolean getIntakeReverse() {
+			return operatorJoystick.getRawButton(3);
+		}
+
+		public double returnSlider() {
+			return operatorJoystick.getRawAxis(3);
+		}
+
+		public boolean isIntakeOut() {
+			return operatorJoystick.getRawButton(7);
+		}
+
+		public boolean isIntakeIn() {
+			return operatorJoystick.getRawButton(8);
+		}
+
+		public boolean getButton2Operator() {
+			boolean value = operatorJoystick.getRawButton(2);
+			if (value == true && oldValue2 == false) {
+				oldValue2 = value;
+				return true;
+			}
+			oldValue2 = value;
 			return false;
 		}
 	}
 
-	// public boolean switchToCamera6() {
-	// if(RobotMap.Camera.practiceBot == false)
-	// {
-	// return buttonBoard.getRawButton(12);
-	//
-	// }
-	// else {
-	// return false;
-	// }
-	// }
-	public double getOperatorY() {
-		if (Math.abs(operatorJoystick.getY()) >= 0.1) {
-			return operatorJoystick.getY();
+	public class Driver {
+		public double getForward() {
+			if (driveJoystickVertical.getY() >= 0.05 || driveJoystickVertical.getY() <= -0.05) {
+				return -driveJoystickVertical.getY();
+			} else {
+				return 0;
+			}
 		}
-		return 0.0;
-	}
 
-	public boolean getIntakeForward() {
-		return operatorJoystick.getRawButton(5);
-	}
+		public boolean switchToCamera2() {
+			if (RobotMap.Camera.practiceBot) {
+				return operatorJoystick.getRawButton(11);
+			} else {
+				return false;
+			}
 
-	public boolean getIntakeReverse() {
-		return operatorJoystick.getRawButton(3);
-	}
-
-	public double returnSlider() {
-		return operatorJoystick.getRawAxis(3);
-	}
-
-	public boolean isIntakeOut() {
-		return operatorJoystick.getRawButton(7);
-	}
-
-	public boolean isIntakeIn() {
-		return operatorJoystick.getRawButton(8);
-	}
-
-	public boolean getButton2Operator() {
-		boolean value = operatorJoystick.getRawButton(2);
-		if (value == true && oldValue2 == false) {
-			oldValue2 = value;
-			return true;
 		}
-		oldValue2 = value;
-		return false;
+
+		// public boolean switchToCamera3() {
+		// if(RobotMap.Camera.practiceBot) {
+		// return operatorJoystick.getRawButton(12);
+		// }
+		// else {
+		// return false;
+		// }
+		// }
+		public boolean switchToCamera4() {
+			if (RobotMap.Camera.practiceBot == false) {
+				return buttonBoard.getRawButton(10);
+
+			} else {
+				return false;
+			}
+		}
+
+		public boolean switchToCamera5() {
+			if (RobotMap.Camera.practiceBot == false) {
+				return buttonBoard.getRawButton(11);
+
+			} else {
+				return false;
+			}
+		}
+
+		// public boolean switchToCamera6() {
+		// if(RobotMap.Camera.practiceBot == false)
+		// {
+		// return buttonBoard.getRawButton(12);
+		//
+		// }
+		// else {
+		// return false;
+		// }
+		// }
+		public double getOperatorY() {
+			if (Math.abs(operatorJoystick.getY()) >= 0.1) {
+				return operatorJoystick.getY();
+			}
+			return 0.0;
+		}
+
+		public double getRotation() {
+			if (driveJoystickHorizontal.getX() >= 0.05 || driveJoystickHorizontal.getX() <= -0.05) {
+				return -driveJoystickHorizontal.getX();
+			} else {
+				return 0.0;
+			}
+		}
+
+		// hold
+		public boolean isVBusOveridePush() {
+			return driveJoystickHorizontal.getRawButton(2) || driveJoystickVertical.getRawButton(2);
+		}
+
+		// toggle robot starts in vel
+		public Boolean switchToVbus() {
+			return driveJoystickHorizontal.getRawButton(4) || driveJoystickVertical.getRawButton(4);
+		}
+
+		// only used for normal shift
+		public Boolean shiftUp() {
+			return driveJoystickHorizontal.getRawButton(1) || driveJoystickVertical.getRawButton(1);
+		}
+
+		// toggle robot starts in autoshift
+		public Boolean switchToNormalShift() {
+			return driveJoystickHorizontal.getRawButton(5) || driveJoystickVertical.getRawButton(5);
+		}
+
+		// hold
+		public Boolean forceLowGear() {
+			return driveJoystickHorizontal.getRawButton(3) || driveJoystickVertical.getRawButton(3);
+
+		}
 	}
 }
-
-public class Driver {
-	public double getForward() {
-		if (driveJoystickVertical.getY() >= 0.05 || driveJoystickVertical.getY() <= -0.05) {
-			return -driveJoystickVertical.getY();
-		} else {
-			return 0.0;
-		}
-	}
-
-	public double getRotation() {
-		if (driveJoystickHorizontal.getX() >= 0.05 || driveJoystickHorizontal.getX() <= -0.05) {
-			return -driveJoystickHorizontal.getX();
-		} else {
-			return 0.0;
-		}
-	}
-
-	// hold
-	public boolean isVBusOveridePush() {
-		return driveJoystickHorizontal.getRawButton(2) || driveJoystickVertical.getRawButton(2);
-	}
-
-	// toggle robot starts in vel
-	public Boolean switchToVbus() {
-		return driveJoystickHorizontal.getRawButton(4) || driveJoystickVertical.getRawButton(4);
-	}
-
-	// only used for normal shift
-	public Boolean shiftUp() {
-		return driveJoystickHorizontal.getRawButton(1) || driveJoystickVertical.getRawButton(1);
-	}
-
-	// toggle robot starts in autoshift
-	public Boolean switchToNormalShift() {
-		return driveJoystickHorizontal.getRawButton(5) || driveJoystickVertical.getRawButton(5);
-	}
-
-	// hold
-	public Boolean forceLowGear() {
-		return driveJoystickHorizontal.getRawButton(3) || driveJoystickVertical.getRawButton(3);
-
-	}
-
-}}
