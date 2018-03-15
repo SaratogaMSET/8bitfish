@@ -1,5 +1,8 @@
 package org.usfirst.frc.team649.autonomous;
 
+import org.usfirst.frc.team649.robot.commands.DrivetrainMotionProfileIn;
+import org.usfirst.frc.team649.robot.commands.GyroPID;
+
 import edu.wpi.first.wpilibj.command.CommandGroup;
 
 /**
@@ -10,11 +13,11 @@ import edu.wpi.first.wpilibj.command.CommandGroup;
 public class LeftSwitchAround extends CommandGroup {
 
     public LeftSwitchAround() {
-    	// drive forward
-    	// turn 90 degrees
-    	// drive forward
-    	// turn 90 degrees
-    	// drive forward
+    	addSequential(new DrivetrainMotionProfileIn(AutoTest.LeftSwitchFarVal.FIRST_DRIVE)); // drive forward
+    	addSequential(new GyroPID(AutoTest.LeftSwitchFarVal.FIRST_ANGLE_TURN)); // turn 90 degrees
+    	addSequential(new DrivetrainMotionProfileIn(AutoTest.LeftSwitchFarVal.SECOND_DRIVE));// drive forward
+    	addSequential(new GyroPID(AutoTest.LeftSwitchFarVal.SECOND_ANGLE_TURN)); // turn 90 degrees
+    	addSequential(new DrivetrainMotionProfileIn(AutoTest.LeftSwitchFarVal.THIRD_DRIVE));// drive forward
     	// drop cube
         
     }

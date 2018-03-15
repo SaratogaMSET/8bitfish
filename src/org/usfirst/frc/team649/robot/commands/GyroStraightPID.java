@@ -26,10 +26,10 @@ public class GyroStraightPID extends Command {
 	double prevVelRight;
 	Timer doneTime;
 	double turnPoint;
-	double accel = 11000;
+	double cruiseVelocity = 18000;
 	double gyroFinal;
 	
-    public GyroStraightPID(double distance, double angle, double turnPoint) {
+    public GyroStraightPID(double distance) {
         // Use requires() here to declare subsystem dependencies
         // eg. requires(chassis);
     	this.distance = distance;
@@ -37,8 +37,8 @@ public class GyroStraightPID extends Command {
     	GyroController = Robot.gyro.getPIDController();
     	DriveController = Robot.drive.getPIDController();
     	gyroFinal = 0;
-    	this.angle = angle;
-    	this.turnPoint = turnPoint;
+//    	this.angle = angle;
+//    	this.turnPoint = turnPoint;
     	
     }
 
@@ -55,6 +55,7 @@ public class GyroStraightPID extends Command {
     	isFinished = false;
 //    	DriveController.enable();
     	Robot.gyro.resetGyro();
+    	distance = Robot.drive.convert(distance);
 //    	GyroController.setSetpoint(0);
     	atTurningPoint = false;
 //    	DriveController.setSetpoint(distance);
@@ -65,43 +66,43 @@ public class GyroStraightPID extends Command {
     	double left = 0;
     	double right = 0;
 //    	double drivePower = Robot.drive.getDrivePIDOutput();
-    	if ((Math.abs(Robot.drive.motors[0].getSelectedSensorPosition(0)) + Math.abs(Robot.drive.motors[2].getSelectedSensorPosition(0)))/2 > turnPoint) {
+//    	if ((Math.abs(Robot.drive.motors[0].getSelectedSensorPosition(0)) + Math.abs(Robot.drive.motors[2].getSelectedSensorPosition(0)))/2 > turnPoint) {
 //    		atTurningPoint = true;
 //    		Robot.drive.motors[0].configMotionCruiseVelocity(10000, 20);
 //    		Robot.drive.motors[2].configMotionCruiseVelocity(10000, 20);
-    	}
+//    	}
     	SmartDashboard.putBoolean("turning point", atTurningPoint);
     	double gyroPower;
     	
     	double mult;
-    	if(atTurningPoint) {
-    		gyroPower = angle - Robot.gyro.getGyroAngle();
-    		mult = 250;
-    	} else {
+//    	if(atTurningPoint) {
+//    		gyroPower = angle - Robot.gyro.getGyroAngle();
+//    		mult = 250;
+//    	} else {
     		gyroPower = Robot.gyro.getGyroAngle();
     		mult = 100;
-    	}
+//    	}
     	if ( gyroPower > 0) {
     		if(prevVelRight < Math.abs(Robot.drive.motors[0].getSelectedSensorVelocity(0))){
-    			left = accel - gyroPower*mult;
-    			right = accel;
+    			left = cruiseVelocity - gyroPower*mult;
+    			right = cruiseVelocity;
     		}else{
-    			right = accel- gyroPower * mult;
-    			left = accel ;
+    			right = cruiseVelocity- gyroPower * mult;
+    			left = cruiseVelocity ;
     		}
 
 		} else if (gyroPower < 0) {
 			if(prevVelLeft < Math.abs(Robot.drive.motors[2].getSelectedSensorVelocity(0))){
-				right = accel- gyroPower * mult;
-				left = accel ;
+				right = cruiseVelocity- gyroPower * mult;
+				left = cruiseVelocity ;
 			}else{
-				left = accel- gyroPower*mult;
-    			right = accel ;
+				left = cruiseVelocity- gyroPower*mult;
+    			right = cruiseVelocity ;
 			}
 			
 		} else {
-			right = accel;
-			left = accel;
+			right = cruiseVelocity;
+			left = cruiseVelocity;
 		}
     	if(left < 0){
     		left = 0;
@@ -125,8 +126,8 @@ public class GyroStraightPID extends Command {
 		Robot.drive.motors[2].set(ControlMode.MotionMagic, -distance);
 		SmartDashboard.putNumber("gyro pid value", gyroPower);
 		
-//		Robot.drive.motors[0].configMotionAcceleration((int) left, 20);
-//        Robot.drive.motors[2].configMotionAcceleration((int) right, 20);
+		Robot.drive.motors[0].configMotionCruiseVelocity((int) left, 20);
+        Robot.drive.motors[2].configMotionCruiseVelocity((int) right, 20);
     }
 
     // Make this return true when this Command no longer needs to run execute()

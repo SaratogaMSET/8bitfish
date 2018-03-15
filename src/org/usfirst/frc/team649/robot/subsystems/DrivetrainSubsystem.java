@@ -26,6 +26,8 @@ public class DrivetrainSubsystem extends PIDSubsystem {
 	private static boolean isLeftVPid;
 	private static boolean isRightVPid;
 	private static boolean isHighGear;
+	public double wheelSize=5;
+	public int scalingFactor=2;
 
 	//don't save pid stuff here this is for distances and angles etc
     public static class AutoConstants{
@@ -102,9 +104,9 @@ public class DrivetrainSubsystem extends PIDSubsystem {
 		motors[0].configMotionCruiseVelocity(20000, Robot.timeoutMs);
 		motors[0].configMotionAcceleration(11000, Robot.timeoutMs); //1360 actual
 		motors[0].selectProfileSlot(0, 0);
-		motors[0].config_kP(0, 1.5, Robot.timeoutMs);
-		motors[0].config_kI(0, 0.03, Robot.timeoutMs);
-		motors[0].config_kD(0, 1.25, Robot.timeoutMs);
+		motors[0].config_kP(0, 1.5, Robot.timeoutMs); // 1.5
+		motors[0].config_kI(0, 0.03, Robot.timeoutMs); // 0.03
+		motors[0].config_kD(0, 1.25, Robot.timeoutMs); 
 		motors[0].config_kF(0, 0.060176, Robot.timeoutMs);
 		motors[0].setInverted(false);
 		
@@ -144,6 +146,7 @@ public class DrivetrainSubsystem extends PIDSubsystem {
 		isRightVPid = false;
 		isHighGear = true;
 		this.getPIDController().setAbsoluteTolerance(AutoPIDConstants.PID_ABS_TOLERANCE);
+		this.getPIDController().setOutputRange(-1, 1);
 	}
 	//changes the drivetrain between vbus and vpid 
 	private void changeDrivetrainModesLeft(boolean isVPid){
@@ -385,6 +388,19 @@ public class DrivetrainSubsystem extends PIDSubsystem {
 	}
 	public void setD(double d) {
 		AutoPIDConstants.k_D += d;
+	}
+	
+	public int convert(double d){
+		int i = (int)((scalingFactor*d*50*4096)/(Math.PI*wheelSize*24));
+		return i;
+	}
+	public void changeScale(int x){
+		if(scalingFactor+x!=0)
+		scalingFactor+=x;
+	}
+	public void changeWheel(double x){
+		if(wheelSize+x!=0)
+		wheelSize+=x;
 	}
 	
 }

@@ -26,17 +26,11 @@ public class DrivetrainMotionProfile extends Command {
     // Called just before this Command runs the first time
     protected void initialize() {
     	isFinished = false;
-    	
+    	Robot.isDrivePIDRunning = true;
     	Robot.drive.resetEncoders();
     	
-    	Robot.drive.motors[0].getSensorCollection().setQuadraturePosition(0, 20);
-    	Robot.drive.motors[2].getSensorCollection().setQuadraturePosition(0, 20);
-    	
-    	for(int i = 0; i < Robot.drive.motors.length; i++) {
-    		Robot.drive.motors[i].config_kP(0, 0.02, 20);
-    		Robot.drive.motors[i].config_kI(0, 0.0, 20);
-    		Robot.drive.motors[i].config_kD(0, 0.1, 20);
-    	}
+    	Robot.drive.motors[0].setSelectedSensorPosition(0, 0, Robot.timeoutMs);
+    	Robot.drive.motors[2].setSelectedSensorPosition(0, 0, Robot.timeoutMs);
 		
     	
 		SmartDashboard.putNumber("Setpoint", setpoint);
@@ -46,20 +40,19 @@ public class DrivetrainMotionProfile extends Command {
 
     // Called repeatedly when this Command is scheduled to run
     protected void execute() {
-    	Robot.drive.motors[0].set(ControlMode.Position, ((setpoint/(4.0*Math.PI))/ (14.0/60.0)) * 4096.0 );
+    	Robot.drive.motors[0].set(ControlMode.MotionMagic, setpoint );
 		Robot.drive.motors[1].set(ControlMode.Follower, RobotMap.Drivetrain.MOTOR_PORTS[0]);
-		Robot.drive.motors[2].set(ControlMode.Position, -((setpoint/(4.0*Math.PI))/ (14.0/60.0)) * 4096.0 );
+		Robot.drive.motors[2].set(ControlMode.MotionMagic, -setpoint);
 		Robot.drive.motors[3].set(ControlMode.Follower, RobotMap.Drivetrain.MOTOR_PORTS[2]);
-    	SmartDashboard.putNumber("Setpoint", ((setpoint/(4.0*Math.PI))/ (14.0/60.0)) * 4096);
+		SmartDashboard.putNumber("Setpoint", ((setpoint/(4.0*Math.PI))/ (14.0/60.0)) * 4096);
 		
-    	double rawSetpoint = ((setpoint/(4.0*Math.PI))/ (14.0/60.0)) * 4096.0;
 //		if (Math.abs(Robot.drive.motors[0].getEncPosition() - setpoint) < 2) {
 //			isFinished = true;
 //		}
     	
     	SmartDashboard.putNumber("Left Talon Distance", Robot.drive.getTalonDistanceLeft());
     	
-    	if (Math.abs(rawSetpoint - Robot.drive.motors[0].getSensorCollection().getQuadraturePosition()) < 100) {//(Math.abs(Robot.drive.getTalonDistanceLeft() - setpoint) < 2) {
+    	if (Math.abs(setpoint - Robot.drive.motors[0].getSelectedSensorPosition(0)) < 100) {//(Math.abs(Robot.drive.getTalonDistanceLeft() - setpoint) < 2) {
 			isFinished = true;
 		}
     }
@@ -74,6 +67,7 @@ public class DrivetrainMotionProfile extends Command {
     protected void end() {
     	Robot.drive.motors[0].set(ControlMode.PercentOutput, 0);
     	Robot.drive.motors[2].set(ControlMode.PercentOutput, 0);
+    	Robot.isDrivePIDRunning = false;
     }
 
     // Called when another command which requires one or more of the same

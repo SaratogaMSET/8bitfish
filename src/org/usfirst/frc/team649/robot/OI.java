@@ -16,6 +16,7 @@ public class OI {
 
 	public Driver driver;
 	public Operator operator;
+	public Joystick buttonBoard2;
 
 	public boolean oldValue1;
 	public boolean oldValue2;
@@ -28,7 +29,8 @@ public class OI {
 	public boolean oldValue9;
 
 	public OI() {
-		buttonBoard = new Joystick(RobotMap.BUTTON_BOARD);
+//		buttonBoard = new Joystick(RobotMap.BUTTON_BOARD);
+		buttonBoard2 = new Joystick(RobotMap.BUTTON_BOARD);
 		operatorJoystick = new Joystick(RobotMap.OPERATOR_JOYSTICK);
 		driveJoystickHorizontal = new Joystick(RobotMap.DRIVE_JOYSTICK_HORIZONTAL);
 		driveJoystickVertical = new Joystick(RobotMap.DRIVE_JOYSTICK_VERTICAL);
@@ -60,47 +62,47 @@ public class OI {
 
 		// use prev states
 		public boolean getLiftUpSmall() {
-			return buttonBoard.getRawButton(6);
+			return buttonBoard2.getRawButton(12);
 		}
 
 		public boolean getLiftDownSmall() {
-			return buttonBoard.getRawButton(4);
+			return buttonBoard2.getRawButton(9);
 		}
 
 		public boolean getArmUpSmall() {
-			return buttonBoard.getRawButton(7);
+			return buttonBoard2.getRawButton(11);
 		}
 
 		public boolean getArmDownSmall() {
-			return buttonBoard.getRawButton(5);
+			return buttonBoard2.getRawButton(10);
 		}
 
 		public boolean getIntakeState() {
-			return buttonBoard.getRawButton(1);
+			return buttonBoard2.getRawButton(8);
 		}
 
 		public boolean getStoreState() {
-			return buttonBoard.getRawButton(2);
+			return buttonBoard2.getRawButton(5);
 		}
 
 		public boolean getExchangeState() {
-			return buttonBoard.getRawButton(3);
+			return buttonBoard2.getRawButton(7);
 		}
 
 		public boolean getSwitchState() {
-			return buttonBoard.getRawButton(8);
+			return buttonBoard2.getRawButton(4);
 		}
 
 		public boolean getScaleLowState() {
-			return buttonBoard.getRawButton(9);
+			return buttonBoard2.getRawButton(3);
 		}
 
 		public boolean getScaleMidState() {
-			return buttonBoard.getRawButton(10);
+			return buttonBoard2.getRawButton(2);
 		}
 
 		public boolean getScaleHighState() {
-			return buttonBoard.getRawButton(11);
+			return buttonBoard2.getRawButton(1);
 		}
 
 		public boolean deployWithWheelsAndOpen() {

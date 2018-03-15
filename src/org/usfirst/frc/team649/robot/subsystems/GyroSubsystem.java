@@ -15,13 +15,11 @@ public class GyroSubsystem extends PIDSubsystem {
     // here. Call these from Commands.
 	
 	public static class GyroPIDConstants {
-    	public static final double GYRO_ABS_TOLERANCE = 2;
-//    	public static double k_p = .17;
-//    	public static double k_i = 0;  //0.0065
-//    	public static double k_d = .32;
-     	public static double k_p = 1;
-    	public static double k_i = 0;  //0.0065
-    	public static double k_d = 0.5;
+		public static double k_p = 0.9;//0.02;
+		public static double k_i = 0;
+		public static double k_d = 0.67;//0.042;
+		
+		public static final double GYRO_ABS_TOLERANCE = 2;
     }
 	
 	public double GyroPIDOutput;
