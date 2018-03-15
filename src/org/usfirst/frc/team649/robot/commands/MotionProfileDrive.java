@@ -20,6 +20,7 @@ public class MotionProfileDrive extends Command {
 
     // Called just before this Command runs the first time
     protected void initialize() {
+    	Robot.isMPRunning = true;
     	SmartDashboard.putBoolean("isMPFin", false);
     }
 
@@ -46,6 +47,7 @@ public class MotionProfileDrive extends Command {
     // Called once after isFinished returns true
     protected void end() {
     	SmartDashboard.putBoolean("isMPFin", true);
+    	Robot.isMPRunning = false;
 
     	Robot.drive.rawDrive(0, 0);
     }

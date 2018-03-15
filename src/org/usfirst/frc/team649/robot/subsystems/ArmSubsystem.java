@@ -55,12 +55,12 @@ public class ArmSubsystem extends Subsystem {
 		public static final int SWITCH_REAR = -15;
 	}
 	public static class ArmEncoderConstants{
-		public static final int INTAKE_FRONT = 0;
-		public static final int INTAKE_REAR = -4250;
+		public static final int INTAKE_FRONT = 5;
+		public static final int INTAKE_REAR = -4200;
 		public static final int SWITCH_FRONT = -1450;
 		public static final int SWITCH_REAR = -2800;
-		public static final int EXCHANGE_FRONT = 0;
-		public static final int EXCHANGE_REAR = -4250;
+		public static final int EXCHANGE_FRONT = 5;
+		public static final int EXCHANGE_REAR = -4200;
 		public static final int MID_DROP_FRONT = -500;
 		public static final int MID_DROP_REAR = -3750;
 		public static final int HIGH_DROP_FRONT = -800;
@@ -94,11 +94,11 @@ public class ArmSubsystem extends Subsystem {
 		lastVal = 0;
 		time = new Timer();
 		time.start();
-		bottomMotor.configMotionAcceleration(900, Robot.timeoutMs);
+		bottomMotor.configMotionAcceleration(600, Robot.timeoutMs);
 		bottomMotor.configMotionCruiseVelocity(700, Robot.timeoutMs);
 		bottomMotor.config_kP(0, 1, Robot.timeoutMs);
 		bottomMotor.config_kI(0, 0, Robot.timeoutMs);
-		bottomMotor.config_kD(0, 0.06, Robot.timeoutMs);
+		bottomMotor.config_kD(0, 0.1, Robot.timeoutMs);
 		bottomMotor.config_kF(0, 1.25, Robot.timeoutMs);
 		bottomMotor.selectProfileSlot(0, 0);
 		bottomMotor.setNeutralMode(NeutralMode.Brake);
