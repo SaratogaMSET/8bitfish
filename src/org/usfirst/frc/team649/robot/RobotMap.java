@@ -3,6 +3,7 @@ package org.usfirst.frc.team649.robot;
 //constants for ports other constants will be placed in respective subsystems
 public class RobotMap {
 	public static final int BUTTON_BOARD = 4;
+	public static final int BUTTON_BOARD_2 = 3;
 	public static final int OPERATOR_JOYSTICK = 2;
 	public static final int DRIVE_JOYSTICK_HORIZONTAL = 1;
 	public static final int DRIVE_JOYSTICK_VERTICAL = 0;
