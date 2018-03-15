@@ -16,6 +16,7 @@ public class IntakeSubsystem extends Subsystem {
 
     public TalonSRX leftIntake, rightIntake;
     public DoubleSolenoid intakeSol;
+    public boolean isIntakeRunning;
 
     public void initDefaultCommand() {
         // Set the default command for a subsystem here.
@@ -33,10 +34,15 @@ public class IntakeSubsystem extends Subsystem {
     	rightIntake.configNominalOutputReverse(0, Robot.timeoutMs);
     	rightIntake.configPeakOutputForward(1, Robot.timeoutMs);
     	rightIntake.configPeakOutputReverse(-1, Robot.timeoutMs);
+    	isIntakeRunning = false;
     }
     public void setIntakeMotors(double right, double left){
     	leftIntake.set(ControlMode.PercentOutput, left);
     	rightIntake.set(ControlMode.PercentOutput, right);
+    	if(right >= 0 && left >=0 && left<=0 && right<=0)
+    	{
+    		isIntakeRunning = true;
+    	}
     }
     public void setIntakePiston(boolean isOut){
 		intakeSol.set(isOut ? DoubleSolenoid.Value.kForward : DoubleSolenoid.Value.kReverse);
@@ -50,6 +56,10 @@ public class IntakeSubsystem extends Subsystem {
         	setIntakeMotors(-powerLeft,-powerRight);
     	}
     	
+    }
+    public boolean isRunning()
+    {
+    	return isIntakeRunning;
     }
     
 }

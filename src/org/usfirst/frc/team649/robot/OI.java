@@ -16,7 +16,7 @@ public class OI {
 	public Joystick operatorJoystick;
 	
 	public Driver driver;
-	public Operator operator;
+	public Operator operator; 
 	
 	public boolean oldValue1;
 	public boolean oldValue2;
@@ -231,16 +231,64 @@ public class OI {
 			return buttonBoard.getRawButton(14);
 		}
 		public boolean switchToCamera1() {
-			return buttonBoard.getRawButton(10);
+			if(RobotMap.Camera.practiceBot)
+			{
+			return operatorJoystick.getRawButton(10);
+			}
+			else {
+				return false;
+			}
+			
 		}
 
 		public boolean switchToCamera2() {
-			return buttonBoard.getRawButton(11);
+			if(RobotMap.Camera.practiceBot){
+				return operatorJoystick.getRawButton(11);
+			}
+			else {
+				return false;
+			}
+			
+		}
+//		public boolean switchToCamera3() {
+//			if(RobotMap.Camera.practiceBot) {
+//				return operatorJoystick.getRawButton(12);
+//			}
+//			else {
+//				return false;
+//			}
+//		}
+		public boolean switchToCamera4() {
+			if(RobotMap.Camera.practiceBot == false)
+			{
+				return buttonBoard.getRawButton(10);
+
+			}
+			else {
+				return false;
+			}
 		}
 
-		public boolean switchToCamera3() {
-			return buttonBoard.getRawButton(12);
+		public boolean switchToCamera5() {
+			if(RobotMap.Camera.practiceBot == false)
+			{
+				return buttonBoard.getRawButton(11);
+
+			}
+			else {
+				return false;
+			}
 		}
+//		public boolean switchToCamera6() {
+//			if(RobotMap.Camera.practiceBot == false)
+//			{
+//				return buttonBoard.getRawButton(12);
+//
+//			}
+//			else {
+//				return false;
+//			}
+//		}
 		public double getOperatorY() {
 			if(Math.abs(operatorJoystick.getY()) >= 0.1){
 				return operatorJoystick.getY();

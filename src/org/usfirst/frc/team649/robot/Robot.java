@@ -13,38 +13,30 @@ import org.usfirst.frc.team649.robot.CommandGroups.DeployWithWheelsAndIntake;
 import org.usfirst.frc.team649.robot.CommandGroups.FlipRaisedArm;
 import org.usfirst.frc.team649.robot.CommandGroups.IntakeWithWheelsAndClose;
 import org.usfirst.frc.team649.robot.CommandGroups.RightScaleClose;
-import org.usfirst.frc.team649.robot.commands.AngleTalonPID;
 import org.usfirst.frc.team649.robot.commands.ArmMotionProfile;
-import org.usfirst.frc.team649.robot.commands.DistanceTalonPID;
-import org.usfirst.frc.team649.robot.commands.DrivetrainPIDCommand;
-import org.usfirst.frc.team649.robot.commands.GyroPID;
-import org.usfirst.frc.team649.robot.commands.GyroStraightPID;
 import org.usfirst.frc.team649.robot.commands.LiftMotionProfile;
 import org.usfirst.frc.team649.robot.commands.RunIntakeWheels;
 import org.usfirst.frc.team649.robot.commands.SetCompressorCommand;
 import org.usfirst.frc.team649.robot.commands.SetIntakePistons;
-import org.usfirst.frc.team649.robot.commands.SimpleAuto;
 import org.usfirst.frc.team649.robot.subsystems.ArmSubsystem;
 import org.usfirst.frc.team649.robot.subsystems.DrivetrainSubsystem;
 import org.usfirst.frc.team649.robot.subsystems.GyroSubsystem;
 import org.usfirst.frc.team649.robot.subsystems.IntakeSubsystem;
 import org.usfirst.frc.team649.robot.subsystems.LiftSubsystem;
 import org.usfirst.frc.team649.robot.util.Lidar;
-
-import com.ctre.phoenix.motorcontrol.ControlMode;
+import org.usfirst.frc.team649.robot.util.CameraServer;
 
 import edu.wpi.cscore.AxisCamera;
 import edu.wpi.cscore.CvSink;
 import edu.wpi.cscore.CvSource;
-import edu.wpi.first.wpilibj.CameraServer;
 import edu.wpi.first.wpilibj.Compressor;
+import edu.wpi.first.wpilibj.DigitalInput;
 import edu.wpi.first.wpilibj.DoubleSolenoid;
 import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.I2C;
 import edu.wpi.first.wpilibj.TimedRobot;
 import edu.wpi.first.wpilibj.Timer;
 import edu.wpi.first.wpilibj.command.Scheduler;
-import edu.wpi.first.wpilibj.hal.PDPJNI;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import jaci.pathfinder.Pathfinder;
 import jaci.pathfinder.Trajectory;
@@ -150,8 +142,11 @@ public class Robot extends TimedRobot {
 
 	public static boolean useLogging;
 	public static boolean enteredManualMode;
-
+	public boolean hasEndgameStarted;
+	public String Alliance = "Blue";
+	public static I2C arduino;
 	@Override
+
 	public void robotInit() {
 		useLogging = true;
 		drivePIDRunning = false;
@@ -186,7 +181,6 @@ public class Robot extends TimedRobot {
 		driveVel = 0;
 		prevDriveVel = 0;
 		liftState = 2;
-		ManualMode = true;
 		armState = ArmSubsystem.ArmStateConstants.INTAKE_FRONT;
 		rightDTMaxVel = 0;
 		leftDTMaxVel = 0;
@@ -209,6 +203,14 @@ public class Robot extends TimedRobot {
 		} catch (IOException e) {
 			e.printStackTrace();
 		}
+		if (Alliance.equals("Blue")) {
+			UpdateLEDs("a:b");
+		} else if (Alliance.equals("Red")) {
+			UpdateLEDs("a:r");
+		} else {
+			UpdateLEDs("a:w");
+		}
+		arduino = new I2C(I2C.Port.kMXP, 9);
 
 		// Waypoint[] pointsRightScaleSingle = new Waypoint[] {
 		// new Waypoint(-12.6,-2.9,0),
@@ -259,6 +261,14 @@ public class Robot extends TimedRobot {
 				Trajectory.Config.SAMPLES_HIGH, 0.02, 4.5, 3.3, 12);
 		trajectoryLeftScaleSingle = Pathfinder.generate(pointsLeftScaleSingle, configLeftScaleSingle);
 		modifierLeftScaleSingle = new TankModifier(trajectoryLeftScaleSingle).modify(0.66);
+
+		if (Alliance == "Blue") {
+			UpdateLEDs("a:b");
+		} else if (Alliance == "Red") {
+			UpdateLEDs("a:r");
+		} else {
+			UpdateLEDs("a:w");
+		}
 	}
 
 	@Override
@@ -313,6 +323,7 @@ public class Robot extends TimedRobot {
 
 	}
 
+	@SuppressWarnings("unused")
 	@Override
 	public void teleopInit() {
 		armVelMax = 0;
@@ -355,53 +366,76 @@ public class Robot extends TimedRobot {
 		arm.bottomMotor.setSelectedSensorPosition(0, 0, 20);
 		drive.changeBrakeCoast(false);
 		intake.setIntakePiston(false);
-		// new Thread(() -> {
-		//
-		// AxisCamera camera1 =
-		// CameraServer.getInstance().addAxisCamera(RobotMap.Camera.axisName,
-		// RobotMap.Camera.axisPort);
-		// camera1.setResolution(RobotMap.Camera.axisResWidth,
-		// RobotMap.Camera.axisResWidth);
-		// camera1.setFPS(RobotMap.Camera.axisFPS);
-		// AxisCamera camera2 =
-		// CameraServer.getInstance().addAxisCamera(RobotMap.Camera.axis2Name,RobotMap.Camera.axis2Port);
-		// camera2.setResolution(RobotMap.Camera.axis2ResWidth,
-		// RobotMap.Camera.axis2ResHeight);
-		// camera2.setFPS(RobotMap.Camera.axis2FPS);
-		// AxisCamera camera3 =
-		// CameraServer.getInstance().addAxisCamera(RobotMap.Camera.axis3Name,RobotMap.Camera.axis3Port);
-		// camera3.setResolution(RobotMap.Camera.axis3ResWidth,
-		// RobotMap.Camera.axis3ResHeight);
-		// camera3.setFPS(RobotMap.Camera.axis3FPS);
-		//
-		// CvSink cvSink =
-		// CameraServer.getInstance().getVideo(RobotMap.Camera.axisName);
-		// CvSource outputStream = CameraServer.getInstance().putVideo("Switcher", 320,
-		// 480);
-		//
-		// Mat frame = new Mat();
-		//
-		// while (!Thread.interrupted()) {
-		//
-		// if (oi.operator.switchToCamera1()) {
-		// System.out.println("Switching to camera 1");
-		// cvSink = CameraServer.getInstance().getVideo(RobotMap.Camera.axisName);
-		// } else if (oi.operator.switchToCamera2()) {
-		// System.out.println("Switching to camera 2");
-		// cvSink = CameraServer.getInstance().getVideo(RobotMap.Camera.axis2Name);
-		// } else if (oi.operator.switchToCamera3()) {
-		// System.out.println("Switching to camera 3");
-		// cvSink = CameraServer.getInstance().getVideo("whiteAxisCamera");
-		// cvSink = CameraServer.getInstance().getVideo(RobotMap.Camera.axis3Name);
-		// }
-		// if (cvSink.grabFrame(frame) == 0) {
-		// continue;
-		// }
-		//
-		// outputStream.putFrame(frame);
-		//
-		// }
-		// }).start();
+		if (RobotMap.Camera.practiceBot == true) {
+			new Thread(() -> {
+
+				AxisCamera camera1 = CameraServer.getInstance().addAxisCamera(RobotMap.Camera.axisName,
+						RobotMap.Camera.axisPort);
+				camera1.setResolution(RobotMap.Camera.axisResWidth, RobotMap.Camera.axisResWidth);
+				camera1.setFPS(RobotMap.Camera.axisFPS);
+				AxisCamera camera2 = CameraServer.getInstance().addAxisCamera(RobotMap.Camera.axis2Name,
+						RobotMap.Camera.axis2Port);
+				camera2.setResolution(RobotMap.Camera.axis2ResWidth, RobotMap.Camera.axis2ResHeight);
+				camera2.setFPS(RobotMap.Camera.axis2FPS);
+
+				CvSink cvSink = CameraServer.getInstance().getVideo(RobotMap.Camera.axisName);
+				CvSource outputStream = CameraServer.getInstance().putVideo("SwitcherPracBot", 320, 480);
+
+				Mat frame = new Mat();
+
+				while (!Thread.interrupted()) {
+
+					if (oi.operator.switchToCamera1()) {
+						System.out.println("Switching to camera 1");
+						cvSink = CameraServer.getInstance().getVideo(RobotMap.Camera.axisName);
+					} else if (oi.operator.switchToCamera2()) {
+						System.out.println("Switching to camera 2");
+						cvSink = CameraServer.getInstance().getVideo(RobotMap.Camera.axis2Name);
+					}
+					if (cvSink.grabFrame(frame) == 0) {
+						continue;
+					}
+
+					outputStream.putFrame(frame);
+
+				}
+			}).start();
+		}
+		else if(RobotMap.Camera.practiceBot == false)
+		{
+			new Thread(() -> {
+
+				AxisCamera camera4 = CameraServer.getInstance().addAxisCamera(RobotMap.Camera.axis4Name,
+						RobotMap.Camera.axis4Port);
+				camera4.setResolution(RobotMap.Camera.axis4ResWidth, RobotMap.Camera.axis4ResWidth);
+				camera4.setFPS(RobotMap.Camera.axis4FPS);
+				AxisCamera camera5 = CameraServer.getInstance().addAxisCamera(RobotMap.Camera.axis5Name,
+						RobotMap.Camera.axis5Port);
+				camera5.setResolution(RobotMap.Camera.axis5ResWidth, RobotMap.Camera.axis5ResHeight);
+				camera5.setFPS(RobotMap.Camera.axis5FPS);
+
+				CvSink cvSink = CameraServer.getInstance().getVideo(RobotMap.Camera.axis4Name);
+				CvSource outputStream = CameraServer.getInstance().putVideo("SwitcherFinalBot", 320, 480);
+
+				Mat frame = new Mat();
+
+				while (!Thread.interrupted()) {
+
+					if (oi.operator.switchToCamera4()) {
+						System.out.println("Switching to camera 4");
+						cvSink = CameraServer.getInstance().getVideo(RobotMap.Camera.axis4Name);
+					} else if (oi.operator.switchToCamera5()) {
+						System.out.println("Switching to camera 5");
+						cvSink = CameraServer.getInstance().getVideo(RobotMap.Camera.axis5Name);
+					}
+					if (cvSink.grabFrame(frame) == 0) {
+						continue;
+					}
+					outputStream.putFrame(frame);
+
+				}
+			}).start();
+		}
 
 	}
 
@@ -842,7 +876,6 @@ public class Robot extends TimedRobot {
 				liftState = LiftSubsystem.LiftStateConstants.HEADING_MID_SCALE_STATE;
 				new LiftMotionProfile(LiftSubsystem.LiftEncoderConstants.MID_SCALE_STATE, liftState).start();
 				logNewEvent("Lift in Mid Scale State");
-				
 
 			}
 			if (armState != ArmSubsystem.ArmStateConstants.HEADING_MID_DROP_FRONT
@@ -896,7 +929,7 @@ public class Robot extends TimedRobot {
 				}
 				customArmPos = arm.getArmRaw() + ArmSubsystem.ArmEncoderConstants.ADJ;
 				new ArmMotionProfile(customArmPos, armState).start();
-				logNewEvent("Arm Moved Slightly up by "+arm.getArmRaw());
+				logNewEvent("Arm Moved Slightly up by " + arm.getArmRaw());
 
 			}
 		} else if (oi.operator.getArmDownSmall()) {
@@ -910,7 +943,7 @@ public class Robot extends TimedRobot {
 				}
 				customArmPos = arm.getArmRaw() - ArmSubsystem.ArmEncoderConstants.ADJ;
 				new ArmMotionProfile(customArmPos, armState).start();
-				logNewEvent("Arm Moved Slightly Down by "+arm.getArmRaw());
+				logNewEvent("Arm Moved Slightly Down by " + arm.getArmRaw());
 			}
 		} else if (oi.operator.getLiftUpSmall()) {
 			if (liftState != LiftSubsystem.LiftStateConstants.HEADING_CUSTOM_STATE_UP && lift.getRawLift()
@@ -918,7 +951,7 @@ public class Robot extends TimedRobot {
 				liftState = LiftSubsystem.LiftStateConstants.HEADING_CUSTOM_STATE_UP;
 				customLiftPos = (int) lift.getRawLift() + LiftSubsystem.LiftEncoderConstants.ADJ_DIST;
 				new LiftMotionProfile(customLiftPos, liftState).start();
-				logNewEvent("Lift Moved Slightly Up by "+lift.getRawLift());
+				logNewEvent("Lift Moved Slightly Up by " + lift.getRawLift());
 			}
 
 		} else if (oi.operator.getLiftDownSmall()) {
@@ -927,7 +960,7 @@ public class Robot extends TimedRobot {
 				liftState = LiftSubsystem.LiftStateConstants.HEADING_CUSTOM_STATE_DOWN;
 				customLiftPos = (int) lift.getRawLift() - LiftSubsystem.LiftEncoderConstants.ADJ_DIST;
 				new LiftMotionProfile(customLiftPos, liftState).start();
-				logNewEvent("Lift Moved Slightly Down by "+lift.getRawLift());
+				logNewEvent("Lift Moved Slightly Down by " + lift.getRawLift());
 			}
 		} else if (oi.operator.getExchangeState()) {
 			if (liftState != LiftSubsystem.LiftStateConstants.HEADING_INTAKE_EXCHANGE_STORE_STATE
@@ -1021,15 +1054,15 @@ public class Robot extends TimedRobot {
 								|| armState == ArmSubsystem.ArmStateConstants.HEADING_INTAKE_REAR) {
 							armState = ArmSubsystem.ArmStateConstants.HEADING_INTAKE_FRONT;
 							new ArmMotionProfile(ArmSubsystem.ArmEncoderConstants.INTAKE_FRONT, armState).start();
-							logNewEvent("Arm Flipped from Intake Rear State to Intake Front State");						}
+							logNewEvent("Arm Flipped from Intake Rear State to Intake Front State");
+						}
 					}
 				}
 			}
 
 			// }
 		} else if (oi.operator.isManual()) {
-			if(enteredManualMode == false)
-			{
+			if (enteredManualMode == false) {
 				logNewEvent("MANUAL MODE ENTERED, LOGGING STOPPED!");
 				enteredManualMode = true;
 			}
@@ -1119,7 +1152,6 @@ public class Robot extends TimedRobot {
 			SmartDashboard.putString("intake", "forw");
 		} else if (intake.intakeSol.get().equals(DoubleSolenoid.Value.kReverse)) {
 			SmartDashboard.putString("intake", "rev");
-
 		}
 		if (lift.isSecondStageAtBottom()) {
 			lidarOffset = lidar.getSample();
@@ -1131,6 +1163,26 @@ public class Robot extends TimedRobot {
 		lidarCount++;
 		SmartDashboard.putNumber("adj Lidar", lidarValue);
 		SmartDashboard.putBoolean("Can Flip", lift.canFlip());
+		if (DriverStation.getInstance().getMatchTime() <= 30.0 && DriverStation.getInstance().getMatchTime() >= 29.0) {
+			hasEndgameStarted = true;
+			if (hasEndgameStarted) {
+				UpdateLEDs("e:s");
+				hasEndgameStarted = false;
+			}
+		}
+		if (intake.isRunning() == true) {
+			if (arm.getInfraredSensor() == true) {
+				UpdateLEDs("i:ss");
+			} else if (arm.getInfraredSensor() == false) {
+				UpdateLEDs("i:sf");
+			}
+		} else if (intake.isRunning() == false) {
+			if (arm.getInfraredSensor() == true) {
+				UpdateLEDs("i:fs");
+			} else if (arm.getInfraredSensor() == false) {
+				UpdateLEDs("i:ff");
+			}
+		}
 	}
 
 	private void checkAutoShiftToggle() {
@@ -1233,7 +1285,11 @@ public class Robot extends TimedRobot {
 	}
 
 	public void logNewEvent(String eventToLog) {
-		logger.info(returnDifferenceInMatchTime()+" "+eventToLog);
+		if (useLogging == true) {
+			logger.info(returnDifferenceInMatchTime() + " " + eventToLog);
+		} else if (useLogging == false) {
+			logger.info("turned off for match");
+		}
 	}
 
 	public String returnDifferenceInMatchTime() {
@@ -1249,4 +1305,13 @@ public class Robot extends TimedRobot {
 		return conversionTime;
 	}
 
+	public static void UpdateLEDs(String WriteString) {
+
+		char[] CharArray = WriteString.toCharArray();
+		byte[] RobotStatus = new byte[CharArray.length];
+		for (int i = 0; i < CharArray.length; i++) {
+			RobotStatus[i] = (byte) CharArray[i];
+		}
+		arduino.writeBulk(RobotStatus, RobotStatus.length);
+	}
 }
