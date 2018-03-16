@@ -70,7 +70,7 @@ public class GyroPID extends Command {
     		gyroVal = Robot.gyro.getGyroAngle();
     		actuallyFinished = "true";
     	}
-    	if (timeout.get() > 1) {
+    	if (timeout.get() > 3) {
     		isFinished = true;
     		isTimeout = true;
     	}

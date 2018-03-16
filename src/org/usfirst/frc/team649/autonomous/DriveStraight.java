@@ -12,6 +12,6 @@ import edu.wpi.first.wpilibj.command.CommandGroup;
 public class DriveStraight extends CommandGroup {
 
     public DriveStraight() {
-    	addSequential(new DrivetrainPIDCommand(30)); // Drive Straight
+    	addSequential(new DrivetrainPIDCommand(100)); // Drive Straight
     }
 }

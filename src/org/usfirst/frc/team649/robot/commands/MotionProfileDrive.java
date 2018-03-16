@@ -33,7 +33,13 @@ public class MotionProfileDrive extends Command {
 		double desired_heading = Pathfinder.r2d(Robot.left.getHeading());  
 		double angleDifference = Pathfinder.boundHalfDegrees(desired_heading - gyro_heading);
 		//1.1 for middle left
-		double turn = 0.8 * (-1.0/80.0) * angleDifference;
+		double turn;
+		if(Robot.shouldSwitchTurnRatio){
+			turn = 1.1 * (-1.0/80.0) * angleDifference;
+
+		}else{
+			turn = 0.8 * (-1.0/80.0) * angleDifference;
+		}
 		SmartDashboard.putNumber("turn", turn);
 		Robot.drive.motors[0].set(ControlMode.PercentOutput, l+turn);
 		Robot.drive.motors[2].set(ControlMode.PercentOutput, r-turn);

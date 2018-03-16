@@ -20,9 +20,9 @@ import edu.wpi.first.wpilibj.command.CommandGroup;
 /**
  *
  */
-public class RightScaleClose extends CommandGroup {
+public class RightScaleDoubleScaleMP extends CommandGroup {
 
-    public RightScaleClose() {
+    public RightScaleDoubleScaleMP() {
     	addSequential(new ChangeRobotLiftState(9));
     	addSequential(new ChangeRobotArmState(ArmSubsystem.ArmStateConstants.HEADING_HIGH_DROP_FRONT));
     	addParallel(new ArmMotionProfile(ArmSubsystem.ArmEncoderConstants.HIGH_DROP_FRONT,Robot.armState));
@@ -42,15 +42,16 @@ public class RightScaleClose extends CommandGroup {
     	addSequential(new ArmMotionProfile(ArmSubsystem.ArmEncoderConstants.INTAKE_REAR,Robot.armState));
     	addSequential(new SetIntakePistons(true,false));
     	addSequential(new DrivetrainPIDCommand(-20));
-    	addParallel(new SetIntakePistons(false,false));
     	addSequential(new RunIntakeWheels(0.6));
+    	addSequential(new SetIntakePistons(false,false));
     	addSequential(new ChangeRobotArmState(ArmSubsystem.ArmStateConstants.HEADING_INTAKE_FRONT));
     	addSequential(new ArmMotionProfile(ArmSubsystem.ArmEncoderConstants.INTAKE_FRONT,Robot.armState));
     	addParallel(new ChangeRobotLiftState(9));
-    	addParallel(new LiftMotionProfile(LiftSubsystem.LiftEncoderConstants.HIGH_SCALE_STATE,Robot.liftState,1.25));
     	addParallel(new ChangeRobotArmState(ArmSubsystem.ArmStateConstants.HEADING_HIGH_DROP_FRONT));
     	addParallel(new ArmMotionProfile(ArmSubsystem.ArmEncoderConstants.HIGH_DROP_FRONT,Robot.armState));
+    	addParallel(new LiftMotionProfile(LiftSubsystem.LiftEncoderConstants.HIGH_SCALE_STATE,Robot.liftState,0));
     	addSequential(new DrivetrainPIDCommand(35));
+
     	addSequential(new RunIntakeForTime(1,false));
     	////    	addSequential(new GyroZeroDegree());
     }

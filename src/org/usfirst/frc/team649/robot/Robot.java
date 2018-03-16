@@ -2,42 +2,37 @@
 package org.usfirst.frc.team649.robot;
 
 import java.io.File;
-import java.io.IOException;
 import java.util.logging.FileHandler;
 import java.util.logging.Logger;
-import java.util.logging.SimpleFormatter;
 
-import org.opencv.core.Mat;
 import org.usfirst.frc.team649.autonomous.AutoTest;
 import org.usfirst.frc.team649.autonomous.CenterSwitchLeft;
 import org.usfirst.frc.team649.autonomous.CenterSwitchRight;
+import org.usfirst.frc.team649.autonomous.DriveStraight;
+import org.usfirst.frc.team649.autonomous.LeftFarScale;
 import org.usfirst.frc.team649.autonomous.LeftScale;
+import org.usfirst.frc.team649.autonomous.LeftSwitch;
+import org.usfirst.frc.team649.autonomous.LeftSwitchAround;
 import org.usfirst.frc.team649.autonomous.RightFarScale;
 import org.usfirst.frc.team649.autonomous.RightScale;
 import org.usfirst.frc.team649.autonomous.RightSwitch;
+import org.usfirst.frc.team649.autonomous.RightSwitchAround;
 import org.usfirst.frc.team649.autonomous.autoMaster;
-import org.usfirst.frc.team649.robot.RobotMap.AutoSwitches;
-import org.usfirst.frc.team649.robot.CommandGroups.DeployWithWheelsAndIntake;
 import org.usfirst.frc.team649.robot.CommandGroups.FlipRaisedArm;
 import org.usfirst.frc.team649.robot.CommandGroups.IntakeWithWheelsAndClose;
-import org.usfirst.frc.team649.robot.CommandGroups.RightScaleClose;
+import org.usfirst.frc.team649.robot.CommandGroups.LeftMPSwitch;
+import org.usfirst.frc.team649.robot.CommandGroups.LeftScaleDoubleScaleMP;
+import org.usfirst.frc.team649.robot.CommandGroups.LeftScaleSWSCMP;
+import org.usfirst.frc.team649.robot.CommandGroups.LeftScaleSingleMP;
+import org.usfirst.frc.team649.robot.CommandGroups.RighScaleSWSCMP;
+import org.usfirst.frc.team649.robot.CommandGroups.RightMPSwitch;
+import org.usfirst.frc.team649.robot.CommandGroups.RightScaleDoubleScaleMP;
+import org.usfirst.frc.team649.robot.CommandGroups.RightScaleSingleMP;
 import org.usfirst.frc.team649.robot.commands.ArmMotionProfile;
-import org.usfirst.frc.team649.robot.commands.Diagnostic;
-import org.usfirst.frc.team649.robot.commands.ChangeRobotLiftState;
-import org.usfirst.frc.team649.robot.commands.DistanceTalonPID;
-import org.usfirst.frc.team649.robot.commands.DrivetrainMotionProfile;
-import org.usfirst.frc.team649.robot.commands.DrivetrainMotionProfileIn;
-import org.usfirst.frc.team649.robot.commands.DrivetrainPIDCommand;
-import org.usfirst.frc.team649.robot.commands.GyroPID;
-import org.usfirst.frc.team649.robot.commands.GyroStraightPID;
-
 import org.usfirst.frc.team649.robot.commands.LiftMotionProfile;
 import org.usfirst.frc.team649.robot.commands.RunIntakeWheels;
-import org.usfirst.frc.team649.robot.commands.SetCompressorCommand;
 import org.usfirst.frc.team649.robot.commands.SetIntakePistons;
-import org.usfirst.frc.team649.robot.commands.SimpleAuto;
 import org.usfirst.frc.team649.robot.commands.ZeroArmRoutine;
-
 import org.usfirst.frc.team649.robot.subsystems.ArmSubsystem;
 import org.usfirst.frc.team649.robot.subsystems.AutoSelector;
 import org.usfirst.frc.team649.robot.subsystems.DrivetrainSubsystem;
@@ -45,21 +40,11 @@ import org.usfirst.frc.team649.robot.subsystems.GyroSubsystem;
 import org.usfirst.frc.team649.robot.subsystems.IntakeSubsystem;
 import org.usfirst.frc.team649.robot.subsystems.LiftSubsystem;
 import org.usfirst.frc.team649.robot.util.Lidar;
-import org.usfirst.frc.team649.test.AutoTestCommand;
-import org.usfirst.frc.team649.test.Square;
 
-import com.ctre.phoenix.motorcontrol.ControlMode;
 import com.ctre.phoenix.motorcontrol.NeutralMode;
 
-import org.usfirst.frc.team649.robot.util.CameraServer;
-
-import edu.wpi.cscore.AxisCamera;
-import edu.wpi.cscore.CvSink;
-import edu.wpi.cscore.CvSource;
 import edu.wpi.first.wpilibj.Compressor;
-
-import edu.wpi.first.wpilibj.DigitalInput;
-
+import edu.wpi.first.wpilibj.DigitalOutput;
 import edu.wpi.first.wpilibj.DoubleSolenoid;
 import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.I2C;
@@ -193,6 +178,12 @@ public class Robot extends TimedRobot {
 	public boolean hasEndgameStarted;
 	public String Alliance = "Red";
 	public static I2C arduino;
+	DigitalOutput dio = new DigitalOutput(3);
+	public static boolean hasFMS;
+	public static boolean shouldSwitchTurnRatio;
+	
+	public static int pos = 0;	//left mid right forward
+	
 
 	@Override
 
@@ -249,13 +240,7 @@ public class Robot extends TimedRobot {
 		isMPRunning = false;
 //		arduino = new I2C(I2C.Port.kOnboard, 0x2);
 
-		Waypoint[] pointsRightScaleSingle = new Waypoint[] { new Waypoint(-12.9, -2.9, 0), new Waypoint(-7, -2.9, 0),
-				new Waypoint(-4, -2.9, Pathfinder.d2r(45)), new Waypoint(-2.05, 0, 0), new Waypoint(0, 0, 0) };
-
-		configRightScaleSingle = new Trajectory.Config(Trajectory.FitMethod.HERMITE_CUBIC,
-				Trajectory.Config.SAMPLES_HIGH, 0.02, 4.5, 3.3, 12);
-		trajectoryRightScaleSingle = Pathfinder.generate(pointsRightScaleSingle, configRightScaleSingle);
-		modifierRightScaleSingle = new TankModifier(trajectoryRightScaleSingle).modify(0.66);
+		
 		//
 		// Waypoint[] pointsRightScaleSingle2 = new Waypoint[] {
 		// new Waypoint(-12.9,-2.9,0),
@@ -336,14 +321,14 @@ public class Robot extends TimedRobot {
 //			} catch (IOException e) {
 //				e.printStackTrace();
 //			}
-//			if (Alliance.equals("Blue")) {
-//				UpdateLEDs("a:b");
-//			} else if (Alliance.equals("Red")) {
-//				UpdateLEDs("a:r");
-//			} else {
-//				UpdateLEDs("a:w");
-//			}
-//		arduino = new I2C(I2C.Port.kMXP, 0xA);
+			if (Alliance.equals("Blue")) {
+				dio.pulse(1);
+			} else if (Alliance.equals("Red")) {
+				dio.pulse(2);
+			} else {
+				dio.pulse(10);
+			}
+		arduino = new I2C(I2C.Port.kMXP, 10);
 
 		// Waypoint[] pointsRightScaleSingle = new Waypoint[] {
 		// new Waypoint(-12.6,-2.9,0),
@@ -388,23 +373,54 @@ public class Robot extends TimedRobot {
 		// modifierMiddleLeftSingle = new
 		// TankModifier(trajectoryMiddleLeftSingle).modify(0.66);
 		//
-		Waypoint[] pointsLeftScaleSingle = new Waypoint[] { new Waypoint(-9.2, -9.5, 0),
-				new Waypoint(-0.8, -9.5, Pathfinder.d2r(25)), new Waypoint(0, 0, 0),
-				// new Waypoint(0,0,0)
-		};
+		if(pos == 0){
+			Waypoint[] pointsLeftScaleSingle = new Waypoint[] {
+					new Waypoint(-12.9, 2.9, 0), 
+					new Waypoint(-7, 2.9, 0),
+					new Waypoint(-4, 2.9, Pathfinder.d2r(-45)), 
+					new Waypoint(-2.05, 0, 0), new Waypoint(0, 0, 0) 
+			};
 
-		configLeftScaleSingle = new Trajectory.Config(Trajectory.FitMethod.HERMITE_CUBIC,
-				Trajectory.Config.SAMPLES_HIGH, 0.02, 4.5, 3.3, 12);
-		trajectoryLeftScaleSingle = Pathfinder.generate(pointsLeftScaleSingle, configLeftScaleSingle);
-		modifierLeftScaleSingle = new TankModifier(trajectoryLeftScaleSingle).modify(0.66);
+			configLeftScaleSingle = new Trajectory.Config(Trajectory.FitMethod.HERMITE_CUBIC,Trajectory.Config.SAMPLES_HIGH, 0.02, 4.5, 3.3, 12);
+			trajectoryLeftScaleSingle = Pathfinder.generate(pointsLeftScaleSingle, configLeftScaleSingle);
+			modifierLeftScaleSingle = new TankModifier(trajectoryLeftScaleSingle).modify(0.66);
+		}else if(pos == 1){
+				Waypoint[] pointsMiddleRightSingle = new Waypoint[] {
+				 	new Waypoint(-5.6,0,0),
+				 	new Waypoint(0,0,0)
+				 };
+					
+					 configMiddleRightSingle = new
+					 Trajectory.Config(Trajectory.FitMethod.HERMITE_CUBIC,
+					 Trajectory.Config.SAMPLES_HIGH, 0.02, 4.5, 3.3, 12);
+					 trajectoryMiddleRightSingle =
+					 Pathfinder.generate(pointsMiddleRightSingle,
+					 configMiddleRightSingle);
+					 modifierMiddleRightSingle = new
+					 TankModifier(trajectoryMiddleRightSingle).modify(0.66);
+					 Waypoint[] pointsMiddleLeftSingle = new Waypoint[] {
+						new Waypoint(-1,-3.75,0),
+						new Waypoint(-.5,-3.75,Pathfinder.d2r(30)),
+					 	new Waypoint(0,0,0),
+					 };
+					 configMiddleLeftSingle = new
+					 Trajectory.Config(Trajectory.FitMethod.HERMITE_CUBIC,
+					 Trajectory.Config.SAMPLES_HIGH, 0.02, 3, 2.3, 12);
+					 trajectoryMiddleLeftSingle =
+					 Pathfinder.generate(pointsMiddleLeftSingle,
+					 configMiddleLeftSingle);
+					 modifierMiddleLeftSingle = new
+					 TankModifier(trajectoryMiddleLeftSingle).modify(0.66);
+		}else if(pos == 2){
+			Waypoint[] pointsRightScaleSingle = new Waypoint[] { new Waypoint(-12.9, -2.9, 0), new Waypoint(-7, -2.9, 0),
+					new Waypoint(-4, -2.9, Pathfinder.d2r(45)), new Waypoint(-2.05, 0, 0), new Waypoint(0, 0, 0) 
+			};
 
-//		if (Alliance == "Blue") {
-//			UpdateLEDs("a:b");
-//		} else if (Alliance == "Red") {
-//			UpdateLEDs("a:r");
-//		} else {
-//			UpdateLEDs("a:w");
-//		}
+			configRightScaleSingle = new Trajectory.Config(Trajectory.FitMethod.HERMITE_CUBIC,Trajectory.Config.SAMPLES_HIGH, 0.02, 4.5, 3.3, 12);
+			trajectoryRightScaleSingle = Pathfinder.generate(pointsRightScaleSingle, configRightScaleSingle);
+			modifierRightScaleSingle = new TankModifier(trajectoryRightScaleSingle).modify(0.66);
+		}
+
 	}
 
 	@Override
@@ -419,6 +435,8 @@ public class Robot extends TimedRobot {
 
 	@Override
 	public void autonomousInit() {
+		hasFMS = false;
+		shouldSwitchTurnRatio = false;
 //		automaster.autoDecider();
 //		arm.setArmBrake(true);
 //		drive.resetEncoders();
@@ -468,13 +486,8 @@ public class Robot extends TimedRobot {
 		// File myFileR = new
 		// File("C:\\Users\\MSET\\Downloads\\Motion_Profile_Generator-1.0.2\\Motion_Profile_Generator-1.0.2\\images\\Paht.csv_right_detailed.csv");
 		// Trajectory trajectoryR = Pathfinder.readFromCSV(myFileR);
-		left = new EncoderFollower(modifierRightScaleSingle.getLeftTrajectory());
-		right = new EncoderFollower(modifierRightScaleSingle.getRightTrajectory());
-		left.configureEncoder(0, 4096 * 2, 0.127);
-		right.configureEncoder(0, 4096 * 2, 0.127);
-		left.configurePIDVA(2, 0.0, 0, 1 / 4.5, 0);
-		right.configurePIDVA(2, 0.0, 0, 1 / 4.5, 0);
-		new RightScaleClose().start();
+		
+//		new RightScaleClose().start();
 //		new ChangeRobotLiftState(10).start();
 		// gyro.resetGyro();
 		// new DrivetrainPIDCommand(30.0).start();
@@ -514,14 +527,108 @@ public class Robot extends TimedRobot {
 	@Override
 	public void autonomousPeriodic() {
 		Scheduler.getInstance().run();
-		if (isAutonomous()) {
-			// logNewEvent(returnDifferenceInMatchTime() + " " + "I'm In
-			// Autonomous Mode!");
+		
+		String gameData = DriverStation.getInstance().getGameSpecificMessage();
+		if(gameData.length() > 0 && !hasFMS){
+			hasFMS = true;
+			
+			
+			if(pos == 0){ //left
+				if(gameData.charAt(0) == 'L' && gameData.charAt(1) == 'R'){
+					new LeftFarScale().start();
+					new LeftSwitch().start();
+				}else if(gameData.charAt(0) == 'R' && gameData.charAt(1) == 'L'){
+					left = new EncoderFollower(modifierLeftScaleSingle.getLeftTrajectory());
+					right = new EncoderFollower(modifierLeftScaleSingle.getRightTrajectory());
+					left.configureEncoder(0, 4096 * 2, 0.127);
+					right.configureEncoder(0, 4096 * 2, 0.127);
+					left.configurePIDVA(2, 0.0, 0, 1 / 4.5, 0);
+					right.configurePIDVA(2, 0.0, 0, 1 / 4.5, 0);
+					new LeftScaleDoubleScaleMP().start();
+//					new LeftScaleSingleMP().start();
+//					new LeftSwitchAround().start();
+//					new LeftScale().start();
+				}else if(gameData.charAt(0) == 'L' && gameData.charAt(1) == 'L'){
+					left = new EncoderFollower(modifierLeftScaleSingle.getLeftTrajectory());
+					right = new EncoderFollower(modifierLeftScaleSingle.getRightTrajectory());
+					left.configureEncoder(0, 4096 * 2, 0.127);
+					right.configureEncoder(0, 4096 * 2, 0.127);
+					left.configurePIDVA(2, 0.0, 0, 1 / 4.5, 0);
+					right.configurePIDVA(2, 0.0, 0, 1 / 4.5, 0);
+					new LeftScaleDoubleScaleMP().start();
+					new LeftScaleSingleMP().start();
+					new LeftScaleSWSCMP().start();
+					new LeftSwitch().start();
+					new LeftScale().start();
+
+				}else if(gameData.charAt(0) == 'R' && gameData.charAt(1) == 'R'){
+					new LeftFarScale().start();
+					new LeftSwitchAround().start();
+				}
+			}else if(pos == 1){ //mid
+				if(gameData.charAt(0) == 'L'){
+					shouldSwitchTurnRatio = true;
+					left = new EncoderFollower(modifierMiddleLeftSingle.getLeftTrajectory());
+					right = new EncoderFollower(modifierMiddleLeftSingle.getRightTrajectory());
+					left.configureEncoder(0, 4096 * 2, 0.127);
+					right.configureEncoder(0, 4096 * 2, 0.127);
+					left.configurePIDVA(2, 0.0, 0, 1 / 3, 0);
+					right.configurePIDVA(2, 0.0, 0, 1 / 3, 0);
+					new LeftMPSwitch().start();
+					new CenterSwitchLeft().start();
+				}else if(gameData.charAt(0) == 'R'){
+					left = new EncoderFollower(modifierMiddleRightSingle.getLeftTrajectory());
+					right = new EncoderFollower(modifierMiddleRightSingle.getRightTrajectory());
+					left.configureEncoder(0, 4096 * 2, 0.127);
+					right.configureEncoder(0, 4096 * 2, 0.127);
+					left.configurePIDVA(2, 0.0, 0, 1 / 4.5, 0);
+					right.configurePIDVA(2, 0.0, 0, 1 / 4.5, 0);
+					new RightMPSwitch().start();
+					new CenterSwitchRight().start();
+				}
+				
+			}else if(pos == 2){ //right
+				if(gameData.charAt(0) == 'L' && gameData.charAt(1) == 'R'){
+					left = new EncoderFollower(modifierRightScaleSingle.getLeftTrajectory());
+					right = new EncoderFollower(modifierRightScaleSingle.getRightTrajectory());
+					left.configureEncoder(0, 4096 * 2, 0.127);
+					right.configureEncoder(0, 4096 * 2, 0.127);
+					left.configurePIDVA(2, 0.0, 0, 1 / 4.5, 0);
+					right.configurePIDVA(2, 0.0, 0, 1 / 4.5, 0);
+					new RightScaleDoubleScaleMP().start();
+					new RightScaleSingleMP().start();
+					new RightScale().start();
+					new RightSwitchAround().start();
+				}else if(gameData.charAt(0) == 'R' && gameData.charAt(1) == 'L'){
+					new RightFarScale().start();
+					new RightSwitch().start();
+
+				}else if(gameData.charAt(0) == 'L' && gameData.charAt(1) == 'L'){
+					new RightFarScale().start();
+					new RightSwitchAround().start();
+				}else if(gameData.charAt(0) == 'R' && gameData.charAt(1) == 'R'){
+					left = new EncoderFollower(modifierRightScaleSingle.getLeftTrajectory());
+					right = new EncoderFollower(modifierRightScaleSingle.getRightTrajectory());
+					left.configureEncoder(0, 4096 * 2, 0.127);
+					right.configureEncoder(0, 4096 * 2, 0.127);
+					left.configurePIDVA(2, 0.0, 0, 1 / 4.5, 0);
+					right.configurePIDVA(2, 0.0, 0, 1 / 4.5, 0);
+					new RightScaleDoubleScaleMP().start();
+//					new RightScaleSingleMP().start();
+//					new RighScaleSWSCMP().start();
+//					new RightScale().start();
+//					new RightSwitch().start();
+
+				}
+			}else{
+				new DriveStraight().start();
+			}
+			
+			
 		}
-		// updateSmartDashboardTesting();
-		SmartDashboard.putNumber("arm", arm.getArmRaw());
-		updateSmartDashboardTesting();
-		SmartDashboard.putNumber("Lift state", liftState);
+//		SmartDashboard.putNumber("arm", arm.getArmRaw());
+//		updateSmartDashboardTesting();
+//		SmartDashboard.putNumber("Lift state", liftState);
 
 
 	}
@@ -1126,26 +1233,26 @@ public class Robot extends TimedRobot {
 		SmartDashboard.putNumber("adj Lidar", lidarValue);
 		SmartDashboard.putBoolean("Can Flip", lift.canFlip());
 		SmartDashboard.putNumber("Arm Current", arm.bottomMotor.getOutputCurrent());
-//		if (DriverStation.getInstance().getMatchTime() <= 30.0 && DriverStation.getInstance().getMatchTime() >= 29.0) {
-//			hasEndgameStarted = true;
-//			if (hasEndgameStarted) {
-//				UpdateLEDs("e:s");
-//				hasEndgameStarted = false;
-//			}
-//		}
-//		if (intake.isRunning() == true) {
-//			if (arm.getInfraredSensor() == true) {
-//				UpdateLEDs("i:ss");
-//			} else if (arm.getInfraredSensor() == false) {
-//				UpdateLEDs("i:sf");
-//			}
-//		} else if (intake.isRunning() == false) {
-//			if (arm.getInfraredSensor() == true) {
-//				UpdateLEDs("i:fs");
-//			} else if (arm.getInfraredSensor() == false) {
-//				UpdateLEDs("i:ff");
-//			}
-//		}
+		if (DriverStation.getInstance().getMatchTime() <= 30.0 && DriverStation.getInstance().getMatchTime() >= 29.0) {
+			hasEndgameStarted = true;
+			if (hasEndgameStarted) {
+				dio.pulse(3);
+				hasEndgameStarted = false;
+			}
+		}
+		if (intake.isRunning() == true) {
+			if (arm.getInfraredSensor() == true) {
+				dio.pulse(4);;
+			} else if (arm.getInfraredSensor() == false) {
+				dio.pulse(5);
+			}
+		} else if (intake.isRunning() == false) {
+			if (arm.getInfraredSensor() == true) {
+				dio.pulse(6);
+			} else if (arm.getInfraredSensor() == false) {
+				dio.pulse(7);
+			}
+		}
 	}
 
 	private void checkAutoShiftToggle() {

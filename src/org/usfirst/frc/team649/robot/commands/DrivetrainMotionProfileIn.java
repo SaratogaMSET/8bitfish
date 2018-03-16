@@ -39,7 +39,7 @@ public class DrivetrainMotionProfileIn extends Command {
 		
     	
 		SmartDashboard.putNumber("Setpoint", setpoint);
-		SmartDashboard.putString("Current Command", getName());
+		SmartDashboard.putString("Current Command", getName() + setpoint);
 		
     }
 
@@ -47,7 +47,7 @@ public class DrivetrainMotionProfileIn extends Command {
     protected void execute() {
     	Robot.drive.motors[0].set(ControlMode.MotionMagic,(int) converted );
 		Robot.drive.motors[1].set(ControlMode.Follower, RobotMap.Drivetrain.MOTOR_PORTS[0]);
-		Robot.drive.motors[2].set(ControlMode.MotionMagic, -(int)converted);
+		Robot.drive.motors[2].set(ControlMode.MotionMagic, (int)converted);
 		Robot.drive.motors[3].set(ControlMode.Follower, RobotMap.Drivetrain.MOTOR_PORTS[2]);
 //		SmartDashboard.putNumber("Setpoint", ((setpoint/(4.0*Math.PI))/ (14.0/60.0)) * 4096);
 		
@@ -73,7 +73,7 @@ public class DrivetrainMotionProfileIn extends Command {
     	Robot.drive.motors[0].set(ControlMode.PercentOutput, 0);
     	Robot.drive.motors[2].set(ControlMode.PercentOutput, 0);
     	Robot.isDrivePIDRunning = false;
-    	Robot.drive.changeBrakeCoast(true);
+//    	Robot.drive.changeBrakeCoast(true);
     }
 
     // Called when another command which requires one or more of the same

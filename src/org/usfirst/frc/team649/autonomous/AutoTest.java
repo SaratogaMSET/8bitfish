@@ -32,7 +32,7 @@ public class AutoTest {
 	public static class CenterRightSwitch {
 		public static double FIRST_DRIVE = 35.96-Robot.robotLength/2;
 		public static double FIRST_ANGLE_TURN = 32;
-		public static double SECOND_DRIVE = 95.85;
+		public static double SECOND_DRIVE = 90.85;
 		public static double SECOND_ANGLE_TURN = -32;
 	}
 	
@@ -44,9 +44,9 @@ public class AutoTest {
 	}
 	
 	public static class RightSwitchVal {
-		public static double FIRST_DRIVE = 230.8-Robot.robotLength/2;
+		public static double FIRST_DRIVE = 164.8-Robot.robotLength/2;
 		public static double FIRST_ANGLE_TURN = -90;
-		public static double SECOND_DRIVE = 44.6-Robot.robotLength/2;
+		public static double SECOND_DRIVE = 36-Robot.robotLength/2;
 		public static double SECOND_ANGLE_TURN = -90;
 		public static double THIRD_DRIVE = 21.2-Robot.robotLength/2;
 	}
@@ -60,9 +60,9 @@ public class AutoTest {
 	}
 	
 	public static class LeftSwitchVal {
-		public static double FIRST_DRIVE = 230.8-Robot.robotLength/2;
+		public static double FIRST_DRIVE = 164.8-Robot.robotLength/2;
 		public static double FIRST_ANGLE_TURN = 90;
-		public static double SECOND_DRIVE = 44.6-Robot.robotLength/2;
+		public static double SECOND_DRIVE = 36-Robot.robotLength/2;
 		public static double SECOND_ANGLE_TURN = 90;
 		public static double THIRD_DRIVE = 21.2-Robot.robotLength/2;
 	}
@@ -112,7 +112,7 @@ public class AutoTest {
 		public static double FIRST_ANGLE_TURN = 85; // need to tune, should be 90
 		public static double SECOND_DRIVE = 155+52.6-Robot.robotLength/2;// + 155
 		public static double SECOND_ANGLE_TURN = -90;
-		public static double THIRD_DRIVE = 69.2-Robot.robotLength/2;
+		public static double THIRD_DRIVE = 72.2-Robot.robotLength/2;
 	}
 	
 	public int currentlyTuningProgram;

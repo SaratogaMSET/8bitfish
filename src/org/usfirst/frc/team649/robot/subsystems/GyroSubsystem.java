@@ -90,7 +90,7 @@ public class GyroSubsystem extends PIDSubsystem {
 //			}
 //			Robot.drive.rawDrive(left, right);
 		} else {
-			Robot.drive.rawDrive(-output, output);
+			Robot.drive.rawDrive(-output, -output);
 		}
 	}
 	public void setDrivingStraight(boolean straight) {
