@@ -59,8 +59,8 @@ public class ArmSubsystem extends Subsystem {
 		public static final int INTAKE_REAR = -4200;
 		public static final int SWITCH_FRONT = -1450;
 		public static final int SWITCH_REAR = -2800;
-		public static final int EXCHANGE_FRONT = 5;
-		public static final int EXCHANGE_REAR = -4200;
+		public static final int EXCHANGE_FRONT = -400;
+		public static final int EXCHANGE_REAR = -3800;
 		public static final int MID_DROP_FRONT = -500;
 		public static final int MID_DROP_REAR = -3750;
 		public static final int HIGH_DROP_FRONT = -800;

@@ -26,6 +26,7 @@ public class ArmMotionProfile extends Command {
     // Called just before this Command runs the first time
     protected void initialize() {
     	SmartDashboard.putBoolean("ran is fin", false);
+    	state = Robot.armState;
 		Robot.isArmPidRunning = true;
     	doneTime = new Timer();
     	donePos = 0;
@@ -96,7 +97,7 @@ public class ArmMotionProfile extends Command {
 		Robot.isArmPidRunning = false;
     	Robot.arm.setArmBrake(true);
     	Robot.intake.setIntakeMotors(0, 0);
-    	if(Robot.armState == ArmSubsystem.ArmStateConstants.EXCHANGE_FRONT ||Robot.armState == ArmSubsystem.ArmStateConstants.EXCHANGE_REAR || Robot.armState == ArmSubsystem.ArmStateConstants.INTAKE_FRONT   || Robot.armState == ArmSubsystem.ArmStateConstants.INTAKE_REAR){
+    	if(Robot.armState == ArmSubsystem.ArmStateConstants.INTAKE_FRONT   || Robot.armState == ArmSubsystem.ArmStateConstants.INTAKE_REAR){
         	Robot.arm.bottomMotor.set(ControlMode.PercentOutput, 0);
 
     	}

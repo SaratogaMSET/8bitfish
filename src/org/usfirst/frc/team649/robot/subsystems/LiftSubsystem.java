@@ -57,6 +57,8 @@ public class LiftSubsystem extends PIDSubsystem {
     	public static int CUSTOM_STATE = 12;
     	public static int HEADING_CUSTOM_STATE_UP = 13;
     	public static int HEADING_CUSTOM_STATE_DOWN = 11;
+    	public static int HEADING_INTAKE_2 = 14;
+    	public static int INTAKE_2 = 15;
     	
     }
     public static class LiftEncoderConstants{
@@ -66,6 +68,7 @@ public class LiftSubsystem extends PIDSubsystem {
     	public static int MID_SCALE_STATE = 43500;
     	public static int HIGH_SCALE_STATE = 48100;
     	public static int ADJ_DIST = 4000;
+    	public static int INTAKE_2_STATE = 5000;
     	
     }
     public static class LiftConstants{

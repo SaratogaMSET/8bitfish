@@ -24,7 +24,7 @@ public class LeftScale extends CommandGroup {
     	addSequential(new DrivetrainMotionProfileIn(AutoTest.LeftScaleVal.FIRST_DRIVE)); // drive straight
     	addSequential(new GyroPID(AutoTest.LeftScaleVal.FIRST_ANGLE_TURN)); // turn ~45 degrees
     	int liftState = LiftSubsystem.LiftStateConstants.INTAKE_EXCHANGE_STORE_STATE;
-      	addSequential(new LiftMotionProfile(LiftSubsystem.LiftEncoderConstants.MID_SCALE_STATE,liftState));
+      	addSequential(new LiftMotionProfile(LiftSubsystem.LiftEncoderConstants.MID_SCALE_STATE,liftState,0));
         addSequential(new DrivetrainMotionProfileIn(AutoTest.LeftScaleVal.SECOND_DRIVE));// drive straight
     	addSequential(new GyroPID(AutoTest.LeftScaleVal.SECOND_ANGLE_TURN));
         addSequential(new DrivetrainMotionProfileIn(AutoTest.LeftScaleVal.THIRD_DRIVE));// drive straight

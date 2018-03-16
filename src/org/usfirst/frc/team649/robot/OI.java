@@ -130,7 +130,7 @@ public class OI {
 		}
 
 		public boolean isManual() {
-			return operatorJoystick.getRawButton(11);
+			return operatorJoystick.getRawButton(12);
 		}
 
 		public double getManualArm() {
@@ -280,7 +280,7 @@ public class OI {
 		// }
 		public boolean switchToCamera4() {
 			if (RobotMap.Camera.practiceBot == false) {
-				return buttonBoard.getRawButton(10);
+				return buttonBoard2.getRawButton(10);
 
 			} else {
 				return false;
@@ -288,12 +288,12 @@ public class OI {
 		}
 
 		public boolean switchToCamera2() {
-			return buttonBoard.getRawButton(11);
+			return buttonBoard2.getRawButton(11);
 		}
 
 		public boolean switchToCamera5() {
 			if (RobotMap.Camera.practiceBot == false) {
-				return buttonBoard.getRawButton(11);
+				return buttonBoard2.getRawButton(11);
 
 			} else {
 				return false;

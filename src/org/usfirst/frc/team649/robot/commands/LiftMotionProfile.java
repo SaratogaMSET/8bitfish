@@ -17,12 +17,16 @@ public class LiftMotionProfile extends Command {
 	int value;
 	Timer doneTime;
 	Timer timeout;
+	Timer startTime;
 	int state;
+	double waitTime;
+	
 	boolean wasCancl;
 	
-    public LiftMotionProfile(int encoderValue, int state) {
+    public LiftMotionProfile(int encoderValue, int state, double time) {
     	value = encoderValue;
         this.state = state;
+        waitTime = time;
         SmartDashboard.putNumber("Val", value);
         SmartDashboard.putBoolean("started", true);
     }
@@ -32,9 +36,11 @@ public class LiftMotionProfile extends Command {
     	
     	SmartDashboard.putBoolean("ran is fin", false);
 //		Robot.isArmPidRunning = true;
-    	
+    	state = Robot.liftState;
+    	startTime = new Timer();
     	timeout = new Timer();
     	doneTime = new Timer();
+    	startTime.start();
     	wasCancl = false;
 //    	timeout.start();
     	
@@ -44,7 +50,7 @@ public class LiftMotionProfile extends Command {
     // Called repeatedly when this Command is scheduled to run
     protected void execute() {
     	SmartDashboard.putBoolean("running", true);
-    	if(Robot.isZero){
+    	if(Robot.isZero && startTime.get() > waitTime){
     		if(timeout.get() == 0){
     			timeout.start();
     			if(value > Robot.lift.getRawLift()){
