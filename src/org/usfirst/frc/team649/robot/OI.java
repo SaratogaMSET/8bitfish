@@ -280,7 +280,7 @@ public class OI {
 		// }
 		public boolean switchToCamera4() {
 			if (RobotMap.Camera.practiceBot == false) {
-				return buttonBoard2.getRawButton(10);
+				return operatorJoystick.getRawButton(6);
 
 			} else {
 				return false;

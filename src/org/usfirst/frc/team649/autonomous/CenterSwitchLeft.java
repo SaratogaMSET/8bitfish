@@ -30,10 +30,9 @@ public class CenterSwitchLeft extends CommandGroup {
     	addSequential(new ZeroArmRoutine());
     	addSequential(new DrivetrainMotionProfileIn(AutoTest.CenterLeftSwitch.FIRST_DRIVE)); // drive straight
     	addSequential(new GyroPID(AutoTest.CenterLeftSwitch.FIRST_ANGLE_TURN)); // turn ~45 degrees
-    	addParallel(new DrivetrainMotionProfileIn(AutoTest.CenterLeftSwitch.SECOND_DRIVE)); // drive straight diagonally
     	addSequential(new ChangeRobotArmState(ArmSubsystem.ArmStateConstants.HEADING_SWITCH_FRONT));
-    	addSequential(new ArmMotionProfile(ArmSubsystem.ArmEncoderConstants.INTAKE_FRONT, Robot.armState));
-    	addSequential(new GyroPID(AutoTest.CenterLeftSwitch.SECOND_ANGLE_TURN));// turn back to straight
+    	addParallel(new ArmMotionProfile(ArmSubsystem.ArmEncoderConstants.INTAKE_FRONT, Robot.armState));
+    	addSequential(new DrivetrainMotionProfileIn(AutoTest.CenterLeftSwitch.SECOND_DRIVE)); // drive straight diagonally    	addSequential(new GyroPID(AutoTest.CenterLeftSwitch.SECOND_ANGLE_TURN));// turn back to straight
        	addSequential(new RunIntakeForTime(1, false));
     	addSequential(new DrivetrainMotionProfileIn(-10));
 

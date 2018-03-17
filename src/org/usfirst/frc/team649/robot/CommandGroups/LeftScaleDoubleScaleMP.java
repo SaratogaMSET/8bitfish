@@ -25,16 +25,10 @@ public class LeftScaleDoubleScaleMP extends CommandGroup {
     	addSequential(new ChangeRobotArmState(ArmSubsystem.ArmStateConstants.HEADING_HIGH_DROP_FRONT));
     	addParallel(new ArmMotionProfile(ArmSubsystem.ArmEncoderConstants.HIGH_DROP_FRONT,Robot.armState));
     	addParallel(new LiftMotionProfile(LiftSubsystem.LiftEncoderConstants.HIGH_SCALE_STATE,Robot.liftState,1.25));
-
-    	addSequential(new MotionProfileDrive());
-    	
-    	//
-////    	addSequential(new SwitchMPModes(Robot.modifierRightScaleSingle2.getLeftTrajectory(),Robot.modifierRightScaleSingle2.getLeftTrajectory()));
+    	addSequential(new MotionProfileDrive());    	
     	addParallel(new DrivetrainPIDCommand(-15));
     	addParallel(new ChangeRobotLiftState(1));
     	addSequential(new RunIntakeForTime(0.5,false));
-    	
-
     	addSequential(new LiftMotionProfile(LiftSubsystem.LiftEncoderConstants.LOW_STATE,Robot.liftState,0.1));
     	addSequential(new ChangeRobotArmState(ArmSubsystem.ArmStateConstants.HEADING_INTAKE_REAR));
     	addSequential(new ArmMotionProfile(ArmSubsystem.ArmEncoderConstants.INTAKE_REAR,Robot.armState));
@@ -49,8 +43,7 @@ public class LeftScaleDoubleScaleMP extends CommandGroup {
     	addParallel(new ArmMotionProfile(ArmSubsystem.ArmEncoderConstants.HIGH_DROP_FRONT,Robot.armState));
     	addParallel(new LiftMotionProfile(LiftSubsystem.LiftEncoderConstants.HIGH_SCALE_STATE,Robot.liftState,0));
     	addSequential(new DrivetrainPIDCommand(35));
-
     	addSequential(new RunIntakeForTime(1,false));
-    	////    	addSequential(new GyroZeroDegree());
+    	addSequential(new DrivetrainPIDCommand(-25));
     }
 }

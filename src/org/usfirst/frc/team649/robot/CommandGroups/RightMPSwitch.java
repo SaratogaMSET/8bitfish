@@ -1,5 +1,13 @@
 package org.usfirst.frc.team649.robot.CommandGroups;
 
+import org.usfirst.frc.team649.robot.Robot;
+import org.usfirst.frc.team649.robot.commands.ArmMotionProfile;
+import org.usfirst.frc.team649.robot.commands.ChangeRobotArmState;
+import org.usfirst.frc.team649.robot.commands.DrivetrainPIDCommand;
+import org.usfirst.frc.team649.robot.commands.MotionProfileDrive;
+import org.usfirst.frc.team649.robot.commands.RunIntakeForTime;
+import org.usfirst.frc.team649.robot.subsystems.ArmSubsystem;
+
 import edu.wpi.first.wpilibj.command.CommandGroup;
 
 /**
@@ -8,21 +16,10 @@ import edu.wpi.first.wpilibj.command.CommandGroup;
 public class RightMPSwitch extends CommandGroup {
 
     public RightMPSwitch() {
-        // Add Commands here:
-        // e.g. addSequential(new Command1());
-        //      addSequential(new Command2());
-        // these will run in order.
-
-        // To run multiple commands at the same time,
-        // use addParallel()
-        // e.g. addParallel(new Command1());
-        //      addSequential(new Command2());
-        // Command1 and Command2 will run in parallel.
-
-        // A command group will require all of the subsystems that each member
-        // would require.
-        // e.g. if Command1 requires chassis, and Command2 requires arm,
-        // a CommandGroup containing them would require both the chassis and the
-        // arm.
+    	addSequential(new ChangeRobotArmState(ArmSubsystem.ArmStateConstants.HEADING_SWITCH_FRONT));
+    	addParallel(new ArmMotionProfile(ArmSubsystem.ArmEncoderConstants.SWITCH_FRONT,Robot.armState));
+        addSequential(new MotionProfileDrive());
+        addSequential(new RunIntakeForTime(1,false));
+        addSequential(new DrivetrainPIDCommand(-25));
     }
 }

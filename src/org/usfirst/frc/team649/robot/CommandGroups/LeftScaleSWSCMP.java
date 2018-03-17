@@ -1,5 +1,18 @@
 package org.usfirst.frc.team649.robot.CommandGroups;
 
+import org.usfirst.frc.team649.robot.Robot;
+import org.usfirst.frc.team649.robot.commands.ArmMotionProfile;
+import org.usfirst.frc.team649.robot.commands.ChangeRobotArmState;
+import org.usfirst.frc.team649.robot.commands.ChangeRobotLiftState;
+import org.usfirst.frc.team649.robot.commands.DrivetrainPIDCommand;
+import org.usfirst.frc.team649.robot.commands.LiftMotionProfile;
+import org.usfirst.frc.team649.robot.commands.MotionProfileDrive;
+import org.usfirst.frc.team649.robot.commands.RunIntakeForTime;
+import org.usfirst.frc.team649.robot.commands.RunIntakeWheels;
+import org.usfirst.frc.team649.robot.commands.SetIntakePistons;
+import org.usfirst.frc.team649.robot.subsystems.ArmSubsystem;
+import org.usfirst.frc.team649.robot.subsystems.LiftSubsystem;
+
 import edu.wpi.first.wpilibj.command.CommandGroup;
 
 /**
@@ -8,21 +21,24 @@ import edu.wpi.first.wpilibj.command.CommandGroup;
 public class LeftScaleSWSCMP extends CommandGroup {
 
     public LeftScaleSWSCMP() {
-        // Add Commands here:
-        // e.g. addSequential(new Command1());
-        //      addSequential(new Command2());
-        // these will run in order.
-
-        // To run multiple commands at the same time,
-        // use addParallel()
-        // e.g. addParallel(new Command1());
-        //      addSequential(new Command2());
-        // Command1 and Command2 will run in parallel.
-
-        // A command group will require all of the subsystems that each member
-        // would require.
-        // e.g. if Command1 requires chassis, and Command2 requires arm,
-        // a CommandGroup containing them would require both the chassis and the
-        // arm.
+    	addSequential(new ChangeRobotLiftState(9));
+    	addSequential(new ChangeRobotArmState(ArmSubsystem.ArmStateConstants.HEADING_HIGH_DROP_FRONT));
+    	addParallel(new ArmMotionProfile(ArmSubsystem.ArmEncoderConstants.HIGH_DROP_FRONT,Robot.armState));
+    	addParallel(new LiftMotionProfile(LiftSubsystem.LiftEncoderConstants.HIGH_SCALE_STATE,Robot.liftState,1.25));
+    	addSequential(new MotionProfileDrive());    	
+    	addParallel(new DrivetrainPIDCommand(-15));
+    	addParallel(new ChangeRobotLiftState(1));
+    	addSequential(new RunIntakeForTime(0.5,false));
+    	addSequential(new LiftMotionProfile(LiftSubsystem.LiftEncoderConstants.LOW_STATE,Robot.liftState,0.1));
+    	addSequential(new ChangeRobotArmState(ArmSubsystem.ArmStateConstants.HEADING_INTAKE_REAR));
+    	addSequential(new ArmMotionProfile(ArmSubsystem.ArmEncoderConstants.INTAKE_REAR,Robot.armState));
+    	addSequential(new SetIntakePistons(true,false));
+    	addSequential(new DrivetrainPIDCommand(-20));
+    	addSequential(new RunIntakeWheels(0.6));
+    	addSequential(new SetIntakePistons(false,false));    	
+    	addParallel(new ChangeRobotArmState(ArmSubsystem.ArmStateConstants.HEADING_SWITCH_REAR));
+    	addSequential(new ArmMotionProfile(ArmSubsystem.ArmEncoderConstants.SWITCH_REAR,Robot.armState));
+    	addSequential(new DrivetrainPIDCommand(-10));
+    	addSequential(new RunIntakeForTime(1,false));
     }
 }

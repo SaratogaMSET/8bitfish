@@ -79,14 +79,14 @@ public class ArmSubsystem extends Subsystem {
 	public DigitalInput frontHal,rearHal;
 	public ArmSubsystem() {
 		bottomMotor = new TalonSRX(RobotMap.Arm.BOTTOM_ARM_MOTOR);
-//		bottomMotor.configSelectedFeedbackSensor(FeedbackDevice.CTRE_MagEncoder_Relative, 0, Robot.timeoutMs);
+		bottomMotor.configSelectedFeedbackSensor(FeedbackDevice.CTRE_MagEncoder_Relative, 0, Robot.timeoutMs);
 		topMotor = new TalonSRX(RobotMap.Arm.TOP_ARM_MOTOR);
 		infraredSensor = new DigitalInput(RobotMap.Arm.INFRARED_SENSOR);
 		bottomMotor.configNominalOutputForward(0, Robot.timeoutMs);
 		bottomMotor.configNominalOutputReverse(0, Robot.timeoutMs);
 		bottomMotor.configPeakOutputForward(1.0, Robot.timeoutMs);
 		bottomMotor.configPeakOutputReverse(-1.0, Robot.timeoutMs);
-		bottomMotor.setSensorPhase(true);
+		bottomMotor.setSensorPhase(false);
 		bottomMotor.setInverted(true);
 		bottomMotor.setStatusFramePeriod(StatusFrameEnhanced.Status_10_MotionMagic, 10, Robot.timeoutMs);
 		frontHal = new DigitalInput(RobotMap.Arm.ARM_HAL_FRONT);
@@ -94,11 +94,11 @@ public class ArmSubsystem extends Subsystem {
 		lastVal = 0;
 		time = new Timer();
 		time.start();
-		bottomMotor.configMotionAcceleration(600, Robot.timeoutMs);
+		bottomMotor.configMotionAcceleration(950, Robot.timeoutMs);
 		bottomMotor.configMotionCruiseVelocity(700, Robot.timeoutMs);
 		bottomMotor.config_kP(0, 1, Robot.timeoutMs);
 		bottomMotor.config_kI(0, 0, Robot.timeoutMs);
-		bottomMotor.config_kD(0, 0.1, Robot.timeoutMs);
+		bottomMotor.config_kD(0, 0.07, Robot.timeoutMs);
 		bottomMotor.config_kF(0, 1.25, Robot.timeoutMs);
 		bottomMotor.selectProfileSlot(0, 0);
 		bottomMotor.setNeutralMode(NeutralMode.Brake);
@@ -124,7 +124,7 @@ public class ArmSubsystem extends Subsystem {
 		return !rearHal.get();
 	}
 	public void setArmBrake(boolean isEngaged){
-		armBrake.set(!isEngaged ? DoubleSolenoid.Value.kForward : DoubleSolenoid.Value.kReverse);
+		armBrake.set(isEngaged ? DoubleSolenoid.Value.kForward : DoubleSolenoid.Value.kReverse);
 	}
 	public int getArmRaw() {
 		return bottomMotor.getSelectedSensorPosition(0);

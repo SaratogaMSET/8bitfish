@@ -51,10 +51,10 @@ public class IntakeSubsystem extends Subsystem {
     	}
     }
     public void setIntakePiston60(boolean isOut){
-		intakeSol.set(isOut ? DoubleSolenoid.Value.kForward : DoubleSolenoid.Value.kReverse);
+		intakeSol.set(!isOut ? DoubleSolenoid.Value.kForward : DoubleSolenoid.Value.kReverse);
     }
     public void setIntakePiston30(boolean isOut){
-  		intakeSol2.set(isOut ? DoubleSolenoid.Value.kForward : DoubleSolenoid.Value.kReverse);
+  		intakeSol2.set(!isOut ? DoubleSolenoid.Value.kForward : DoubleSolenoid.Value.kReverse);
     }
     public void setIntakePulse(double time, double period,boolean isForward){
     	double powerLeft = Math.abs(Math.sin(2*Math.PI*(time/period)));

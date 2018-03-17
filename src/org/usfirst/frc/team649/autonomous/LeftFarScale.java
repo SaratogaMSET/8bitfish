@@ -30,8 +30,8 @@ public class LeftFarScale extends CommandGroup {
     	addSequential(new GyroPID(AutoTest.LeftScaleFarVal.FIRST_ANGLE_TURN)); // turn ~45 degrees
         addSequential(new DrivetrainMotionProfileIn(AutoTest.LeftScaleFarVal.SECOND_DRIVE));// drive straight
         addSequential(new ChangeRobotLiftState(LiftSubsystem.LiftStateConstants.HIGH_SCALE_STATE));
+    	addSequential(new ChangeRobotArmState(ArmSubsystem.ArmStateConstants.HEADING_HIGH_DROP_FRONT));
         addParallel(new LiftMotionProfile(LiftSubsystem.LiftEncoderConstants.HIGH_SCALE_STATE,Robot.liftState,1.25));
-    	addParallel(new ChangeRobotArmState(ArmSubsystem.ArmStateConstants.HEADING_HIGH_DROP_FRONT));
     	addParallel(new ArmMotionProfile(ArmSubsystem.ArmEncoderConstants.HIGH_DROP_FRONT,Robot.armState));
         addSequential(new GyroPID(AutoTest.LeftScaleFarVal.SECOND_ANGLE_TURN));
         addSequential(new DrivetrainMotionProfileIn(AutoTest.LeftScaleFarVal.THIRD_DRIVE));

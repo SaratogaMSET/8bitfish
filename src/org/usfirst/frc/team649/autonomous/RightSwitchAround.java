@@ -2,6 +2,7 @@ package org.usfirst.frc.team649.autonomous;
 
 import org.usfirst.frc.team649.robot.commands.DrivetrainMotionProfileIn;
 import org.usfirst.frc.team649.robot.commands.GyroPID;
+import org.usfirst.frc.team649.robot.commands.RunIntakeForTime;
 
 import edu.wpi.first.wpilibj.command.CommandGroup;
 
@@ -18,6 +19,8 @@ public class RightSwitchAround extends CommandGroup {
     	addSequential(new DrivetrainMotionProfileIn(AutoTest.RightSwitchFarVal.SECOND_DRIVE));// drive forward
     	addSequential(new GyroPID(AutoTest.RightSwitchFarVal.SECOND_ANGLE_TURN)); // turn 90 degrees
     	addSequential(new DrivetrainMotionProfileIn(AutoTest.RightSwitchFarVal.THIRD_DRIVE));// drive forward
+    	addSequential(new RunIntakeForTime(1, false));
+
     	// drop cube
         
     }

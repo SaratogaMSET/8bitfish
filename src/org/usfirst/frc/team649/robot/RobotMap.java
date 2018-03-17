@@ -2,8 +2,8 @@ package org.usfirst.frc.team649.robot;
 
 //constants for ports other constants will be placed in respective subsystems
 public class RobotMap {
-	public static final int BUTTON_BOARD = 4;
-	public static final int BUTTON_BOARD_2 = 3;
+	public static final int BUTTON_BOARD = 3;
+	public static final int BUTTON_BOARD_2 = 4;
 	public static final int OPERATOR_JOYSTICK = 2;
 	public static final int DRIVE_JOYSTICK_HORIZONTAL = 1;
 	public static final int DRIVE_JOYSTICK_VERTICAL = 0;
@@ -14,7 +14,7 @@ public class RobotMap {
 //		public static final int[] LEFT_SIDE_ENCODER = { 4, 5 };
 //		public static final int[] RIGHT_SIDE_ENCODER = { 6, 7 };
 		// FL,BL,BR,FR
-		public static final int[] MOTOR_PORTS = { 12, 13, 18, 19 };
+		public static final int[] MOTOR_PORTS = {12, 13, 18, 19};
 		public static final int[] RIGHT_DRIVE_SOL = {4, 4, 5};
 		public static final int[] LEFT_DRIVE_SOL = { 3,2, 3 };
 	}
@@ -23,10 +23,18 @@ public class RobotMap {
 		public static final int LEFT_WINCH_MOTOR = 10;
 		public static final int RIGHT_WINCH_MOTOR = 16;
 		public static final int LEFT_WINCH_SECOND_MOTOR = 11;
-		public static final int CARRIAGE_HAL_BOT = 0;
-		public static final int CARRIAGE_HAL_TOP = 1;
-		public static final int SECOND_STAGE_HAL_BOT =7;
-		public static final int SECOND_STAGE_HAL_TOP = 6;
+		
+		public static final int CARRIAGE_HAL_BOT_RIGHT = 0;
+		public static final int CARRIAGE_HAL_BOT_LEFT = 2;
+
+		public static final int CARRIAGE_HAL_TOP_RIGHT = 1;
+		public static final int CARRIAGE_HAL_TOP_LEFT = 3;
+
+		public static final int SECOND_STAGE_HAL_BOT_RIGHT = 7;
+		public static final int SECOND_STAGE_HAL_BOT_LEFT = 4;
+
+		public static final int SECOND_STAGE_HAL_TOP_RIGHT = 6;
+		public static final int SECOND_STAGE_HAL_TOP_LEFT = 5;
 		
 	}
 	public static class Arm {
@@ -35,7 +43,7 @@ public class RobotMap {
 		public static final int INFRARED_SENSOR = 8;
 		public static final int[] ARM_BRAKE = {4,6,7};
 		public static final int ARM_HAL_FRONT = 9;
-		public static final int ARM_HAL_REAR = 1;
+		public static final int ARM_HAL_REAR = 10;
 	}
 	public static class AutoSwitches{
 		public static final int[] Auto_Switches = {0,1,2,3,4};

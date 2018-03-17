@@ -64,9 +64,9 @@ public class LiftSubsystem extends PIDSubsystem {
     public static class LiftEncoderConstants{
     	public static int LOW_STATE = 0;
     	public static int SWITCH_STATE = 20000;
-    	public static int LOW_SCALE_STATE = 38500;
-    	public static int MID_SCALE_STATE = 43500;
-    	public static int HIGH_SCALE_STATE = 48100;
+    	public static int LOW_SCALE_STATE = 35500;
+    	public static int MID_SCALE_STATE = 40500;
+    	public static int HIGH_SCALE_STATE = 45100;
     	public static int ADJ_DIST = 4000;
     	public static int INTAKE_2_STATE = 5000;
     	
@@ -79,13 +79,15 @@ public class LiftSubsystem extends PIDSubsystem {
     	public static double absTol = 15;
     }
     public TalonSRX mainLiftMotor,followerLiftMotor,followerLiftMotor2;
-    public DigitalInput botSecondStageHal, topSecondStageHal, botCarriageHal, topCarriageHal;
+    public DigitalInput botSecondStageHalRight, topSecondStageHalRight, botCarriageHalRight, topCarriageHalRight, botSecondStageHalLeft, topSecondStageHalLeft, botCarriageHalLeft, topCarriageHalLeft;
     double liftPIDOutPut;
     
     public LiftSubsystem(){
     	super(LiftPIDConstants.k_P, LiftPIDConstants.k_I, LiftPIDConstants.k_D);
     	mainLiftMotor = new TalonSRX(RobotMap.Lift.RIGHT_WINCH_MOTOR);
     	mainLiftMotor.configSelectedFeedbackSensor(FeedbackDevice.CTRE_MagEncoder_Relative, 0, Robot.timeoutMs);
+    	mainLiftMotor.setInverted(true);
+    	mainLiftMotor.setSensorPhase(true);
     	followerLiftMotor = new TalonSRX(RobotMap.Lift.LEFT_WINCH_MOTOR);
     	followerLiftMotor.setInverted(false);
     	followerLiftMotor.set(ControlMode.Follower, RobotMap.Lift.RIGHT_WINCH_MOTOR);
@@ -109,10 +111,15 @@ public class LiftSubsystem extends PIDSubsystem {
 		mainLiftMotor.config_kP(0, 3.5, Robot.timeoutMs);
 		mainLiftMotor.config_kI(0, 0.015, Robot.timeoutMs);
 		mainLiftMotor.config_kD(0, 0.07, Robot.timeoutMs);
-    	botSecondStageHal = new DigitalInput(RobotMap.Lift.SECOND_STAGE_HAL_BOT);
-    	topSecondStageHal = new DigitalInput(RobotMap.Lift.SECOND_STAGE_HAL_TOP);
-    	botCarriageHal = new DigitalInput(RobotMap.Lift.CARRIAGE_HAL_BOT);
-//    	topCarriageHal = new DigitalInput(RobotMap.Lift.CARRIAGE_HAL_TOP);
+    	botSecondStageHalRight = new DigitalInput(RobotMap.Lift.SECOND_STAGE_HAL_BOT_RIGHT);
+    	topSecondStageHalRight = new DigitalInput(RobotMap.Lift.SECOND_STAGE_HAL_TOP_RIGHT);
+    	botCarriageHalRight = new DigitalInput(RobotMap.Lift.CARRIAGE_HAL_BOT_RIGHT);
+    	topCarriageHalRight = new DigitalInput(RobotMap.Lift.CARRIAGE_HAL_TOP_RIGHT);
+    
+    	botSecondStageHalLeft = new DigitalInput(RobotMap.Lift.SECOND_STAGE_HAL_BOT_LEFT);
+    	topSecondStageHalLeft = new DigitalInput(RobotMap.Lift.SECOND_STAGE_HAL_TOP_LEFT);
+    	botCarriageHalLeft = new DigitalInput(RobotMap.Lift.CARRIAGE_HAL_BOT_LEFT);
+    	topCarriageHalLeft = new DigitalInput(RobotMap.Lift.CARRIAGE_HAL_TOP_LEFT);
     }
 //    public double getLidarValue(){
 //    	return lidar.getSample()
@@ -236,16 +243,16 @@ public class LiftSubsystem extends PIDSubsystem {
     	return mainLiftMotor.getSelectedSensorVelocity(0);
     }
     public boolean isCarriageAtBottom() {
-    	return !botCarriageHal.get();
+    	return !botCarriageHalRight.get() || !botCarriageHalLeft.get();
     }
     public boolean isSecondStageAtBottom() {
-    	return !botSecondStageHal.get();
+    	return !botSecondStageHalRight.get() || !botSecondStageHalLeft.get();
     }
     public boolean isSecondStageAtTop() {
-    	return !topSecondStageHal.get();
+    	return !topSecondStageHalRight.get() || !topSecondStageHalLeft.get() ;
     }
     public boolean isCarriageAtTop() {
-    	return false;
+    	return !topCarriageHalRight.get() || !topCarriageHalLeft.get();
     }
     public void initDefaultCommand() {
         // Set the default command for a subsystem here.

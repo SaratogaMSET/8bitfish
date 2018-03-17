@@ -57,49 +57,59 @@ public class Diagnostic extends Command {
 
     // Called repeatedly when this Command is scheduled to run
     protected void execute() {
-    	if (Robot.oi.operator.getButton2()) {
+    	if (Robot.oi.operatorJoystick.getRawButton(2)&& time1.get() > 0.2) {
     		Robot.intake.setIntakePiston30(!prevStateIntake);
     		prevStateIntake = !prevStateIntake;
+    		SmartDashboard.putBoolean("Intake State", prevStateIntake);
     		time1.reset();
     		time1.start();
     	}
-    	if (Robot.oi.operator.getButton3() && time2.get() > 0.2) {
+    	if (Robot.oi.operatorJoystick.getPOV() == 0 && time1.get() > 0.2) {
+    		Robot.intake.setIntakePiston60(!prevStateIntake);
+    		prevStateIntake = !prevStateIntake;
+    		SmartDashboard.putBoolean("Intake State", prevStateIntake);
+    		time1.reset();
+    		time1.start();
+    	}
+    	if (Robot.oi.operatorJoystick.getRawButton(3) && time2.get() > 0.2) {
     		Robot.arm.setArmBrake(!prevStateBrake);
     		prevStateBrake = !prevStateBrake;
+    		SmartDashboard.putBoolean("Brake State", prevStateIntake);
     		time2.reset();
     		time2.start();
     	}
-    	if (Robot.oi.operator.getButton4() && time3.get() > 0.2) {
+    	if (Robot.oi.operatorJoystick.getRawButton(4) && time3.get() > 0.2) {
     		Robot.drive.shift(!prevStateShift);
     		prevStateShift = !prevStateShift;
+    		SmartDashboard.putBoolean("Shift State", prevStateIntake);
     		time3.reset();
     		time3.start();
     		
     	}
-    	if (Robot.oi.operator.getButton5()) {
+    	if (Robot.oi.operatorJoystick.getRawButton(5)) {
     		state = Constants.intakeMotorLeft;
     	}
-    	if (Robot.oi.operator.getButton6()) {
+    	if (Robot.oi.operatorJoystick.getRawButton(6)) {
     		state = Constants.intakeMotorRight;
     	}
-    	if (Robot.oi.operator.getButton7()) {
+    	if (Robot.oi.operatorJoystick.getRawButton(7)) {
     		state = Constants.liftMotor;
     	}
-    	if (Robot.oi.operator.getButton8()) {
+    	if (Robot.oi.operatorJoystick.getRawButton(8)) {
     		state = Constants.drivetrainMotorLeft;
     	}
-    	if (Robot.oi.operator.getButton9()) {
+    	if (Robot.oi.operatorJoystick.getRawButton(9)) {
     		state = Constants.drivetrainMotorRight;
     	}
-    	if(Robot.oi.buttonBoard.getRawButton(10)) {
+    	if(Robot.oi.operatorJoystick.getRawButton(10)) {
     		state = Constants.armMotor;
     	}
-    	if(Robot.oi.operator.PIDTunePhase()) {
-    		state = -1;
-    	}
-    	if (Robot.oi.operator.getButton13()) {
-    		isFinished = true;
-    	}
+//    	if(Robot.oi.operator.PIDTunePhase()) {
+//    		state = -1;
+//    	}
+//    	if (Robot.oi.operator.getButton13()) {
+//    		isFinished = true;
+//    	}
     	
     	SmartDashboard.putBoolean("Diag?", true);
     	switch(state) {
@@ -152,10 +162,12 @@ public class Diagnostic extends Command {
     		Robot.drive.rawDrive(0, 0);
     		Robot.lift.setLift(0);
     		SmartDashboard.putString("Currently Running Motor: ", "Arm");
+    		break;
     	case -1:
     		SmartDashboard.putString("Currently Running Motor: ", "None");
     		break;
     	}
+    	SmartDashboard();
     }
 
     // Make this return true when this Command no longer needs to run execute()
@@ -180,8 +192,8 @@ public class Diagnostic extends Command {
     }
     public void SmartDashboard() {
     	// arm
-//    	SmartDashboard.putBoolean("Arm IR", Robot.arm.getInfraredSensor());
-//    	SmartDashboard.putNumber("Arm Raw Position", Robot.arm.bottomMotor.getSelectedSensorPosition(0));
+    	SmartDashboard.putBoolean("Arm IR", Robot.arm.getInfraredSensor());
+    	SmartDashboard.putNumber("Arm Raw Position", Robot.arm.bottomMotor.getSelectedSensorPosition(0));
     	
     	// lift
     	SmartDashboard.putBoolean("Bottom Carriage Hal", Robot.lift.isCarriageAtBottom());
@@ -189,10 +201,11 @@ public class Diagnostic extends Command {
     	SmartDashboard.putBoolean("Bottom Sec Stage Hal", Robot.lift.isSecondStageAtBottom());
     	SmartDashboard.putBoolean("Top Sec Stage Hal", Robot.lift.isSecondStageAtTop());
     	SmartDashboard.putNumber("Lift Raw", Robot.lift.mainLiftMotor.getSelectedSensorPosition(0));
-    	
+    	SmartDashboard.putBoolean("Arm back", Robot.arm.getArmHalZeroBack());
+    	SmartDashboard.putBoolean("Arm front", Robot.arm.getArmHalZeroFront());
     	// drivetrain
-    	SmartDashboard.putNumber("DT Right Side Encoder", Robot.drive.motors[0].getSelectedSensorPosition(0));
-    	SmartDashboard.putNumber("DT Left Side Encoder", Robot.drive.motors[2].getSelectedSensorPosition(0));
+    	SmartDashboard.putNumber("DT Left Side Encoder", Robot.drive.motors[0].getSelectedSensorPosition(0));
+    	SmartDashboard.putNumber("DT Right Side Encoder", Robot.drive.motors[2].getSelectedSensorPosition(0));
     	
     }
     public boolean checkSign(double a, double b) {
