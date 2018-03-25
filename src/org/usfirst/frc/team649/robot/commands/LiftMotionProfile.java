@@ -42,6 +42,23 @@ public class LiftMotionProfile extends Command {
     	doneTime = new Timer();
     	startTime.start();
     	wasCancl = false;
+    	if(value > Robot.lift.getRawLift()){
+    		Robot.lift.mainLiftMotor.configMotionCruiseVelocity(3200, Robot.timeoutMs);
+			Robot.lift.mainLiftMotor.configMotionAcceleration(4000, Robot.timeoutMs); // 400 actual
+			Robot.lift.mainLiftMotor.selectProfileSlot(0, 0);
+			Robot.lift.mainLiftMotor.config_kF(0, 0.307, Robot.timeoutMs);
+			Robot.lift.mainLiftMotor.config_kP(0, 5.8, Robot.timeoutMs);
+			Robot.lift.mainLiftMotor.config_kI(0, 0, Robot.timeoutMs);
+			Robot.lift.mainLiftMotor.config_kD(0, 0.05, Robot.timeoutMs);
+    	}else{
+    		Robot.lift.mainLiftMotor.configMotionCruiseVelocity(4200, Robot.timeoutMs);
+			Robot.lift.mainLiftMotor.configMotionAcceleration(4000, Robot.timeoutMs); // 400 actual
+			Robot.lift.mainLiftMotor.selectProfileSlot(0, 0);
+			Robot.lift.mainLiftMotor.config_kF(0, 0.3197, Robot.timeoutMs);
+			Robot.lift.mainLiftMotor.config_kP(0, 4, Robot.timeoutMs);
+			Robot.lift.mainLiftMotor.config_kI(0, 0, Robot.timeoutMs);
+			Robot.lift.mainLiftMotor.config_kD(0, 0, Robot.timeoutMs);
+    	}
 //    	timeout.start();
     	
     	
@@ -53,23 +70,7 @@ public class LiftMotionProfile extends Command {
     	if(Robot.isZero && startTime.get() > waitTime){
     		if(timeout.get() == 0){
     			timeout.start();
-    			if(value > Robot.lift.getRawLift()){
-    	    		Robot.lift.mainLiftMotor.configMotionCruiseVelocity(3200, Robot.timeoutMs);
-    				Robot.lift.mainLiftMotor.configMotionAcceleration(3650, Robot.timeoutMs); // 400 actual
-    				Robot.lift.mainLiftMotor.selectProfileSlot(0, 0);
-    				Robot.lift.mainLiftMotor.config_kF(0, 0.307, Robot.timeoutMs);
-    				Robot.lift.mainLiftMotor.config_kP(0, 5.5, Robot.timeoutMs);
-    				Robot.lift.mainLiftMotor.config_kI(0, 0, Robot.timeoutMs);
-    				Robot.lift.mainLiftMotor.config_kD(0, 0.05, Robot.timeoutMs);
-    	    	}else{
-    	    		Robot.lift.mainLiftMotor.configMotionCruiseVelocity(4200, Robot.timeoutMs);
-    				Robot.lift.mainLiftMotor.configMotionAcceleration(4000, Robot.timeoutMs); // 400 actual
-    				Robot.lift.mainLiftMotor.selectProfileSlot(0, 0);
-    				Robot.lift.mainLiftMotor.config_kF(0, 0.3197, Robot.timeoutMs);
-    				Robot.lift.mainLiftMotor.config_kP(0, 4, Robot.timeoutMs);
-    				Robot.lift.mainLiftMotor.config_kI(0, 0, Robot.timeoutMs);
-    				Robot.lift.mainLiftMotor.config_kD(0, 0, Robot.timeoutMs);
-    	    	}
+    			
     		}
         	Robot.lift.mainLiftMotor.set(ControlMode.MotionMagic, value);
     	}

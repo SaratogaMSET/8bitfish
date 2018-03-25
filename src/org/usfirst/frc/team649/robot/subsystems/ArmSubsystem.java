@@ -56,17 +56,17 @@ public class ArmSubsystem extends Subsystem {
 	}
 	public static class ArmEncoderConstants{
 		public static final int INTAKE_FRONT = 5;
-		public static final int INTAKE_REAR = -4200;
+		public static final int INTAKE_REAR = -4250;
 		public static final int SWITCH_FRONT = -1450;
-		public static final int SWITCH_REAR = -2800;
+		public static final int SWITCH_REAR = -2850;
 		public static final int EXCHANGE_FRONT = -400;
-		public static final int EXCHANGE_REAR = -3800;
+		public static final int EXCHANGE_REAR = -3850;
 		public static final int MID_DROP_FRONT = -500;
-		public static final int MID_DROP_REAR = -3750;
+		public static final int MID_DROP_REAR = -3800;
 		public static final int HIGH_DROP_FRONT = -800;
-		public static final int HIGH_DROP_REAR = -3450;
+		public static final int HIGH_DROP_REAR = -3500;
 		public static final int STORE_FRONT = -1625;
-		public static final int STORE_REAR = -3000;
+		public static final int STORE_REAR = -3050;
 		public static final int ADJ = 150;
 		public static final int MID = (INTAKE_FRONT + INTAKE_REAR)/2;
 	}
@@ -94,7 +94,7 @@ public class ArmSubsystem extends Subsystem {
 		lastVal = 0;
 		time = new Timer();
 		time.start();
-		bottomMotor.configMotionAcceleration(950, Robot.timeoutMs);
+		bottomMotor.configMotionAcceleration(650, Robot.timeoutMs);
 		bottomMotor.configMotionCruiseVelocity(700, Robot.timeoutMs);
 		bottomMotor.config_kP(0, 1, Robot.timeoutMs);
 		bottomMotor.config_kI(0, 0, Robot.timeoutMs);

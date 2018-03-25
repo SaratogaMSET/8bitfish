@@ -20,6 +20,6 @@ public class RightMPSwitch extends CommandGroup {
     	addParallel(new ArmMotionProfile(ArmSubsystem.ArmEncoderConstants.SWITCH_FRONT,Robot.armState));
         addSequential(new MotionProfileDrive());
         addSequential(new RunIntakeForTime(1,false));
-        addSequential(new DrivetrainPIDCommand(-25));
+//        addSequential(new DrivetrainPIDCommand(-25));
     }
 }

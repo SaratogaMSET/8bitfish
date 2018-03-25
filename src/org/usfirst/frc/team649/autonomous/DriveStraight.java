@@ -1,5 +1,6 @@
 package org.usfirst.frc.team649.autonomous;
 
+import org.usfirst.frc.team649.robot.commands.DrivetrainMotionProfileIn;
 import org.usfirst.frc.team649.robot.commands.DrivetrainPIDCommand;
 
 import edu.wpi.first.wpilibj.command.CommandGroup;
@@ -12,6 +13,6 @@ import edu.wpi.first.wpilibj.command.CommandGroup;
 public class DriveStraight extends CommandGroup {
 
     public DriveStraight() {
-    	addSequential(new DrivetrainPIDCommand(100)); // Drive Straight
+    	addSequential(new DrivetrainMotionProfileIn(1200)); // Drive Straight
     }
 }

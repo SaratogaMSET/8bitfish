@@ -32,6 +32,7 @@ public class ZeroArmRoutine extends Command {
     // Called once after isFinished returns true
     protected void end() {
     	Robot.arm.setArmBrake(true);
+    	Robot.arm.bottomMotor.setSelectedSensorPosition(0, 0, 20);
     	Robot.arm.setArm(0);
     	Robot.isZero = true;
     	Robot.armIsFront = true;

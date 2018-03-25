@@ -46,7 +46,7 @@ public class AutoTest {
 	public static class RightSwitchVal {
 		public static double FIRST_DRIVE = 164.8-Robot.robotLength/2;
 		public static double FIRST_ANGLE_TURN = -90;
-		public static double SECOND_DRIVE = 36-Robot.robotLength/2;
+		public static double SECOND_DRIVE = 40-Robot.robotLength/2;
 		public static double SECOND_ANGLE_TURN = -90;
 		public static double THIRD_DRIVE = 21.2-Robot.robotLength/2;
 	}
@@ -62,7 +62,7 @@ public class AutoTest {
 	public static class LeftSwitchVal {
 		public static double FIRST_DRIVE = 164.8-Robot.robotLength/2;
 		public static double FIRST_ANGLE_TURN = 90;
-		public static double SECOND_DRIVE = 36-Robot.robotLength/2;
+		public static double SECOND_DRIVE = 40-Robot.robotLength/2;
 		public static double SECOND_ANGLE_TURN = 90;
 		public static double THIRD_DRIVE = 21.2-Robot.robotLength/2;
 	}

@@ -2,8 +2,8 @@ package org.usfirst.frc.team649.robot;
 
 //constants for ports other constants will be placed in respective subsystems
 public class RobotMap {
-	public static final int BUTTON_BOARD = 3;
-	public static final int BUTTON_BOARD_2 = 4;
+	public static final int BUTTON_BOARD = 4;
+	public static final int BUTTON_BOARD_2 = 3;
 	public static final int OPERATOR_JOYSTICK = 2;
 	public static final int DRIVE_JOYSTICK_HORIZONTAL = 1;
 	public static final int DRIVE_JOYSTICK_VERTICAL = 0;
@@ -14,8 +14,8 @@ public class RobotMap {
 //		public static final int[] LEFT_SIDE_ENCODER = { 4, 5 };
 //		public static final int[] RIGHT_SIDE_ENCODER = { 6, 7 };
 		// FL,BL,BR,FR
-		public static final int[] MOTOR_PORTS = {12, 13, 18, 19};
-		public static final int[] RIGHT_DRIVE_SOL = {4, 4, 5};
+		public static final int[] MOTOR_PORTS = {12, 13, 20, 19}; //18-->20
+		public static final int[] RIGHT_DRIVE_SOL = {4, 4, 1}; // 4,4,5
 		public static final int[] LEFT_DRIVE_SOL = { 3,2, 3 };
 	}
 	public static class Lift {
@@ -41,7 +41,7 @@ public class RobotMap {
 		public static final int BOTTOM_ARM_MOTOR = 8;
 		public static final int TOP_ARM_MOTOR = 17;
 		public static final int INFRARED_SENSOR = 8;
-		public static final int[] ARM_BRAKE = {4,6,7};
+		public static final int[] ARM_BRAKE = {4,6,7}; // 4,6,7  4,0,7
 		public static final int ARM_HAL_FRONT = 9;
 		public static final int ARM_HAL_REAR = 10;
 	}
@@ -85,11 +85,11 @@ public class RobotMap {
 //        public static final String axis5Name = "greenAxisCamera";
 //        public static final int axis5ResWidth = 320;
 //        public static final int axis5ResHeight = 480;
-//        public static final int axis5FPS = 30;
-        public static final String axis6Port = "10.6.49.7";
-        public static final String axis6Name = "tanAxisCamera";
-        public static final int axis6ResWidth = 320;
-        public static final int axis6ResHeight = 480;
-        public static final int axis6FPS = 30;
+////        public static final int axis5FPS = 30;
+//        public static final String axis6Port = "10.6.49.7";
+//        public static final String axis6Name = "tanAxisCamera";
+//        public static final int axis6ResWidth = 320;
+//        public static final int axis6ResHeight = 480;
+//        public static final int axis6FPS = 30;
     }
 }
