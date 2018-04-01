@@ -9,6 +9,7 @@ import com.ctre.phoenix.motorcontrol.NeutralMode;
 import com.ctre.phoenix.motorcontrol.StatusFrameEnhanced;
 import com.ctre.phoenix.motorcontrol.can.TalonSRX;
 
+import edu.wpi.first.wpilibj.AnalogInput;
 import edu.wpi.first.wpilibj.DigitalInput;
 import edu.wpi.first.wpilibj.DoubleSolenoid;
 import edu.wpi.first.wpilibj.Timer;
@@ -55,20 +56,34 @@ public class ArmSubsystem extends Subsystem {
 		public static final int SWITCH_REAR = -15;
 	}
 	public static class ArmEncoderConstants{
-		public static final int INTAKE_FRONT = 5;
-		public static final int INTAKE_REAR = -4250;
+		public static final int INTAKE_FRONT = -5;
+		public static final int INTAKE_REAR = -4265;
 		public static final int SWITCH_FRONT = -1450;
-		public static final int SWITCH_REAR = -2850;
+		public static final int SWITCH_REAR = -2820;
 		public static final int EXCHANGE_FRONT = -400;
-		public static final int EXCHANGE_REAR = -3850;
+		public static final int EXCHANGE_REAR = -3880;
 		public static final int MID_DROP_FRONT = -500;
-		public static final int MID_DROP_REAR = -3800;
+		public static final int MID_DROP_REAR = -3770;
 		public static final int HIGH_DROP_FRONT = -800;
-		public static final int HIGH_DROP_REAR = -3500;
-		public static final int STORE_FRONT = -1625;
-		public static final int STORE_REAR = -3050;
-		public static final int ADJ = 150;
+		public static final int HIGH_DROP_REAR = -3470;
+		public static final int STORE_FRONT = -1500;
+		public static final int STORE_REAR = -2770;
+		public static final int ADJ = -150;
 		public static final int MID = (INTAKE_FRONT + INTAKE_REAR)/2;
+//		public static final int INTAKE_FRONT = 402;
+//		public static final int INTAKE_REAR = 504;
+//		public static final int SWITCH_FRONT = 437;
+//		public static final int SWITCH_REAR = 469;
+//		public static final int EXCHANGE_FRONT = 404;
+//		public static final int EXCHANGE_REAR = 502;
+//		public static final int MID_DROP_FRONT = 406;
+//		public static final int MID_DROP_REAR = 498;
+//		public static final int HIGH_DROP_FRONT = 416;
+//		public static final int HIGH_DROP_REAR = 490;
+//		public static final int STORE_FRONT = 444;
+//		public static final int STORE_REAR = 462;
+//		public static final int ADJ = 2;
+//		public static final int MID = (INTAKE_FRONT + INTAKE_REAR)/2;
 	}
 	DigitalInput infraredSensor;
 	public TalonSRX bottomMotor;
@@ -96,9 +111,13 @@ public class ArmSubsystem extends Subsystem {
 		time.start();
 		bottomMotor.configMotionAcceleration(650, Robot.timeoutMs);
 		bottomMotor.configMotionCruiseVelocity(700, Robot.timeoutMs);
+//		bottomMotor.config_kP(0, 1, Robot.timeoutMs);
+//		bottomMotor.config_kI(0, 0, Robot.timeoutMs);
+//		bottomMotor.config_kD(0, 0.07, Robot.timeoutMs);
+//		bottomMotor.config_kF(0, 1.25, Robot.timeoutMs);
 		bottomMotor.config_kP(0, 1, Robot.timeoutMs);
 		bottomMotor.config_kI(0, 0, Robot.timeoutMs);
-		bottomMotor.config_kD(0, 0.07, Robot.timeoutMs);
+		bottomMotor.config_kD(0, 0, Robot.timeoutMs);
 		bottomMotor.config_kF(0, 1.25, Robot.timeoutMs);
 		bottomMotor.selectProfileSlot(0, 0);
 		bottomMotor.setNeutralMode(NeutralMode.Brake);
@@ -115,7 +134,7 @@ public class ArmSubsystem extends Subsystem {
 //		topMotor.set(ControlMode.Follower, RobotMap.Arm.BOTTOM_ARM_MOTOR);
 	}
 	public boolean getInfraredSensor() {
-		return infraredSensor.get();
+		return !infraredSensor.get();
 	}
 	public boolean getArmHalZeroFront(){
 		return !frontHal.get();

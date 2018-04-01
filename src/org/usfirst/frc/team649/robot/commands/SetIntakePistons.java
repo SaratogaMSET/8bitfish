@@ -23,9 +23,12 @@ public class SetIntakePistons extends Command {
     protected void initialize() {
     	
     	if(isOpen){
+    		Robot.isOpen = true;
     		Robot.intake.setIntakePiston60(false);
     		Robot.intake.setIntakePiston30(true);
+    		
     	}else{
+    		Robot.isOpen = false;
     		if(isClamp){
     			Robot.intake.setIntakePiston60(true);
         		Robot.intake.setIntakePiston30(false);

@@ -29,8 +29,8 @@ public class OI {
 	public boolean oldValue9;
 
 	public OI() {
-//		buttonBoard = new Joystick(RobotMap.BUTTON_BOARD);
-		buttonBoard2 = new Joystick(RobotMap.BUTTON_BOARD);
+		buttonBoard = new Joystick(RobotMap.BUTTON_BOARD);
+		buttonBoard2 = new Joystick(RobotMap.BUTTON_BOARD_2);
 		operatorJoystick = new Joystick(RobotMap.OPERATOR_JOYSTICK);
 		driveJoystickHorizontal = new Joystick(RobotMap.DRIVE_JOYSTICK_HORIZONTAL);
 		driveJoystickVertical = new Joystick(RobotMap.DRIVE_JOYSTICK_VERTICAL);
@@ -62,47 +62,47 @@ public class OI {
 
 		// use prev states
 		public boolean getLiftUpSmall() {
-			return buttonBoard2.getRawButton(12);
+			return buttonBoard.getRawButton(12);
 		}
 
 		public boolean getLiftDownSmall() {
-			return buttonBoard2.getRawButton(9);
+			return buttonBoard.getRawButton(9);
 		}
 
 		public boolean getArmUpSmall() {
-			return buttonBoard2.getRawButton(11);
+			return buttonBoard.getRawButton(10);
 		}
 
 		public boolean getArmDownSmall() {
-			return buttonBoard2.getRawButton(10);
+			return buttonBoard.getRawButton(11);
 		}
 
 		public boolean getIntakeState() {
-			return buttonBoard2.getRawButton(8);
+			return buttonBoard.getRawButton(8);
 		}
 
 		public boolean getStoreState() {
-			return buttonBoard2.getRawButton(5);
+			return buttonBoard.getRawButton(5);
 		}
 
 		public boolean getExchangeState() {
-			return buttonBoard2.getRawButton(7);
+			return buttonBoard.getRawButton(7);
 		}
 
 		public boolean getSwitchState() {
-			return buttonBoard2.getRawButton(4);
+			return buttonBoard.getRawButton(4);
 		}
 
 		public boolean getScaleLowState() {
-			return buttonBoard2.getRawButton(3);
+			return buttonBoard.getRawButton(4);
 		}
 
 		public boolean getScaleMidState() {
-			return buttonBoard2.getRawButton(2);
+			return buttonBoard.getRawButton(3);
 		}
 
 		public boolean getScaleHighState() {
-			return buttonBoard2.getRawButton(1);
+			return buttonBoard.getRawButton(2);
 		}
 
 		public boolean deployWithWheelsAndOpen() {
@@ -114,21 +114,33 @@ public class OI {
 		}
 
 		public boolean runIntakeWithWheelsClosed() {
-			return operatorJoystick.getRawButton(2);
+			return operatorJoystick.getRawButton(2) || buttonBoard2.getRawButton(3);
 		}
 
-		public boolean openIntake() {
+		public boolean openIntakeToggle() {
 			return operatorJoystick.getRawButton(3);
+		}
+		
+		public boolean openIntakeToggleBB(){
+			 return buttonBoard2.getRawButton(4);
 		}
 
 		public boolean deployOnlyWheels() {
-			return operatorJoystick.getRawButton(5);
+			return operatorJoystick.getRawButton(5)||buttonBoard2.getRawButton(1);
 		}
 
 		public boolean flipArm() {
 			return operatorJoystick.getRawButton(6);
 		}
-
+		public boolean flipAndStore(){
+			return buttonBoard2.getRawButton(5);
+		}
+		public boolean flipAndIntakeHigh(){
+			return buttonBoard2.getRawButton(7);
+		}
+		public boolean flipAndIntakeLow(){
+			return buttonBoard2.getRawButton(8);
+		}
 		public boolean isManual() {
 			return operatorJoystick.getRawButton(12);
 		}

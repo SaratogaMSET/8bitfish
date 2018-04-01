@@ -12,19 +12,29 @@ import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 /**
  *
  */
-public class ArmMotionProfile extends Command {
+public class ArmMotionProfileDelayed extends Command {
+
 	int value;
 	Timer doneTime;
 	int donePos;
 	int state;
-    public ArmMotionProfile(int encoderValue,int state) {
+	boolean firstTime;
+	
+    public ArmMotionProfileDelayed(int encoderValue,int state) {
     	value = encoderValue;
     	
         this.state = state;
+        firstTime = false;
     }
 
     // Called just before this Command runs the first time
     protected void initialize() {
+//    	requires(Robot.arm);
+//    	if(front){
+//    		Robot.armState = ArmSubsystem.ArmStateConstants.INTAKE_FRONT;
+//    	}else{
+//    		Robot.armState = ArmSubsystem.ArmStateConstants.INTAKE_REAR;
+//    	}
     	SmartDashboard.putBoolean("ran is fin", false);
     	state = Robot.armState;
 		Robot.isArmPidRunning = true;
@@ -39,7 +49,16 @@ public class ArmMotionProfile extends Command {
 
     // Called repeatedly when this Command is scheduled to run
     protected void execute() {
-    	if(Robot.isZero){
+    	if(Robot.isZero && Robot.lift.isCarriageAtBottom()){
+    		if(!firstTime){
+    			if(Robot.armState > 0){
+        			Robot.armState = state - 1;
+    			}else{
+    				Robot.armState = state + 1;
+    			}
+    			Robot.shouldCanclArmMP = true;
+    		}
+    		firstTime = true;
     		if(doneTime.get() == 0){
     			doneTime.start();
     	    	Robot.arm.setArmBrake(false);
@@ -61,8 +80,8 @@ public class ArmMotionProfile extends Command {
 //    		donePos = Robot.arm.getArmRaw();
 //    		doneTime.start();
 //    	}
-    	if(Robot.isZero){
-    		if(Math.abs(Robot.arm.getArmRaw()-value) < (ArmSubsystem.ArmConstants.RAW_ABS_TOL+15)){
+
+    		if(Math.abs(Robot.arm.getArmRaw()-value) < ArmSubsystem.ArmConstants.RAW_ABS_TOL){
         		return true;
         	}
 //        	else if(Math.abs(Robot.arm.getArmAngle()) > Math.abs(value)){
@@ -76,27 +95,23 @@ public class ArmMotionProfile extends Command {
         		return true;
         	}else if(Robot.arm.getArmHalZeroFront() && state == ArmSubsystem.ArmStateConstants.HEADING_INTAKE_FRONT){
         		return true;
-        	}else if(Robot.shouldCanclArmMP){
-        		return true;
         	}
         	return false;
-    	}
-    	return false;
+
     }
 
     // Called once after isFinished returns true
     protected void end() {
-    	SmartDashboard.putBoolean("Delayed end", true);
     	if(Robot.armState > 0){
-    		if(Robot.armState == ArmSubsystem.ArmStateConstants.HEADING_CUSTOM_UP){
-    			Robot.armState--;
-    		}else{
+    	
     			Robot.armState++;
-    		}
+    
     	}else{
     			Robot.armState--;
     	}
-    	SmartDashboard.putBoolean("ran is fin", true);
+		Robot.shouldCanclArmMP = false;
+
+    	SmartDashboard.putBoolean("ran is xd", true);
 		Robot.isArmPidRunning = false;
     	Robot.arm.setArmBrake(true);
     	Robot.intake.setIntakeMotors(0, 0);
