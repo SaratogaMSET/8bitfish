@@ -6,6 +6,10 @@ import java.util.logging.FileHandler;
 import java.util.logging.Logger;
 
 import org.usfirst.frc.team649.autonomous.AutoTest;
+import org.usfirst.frc.team649.autonomous.LeftFarScale;
+import org.usfirst.frc.team649.autonomous.LeftSwitch;
+import org.usfirst.frc.team649.autonomous.RightFarScale;
+import org.usfirst.frc.team649.autonomous.RightSwitch;
 import org.usfirst.frc.team649.autonomous.autoMaster;
 import org.usfirst.frc.team649.robot.CommandGroups.DownAndFlipWhenPossible2ndIntakeFront;
 import org.usfirst.frc.team649.robot.CommandGroups.DownAndFlipWhenPossible2ndIntakeRear;
@@ -15,6 +19,10 @@ import org.usfirst.frc.team649.robot.CommandGroups.DownAndFlipWhenPossibleStoreF
 import org.usfirst.frc.team649.robot.CommandGroups.DownAndFlipWhenPossibleStoreRear;
 import org.usfirst.frc.team649.robot.CommandGroups.IntakeWithWheelsAndClose;
 import org.usfirst.frc.team649.robot.commands.ArmMotionProfile;
+import org.usfirst.frc.team649.robot.commands.DrivetrainMotionProfile;
+import org.usfirst.frc.team649.robot.commands.DrivetrainMotionProfileIn;
+import org.usfirst.frc.team649.robot.commands.EncoderTurn;
+import org.usfirst.frc.team649.robot.commands.GyroPID;
 import org.usfirst.frc.team649.robot.commands.LiftMotionProfile;
 import org.usfirst.frc.team649.robot.commands.RunIntakeWheels;
 import org.usfirst.frc.team649.robot.commands.SetIntakePistons;
@@ -420,16 +428,17 @@ public class Robot extends TimedRobot {
 
 		isZero = false;
 
-		arm.setArmBrake(true);
+//		arm.setArmBrake(true);
 		drive.resetEncoders();
 		gyro.resetGyro();
 		drive.shift(true);
 		drive.changeBrakeCoast(true);
 //		arm.bottomMotor.set(ControlMode.MotionMagic, 435);
 		// new ZeroArmRoutine().start();
-		// new GyroPID(90).start();
-
-		 lift.setLiftMotion(LiftSubsystem.LiftEncoderConstants.MID_SCALE_STATE);
+//		new EncoderTurn(90).start();
+//		new LeftSwitch().start();
+		new LeftSwitch().start();
+//		 lift.setLiftMotion(LiftSubsystem.LiftEncoderConstants.MID_SCALE_STATE);
 	}
 
 	@Override
@@ -683,13 +692,23 @@ public class Robot extends TimedRobot {
 		// }
 		// }).start();
 		// lift.setLiftMotion(LiftSubsystem.LiftEncoderConstants.LOW_SCALE_STATE);
-
+		
 	}
 
 	@Override
 	public void teleopPeriodic() {
 		Scheduler.getInstance().run();
 		teleopRun();
+//		if (oi.buttonBoard.getRawButton(1)) {
+//			SmartDashboard.putBoolean("In DriveTest", true);
+//			new DrivetrainMotionProfile(100).start();
+//		}else if (oi.buttonBoard.getRawButton(2)) {
+//			new DrivetrainMotionProfile(150).start();
+//		} else if (oi.buttonBoard.getRawButton(3)) {
+//			new DrivetrainMotionProfile(50).start();
+//		}
+//		SmartDashboard.putBoolean("In DriveTest", false);
+		
 	}
 
 	public void teleopRun() {

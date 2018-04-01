@@ -44,9 +44,9 @@ public class AutoTest {
 	}
 	
 	public static class RightSwitchVal {
-		public static double FIRST_DRIVE = 164.8-Robot.robotLength/2;
+		public static double FIRST_DRIVE = 164.8-Robot.robotLength/2 - 16;
 		public static double FIRST_ANGLE_TURN = -90;
-		public static double SECOND_DRIVE = 40-Robot.robotLength/2;
+		public static double SECOND_DRIVE = 40-Robot.robotLength/2 - 16;
 		public static double SECOND_ANGLE_TURN = -90;
 		public static double THIRD_DRIVE = 21.2-Robot.robotLength/2;
 	}
@@ -60,7 +60,7 @@ public class AutoTest {
 	}
 	
 	public static class LeftSwitchVal {
-		public static double FIRST_DRIVE = 164.8-Robot.robotLength/2;
+		public static double FIRST_DRIVE = 164.8-Robot.robotLength/2 - 16;
 		public static double FIRST_ANGLE_TURN = 90;
 		public static double SECOND_DRIVE = 40-Robot.robotLength/2;
 		public static double SECOND_ANGLE_TURN = 90;
@@ -88,11 +88,11 @@ public class AutoTest {
 	}
 	
 	public static class RightScaleFarVal {
-		public static double FIRST_DRIVE = 230.8-Robot.robotLength/2;
+		public static double FIRST_DRIVE = 230.8-Robot.robotLength/2 - 10;
 		public static double FIRST_ANGLE_TURN = -83; // need to tune
-		public static double SECOND_DRIVE = 155+52.6-Robot.robotLength/2;
+		public static double SECOND_DRIVE = 155-Robot.robotLength/2 -10;
 		public static double SECOND_ANGLE_TURN = 90;
-		public static double THIRD_DRIVE = 69.2-Robot.robotLength/2;
+		public static double THIRD_DRIVE = 69.2-Robot.robotLength/2 - 16;
 //		public static double FIRST_DRIVE = 250-Robot.robotLength/2;
 //		public static double FIRST_ANGLE_TURN = -45;
 //		public static double SECOND_DRIVE = 42.41-Robot.robotLength/2;
@@ -108,11 +108,11 @@ public class AutoTest {
 	}
 	
 	public static class LeftScaleFarVal {
-		public static double FIRST_DRIVE = 230.8-Robot.robotLength/2;
-		public static double FIRST_ANGLE_TURN = 85; // need to tune, should be 90
-		public static double SECOND_DRIVE = 155+52.6-Robot.robotLength/2;// + 155
+		public static double FIRST_DRIVE = 230.8-Robot.robotLength/2 - 10;
+		public static double FIRST_ANGLE_TURN = 90; // need to tune, should be 90
+		public static double SECOND_DRIVE = 155-Robot.robotLength/2-10;// + 155
 		public static double SECOND_ANGLE_TURN = -90;
-		public static double THIRD_DRIVE = 72.2-Robot.robotLength/2;
+		public static double THIRD_DRIVE = 72.2-Robot.robotLength/2-16;
 	}
 	
 	public int currentlyTuningProgram;

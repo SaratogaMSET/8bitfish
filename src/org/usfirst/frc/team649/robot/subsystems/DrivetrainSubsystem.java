@@ -348,8 +348,9 @@ public class DrivetrainSubsystem extends PIDSubsystem {
 //		leftEncoder.reset();
 	}
 	public double getTranslationDistance(double angle) {
-		return (angle / 45)* (50.0/24.0) * 4096 *2;
-		}
+		return convert(32 * Math.PI * (angle / 360));
+	}
+	
     public void initDefaultCommand() {
     	
     }

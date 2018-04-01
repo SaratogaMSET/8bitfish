@@ -25,12 +25,13 @@ import edu.wpi.first.wpilibj.command.CommandGroup;
 public class RightSwitch extends CommandGroup {
 
     public RightSwitch() {
+    	Robot.isMPRunning = false;
     	addSequential(new ZeroArmRoutine());
     	addSequential(new ChangeRobotArmState(ArmSubsystem.ArmStateConstants.HEADING_SWITCH_FRONT));
     	addParallel(new ArmMotionProfile(ArmSubsystem.ArmEncoderConstants.SWITCH_FRONT, Robot.armState));
     	addSequential(new DrivetrainMotionProfileIn(AutoTest.RightSwitchVal.FIRST_DRIVE));// drive forward
       	addSequential(new GyroPID(AutoTest.RightSwitchVal.FIRST_ANGLE_TURN));// turn 90 degrees
-      	addSequential(new DrivetrainMotionProfileIn(AutoTest.RightSwitchVal.SECOND_DRIVE)); // drive forward
+//      addSequential(new DrivetrainMotionProfileIn(AutoTest.RightSwitchVal.SECOND_DRIVE)); // drive forward
     	addSequential(new RunIntakeForTime(1, false));
     	addSequential(new DrivetrainMotionProfileIn(-10));
       	//      	addSequential(new GyroPID(AutoTest.RightSwitchVal.SECOND_ANGLE_TURN));
