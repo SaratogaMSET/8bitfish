@@ -300,7 +300,7 @@ public class Robot extends TimedRobot {
 		// trajectoryLeftScaleSingle =
 		// Pathfinder.generate(pointsLeftScaleSingle, configLeftScaleSingle);
 		// modifierLeftScaleSingle = new
-		// TankModifier(trajectoryLeftScaleSingle).modify(0.66);
+		// TankModifier(t rajectoryLeftScaleSingle).modify(0.66);
 		isAutoInTeleopPrev = false;
 		//
 		// File leftScaleSingle = new

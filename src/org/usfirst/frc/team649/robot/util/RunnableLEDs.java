@@ -19,7 +19,7 @@ public class RunnableLEDs implements Runnable{
 		if (state != Robot.previousState) {
 			byte[] stateArray = new byte[1];
 			stateArray[0] = (byte) state;
-			Robot.sp.write(stateArray, 1);
+			Robot.sp.write(stateArray, 1 );
 		}
 		Robot.previousState = state;
 	}
