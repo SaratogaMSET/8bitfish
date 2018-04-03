@@ -2,14 +2,12 @@
 package org.usfirst.frc.team649.robot;
 
 import java.io.File;
-import java.util.logging.FileHandler;
-import java.util.logging.Logger;
+import java.util.concurrent.Executors;
+import java.util.concurrent.ScheduledExecutorService;
+import java.util.concurrent.TimeUnit;
 
 import org.usfirst.frc.team649.autonomous.AutoTest;
-import org.usfirst.frc.team649.autonomous.LeftFarScale;
 import org.usfirst.frc.team649.autonomous.LeftSwitch;
-import org.usfirst.frc.team649.autonomous.RightFarScale;
-import org.usfirst.frc.team649.autonomous.RightSwitch;
 import org.usfirst.frc.team649.autonomous.autoMaster;
 import org.usfirst.frc.team649.robot.CommandGroups.DownAndFlipWhenPossible2ndIntakeFront;
 import org.usfirst.frc.team649.robot.CommandGroups.DownAndFlipWhenPossible2ndIntakeRear;
@@ -17,12 +15,7 @@ import org.usfirst.frc.team649.robot.CommandGroups.DownAndFlipWhenPossibleIntake
 import org.usfirst.frc.team649.robot.CommandGroups.DownAndFlipWhenPossibleIntakeRear;
 import org.usfirst.frc.team649.robot.CommandGroups.DownAndFlipWhenPossibleStoreFront;
 import org.usfirst.frc.team649.robot.CommandGroups.DownAndFlipWhenPossibleStoreRear;
-import org.usfirst.frc.team649.robot.CommandGroups.IntakeWithWheelsAndClose;
 import org.usfirst.frc.team649.robot.commands.ArmMotionProfile;
-import org.usfirst.frc.team649.robot.commands.DrivetrainMotionProfile;
-import org.usfirst.frc.team649.robot.commands.DrivetrainMotionProfileIn;
-import org.usfirst.frc.team649.robot.commands.EncoderTurn;
-import org.usfirst.frc.team649.robot.commands.GyroPID;
 import org.usfirst.frc.team649.robot.commands.LiftMotionProfile;
 import org.usfirst.frc.team649.robot.commands.RunIntakeWheels;
 import org.usfirst.frc.team649.robot.commands.SetIntakePistons;
@@ -34,8 +27,8 @@ import org.usfirst.frc.team649.robot.subsystems.HangSubsystem;
 import org.usfirst.frc.team649.robot.subsystems.IntakeSubsystem;
 import org.usfirst.frc.team649.robot.subsystems.LiftSubsystem;
 import org.usfirst.frc.team649.robot.util.Lidar;
+import org.usfirst.frc.team649.robot.util.RunnableLEDs;
 
-import com.ctre.phoenix.motorcontrol.ControlMode;
 import com.ctre.phoenix.motorcontrol.NeutralMode;
 
 import edu.wpi.first.wpilibj.Compressor;
@@ -77,11 +70,6 @@ public class Robot extends TimedRobot {
 	public static AutoSelector switches;
 	public static boolean drivePIDRunning;
 	public static double lidarValue;
-	public Logger logger;
-	public FileHandler local;
-	public FileHandler usb;
-	public File logLocation;
-	public String logLocationString;
 	public Timer matchTimer;
 	public Timer intakeTimer;
 	public double teleOpTime = 135;
@@ -172,14 +160,15 @@ public class Robot extends TimedRobot {
 	public static boolean prevStateFlipAndIntakeHigh;
 	public static boolean prevStateFlipAndIntakeLow;
 
-	SerialPort sp;
+	public static SerialPort sp;
 	int state;
-	int previousState;
+	public static int previousState;
+	private ScheduledExecutorService leds;
+	private Runnable rLEDs;
 
-	public static boolean useLogging;
 	public static boolean enteredManualMode;
 	public boolean hasEndgameStarted;
-	public String Alliance;
+	public DriverStation.Alliance alliance;
 	public static I2C arduino;
 	public static boolean isSerialInitiated;
 	// DigitalOutput dio = new DigitalOutput(3);
@@ -193,6 +182,7 @@ public class Robot extends TimedRobot {
 	@Override
 
 	public void robotInit() {
+		rLEDs = new RunnableLEDs();
 		hang = new HangSubsystem();
 		drivePIDRunning = false;
 		prevWinchVel = 0;
@@ -231,7 +221,7 @@ public class Robot extends TimedRobot {
 		canFlipArm = false;
 		prevDriveVel = 0;
 		liftState = 2;
-		Alliance = DriverStation.getInstance().getAlliance().toString();
+		alliance = DriverStation.getInstance().getAlliance();
 		if (arm.getArmRaw() < ArmSubsystem.ArmEncoderConstants.INTAKE_REAR / 2) {
 			armState = ArmSubsystem.ArmStateConstants.INTAKE_REAR;
 		} else {
@@ -252,6 +242,8 @@ public class Robot extends TimedRobot {
 		prevStateFlipAndIntakeHigh = false;
 		prevStateFlipAndIntakeLow = false;
 		sp = new SerialPort(115200, SerialPort.Port.kUSB1, 8, SerialPort.Parity.kNone, SerialPort.StopBits.kOne);
+		leds = Executors.newSingleThreadScheduledExecutor();
+		leds.schedule(rLEDs, 100L, TimeUnit.MILLISECONDS);
 		//
 		// Waypoint[] pointsRightScaleSingle2 = new Waypoint[] {
 		// new Waypoint(-12.9,-2.9,0),
@@ -260,7 +252,7 @@ public class Robot extends TimedRobot {
 		// new Waypoint(-2.05,0,0),
 		// new Waypoint(0,0,0)
 		// };
-		// f
+		//
 		// configRightScaleSingle2 = new
 		// Trajectory.Config(Trajectory.FitMethod.HERMITE_CUBIC,
 		// Trajectory.Config.SAMPLES_HIGH, 0.02, 4.5, 3.3, 12);
@@ -316,14 +308,13 @@ public class Robot extends TimedRobot {
 		// Pathfinder.writeToCSV(leftScaleSingle,
 		// modifierLeftScaleSingle.getLeftTrajectory());
 		//
-		// if (DriverStation.getInstance().getAlliance().toString() == "Blue") {
-		// setLEDs(1);
-		// } else if (DriverStation.getInstance().getAlliance().toString() ==
-		// "Red") {
-		// setLEDs(2);
-		// } else {
-		// setLEDs(7);
-		// }
+		if (alliance == DriverStation.Alliance.Blue) {
+			setLEDs(1);//blue
+		} else if (alliance == DriverStation.Alliance.Red) {
+			setLEDs(2);//red
+		} else if (alliance == DriverStation.Alliance.Invalid){
+			setLEDs(12);//yellow
+		}
 
 		// Waypoint[] pointsRightScaleSingle = new Waypoint[] {
 		// new Waypoint(-12.6,-2.9,0),
@@ -428,17 +419,17 @@ public class Robot extends TimedRobot {
 
 		isZero = false;
 
-//		arm.setArmBrake(true);
+		// arm.setArmBrake(true);
 		drive.resetEncoders();
 		gyro.resetGyro();
 		drive.shift(true);
 		drive.changeBrakeCoast(true);
-//		arm.bottomMotor.set(ControlMode.MotionMagic, 435);
+		// arm.bottomMotor.set(ControlMode.MotionMagic, 435);
 		// new ZeroArmRoutine().start();
-//		new EncoderTurn(90).start();
-//		new LeftSwitch().start();
+		// new EncoderTurn(90).start();
+		// new LeftSwitch().start();
 		new LeftSwitch().start();
-//		 lift.setLiftMotion(LiftSubsystem.LiftEncoderConstants.MID_SCALE_STATE);
+		// lift.setLiftMotion(LiftSubsystem.LiftEncoderConstants.MID_SCALE_STATE);
 	}
 
 	@Override
@@ -570,11 +561,9 @@ public class Robot extends TimedRobot {
 		intakeTimer.start();
 		isZero = true;
 		// gyro.resetGyro();
-		// logger.setUseParentHandlers(false);
 		drive.changeBrakeCoast(false);
 
 		// gyro.resetGyro();
-		// logger.setUseParentHandlers(false);
 		// drive.changeBrakeCoast(false);
 		isAutoShift = true;
 		maxAccelDrive = 0;
@@ -692,23 +681,23 @@ public class Robot extends TimedRobot {
 		// }
 		// }).start();
 		// lift.setLiftMotion(LiftSubsystem.LiftEncoderConstants.LOW_SCALE_STATE);
-		
+
 	}
 
 	@Override
 	public void teleopPeriodic() {
 		Scheduler.getInstance().run();
 		teleopRun();
-//		if (oi.buttonBoard.getRawButton(1)) {
-//			SmartDashboard.putBoolean("In DriveTest", true);
-//			new DrivetrainMotionProfile(100).start();
-//		}else if (oi.buttonBoard.getRawButton(2)) {
-//			new DrivetrainMotionProfile(150).start();
-//		} else if (oi.buttonBoard.getRawButton(3)) {
-//			new DrivetrainMotionProfile(50).start();
-//		}
-//		SmartDashboard.putBoolean("In DriveTest", false);
-		
+		// if (oi.buttonBoard.getRawButton(1)) {
+		// SmartDashboard.putBoolean("In DriveTest", true);
+		// new DrivetrainMotionProfile(100).start();
+		// }else if (oi.buttonBoard.getRawButton(2)) {
+		// new DrivetrainMotionProfile(150).start();
+		// } else if (oi.buttonBoard.getRawButton(3)) {
+		// new DrivetrainMotionProfile(50).start();
+		// }
+		// SmartDashboard.putBoolean("In DriveTest", false);
+
 	}
 
 	public void teleopRun() {
@@ -767,26 +756,32 @@ public class Robot extends TimedRobot {
 			}
 
 		}
-//		else if (oi.operator.getSwitchState()) {
-//			if (liftState != LiftSubsystem.LiftStateConstants.HEADING_INTAKE_EXCHANGE_STORE_STATE
-//					&& liftState != LiftSubsystem.LiftStateConstants.INTAKE_EXCHANGE_STORE_STATE) {
-//				liftState = LiftSubsystem.LiftStateConstants.HEADING_INTAKE_EXCHANGE_STORE_STATE;
-//				new LiftMotionProfile(LiftSubsystem.LiftEncoderConstants.LOW_STATE, liftState, 0).start();
-//			}
-//			if (armState != ArmSubsystem.ArmStateConstants.HEADING_SWITCH_FRONT
-//					&& armState != ArmSubsystem.ArmStateConstants.HEADING_SWITCH_REAR
-//					&& armState != ArmSubsystem.ArmStateConstants.SWITCH_FRONT
-//					&& armState != ArmSubsystem.ArmStateConstants.SWITCH_REAR) {
-//				if (armIsFront) {
-//					armState = ArmSubsystem.ArmStateConstants.HEADING_SWITCH_FRONT;
-//					new ArmMotionProfile(ArmSubsystem.ArmEncoderConstants.SWITCH_FRONT, armState).start();
-//				} else {
-//					armState = ArmSubsystem.ArmStateConstants.HEADING_SWITCH_REAR;
-//					new ArmMotionProfile(ArmSubsystem.ArmEncoderConstants.SWITCH_REAR, armState).start();
-//				}
-//			}
-//		} 
-	else if (oi.operator.getScaleLowState()) {
+		// else if (oi.operator.getSwitchState()) {
+		// if (liftState !=
+		// LiftSubsystem.LiftStateConstants.HEADING_INTAKE_EXCHANGE_STORE_STATE
+		// && liftState !=
+		// LiftSubsystem.LiftStateConstants.INTAKE_EXCHANGE_STORE_STATE) {
+		// liftState =
+		// LiftSubsystem.LiftStateConstants.HEADING_INTAKE_EXCHANGE_STORE_STATE;
+		// new LiftMotionProfile(LiftSubsystem.LiftEncoderConstants.LOW_STATE,
+		// liftState, 0).start();
+		// }
+		// if (armState != ArmSubsystem.ArmStateConstants.HEADING_SWITCH_FRONT
+		// && armState != ArmSubsystem.ArmStateConstants.HEADING_SWITCH_REAR
+		// && armState != ArmSubsystem.ArmStateConstants.SWITCH_FRONT
+		// && armState != ArmSubsystem.ArmStateConstants.SWITCH_REAR) {
+		// if (armIsFront) {
+		// armState = ArmSubsystem.ArmStateConstants.HEADING_SWITCH_FRONT;
+		// new ArmMotionProfile(ArmSubsystem.ArmEncoderConstants.SWITCH_FRONT,
+		// armState).start();
+		// } else {
+		// armState = ArmSubsystem.ArmStateConstants.HEADING_SWITCH_REAR;
+		// new ArmMotionProfile(ArmSubsystem.ArmEncoderConstants.SWITCH_REAR,
+		// armState).start();
+		// }
+		// }
+		// }
+		else if (oi.operator.getScaleLowState()) {
 			if (liftState != LiftSubsystem.LiftStateConstants.HEADING_LOW_SCALE_STATE
 					&& liftState != LiftSubsystem.LiftStateConstants.LOW_SCALE_STATE) {
 				liftState = LiftSubsystem.LiftStateConstants.HEADING_LOW_SCALE_STATE;
@@ -910,74 +905,74 @@ public class Robot extends TimedRobot {
 			canFlipArm = true;
 			if (!isOpen && canFlipArm) {
 				if (!prevStateFlipArm && lift.getRawLift() < LiftSubsystem.LiftEncoderConstants.LOW_SCALE_STATE) {
-					if (armIsFront) {
-						if (armState == ArmSubsystem.ArmStateConstants.EXCHANGE_FRONT
-								|| armState == ArmSubsystem.ArmStateConstants.HEADING_EXCHANGE_FRONT) {
-							armState = ArmSubsystem.ArmStateConstants.HEADING_EXCHANGE_REAR;
-							new ArmMotionProfile(ArmSubsystem.ArmEncoderConstants.EXCHANGE_REAR, armState).start();
-						} else if (armState == ArmSubsystem.ArmStateConstants.HEADING_CUSTOM_UP
-								|| armState == ArmSubsystem.ArmStateConstants.CUSTOM) {
-							armState = ArmSubsystem.ArmStateConstants.HEADING_CUSTOM_DOWN;
-							new ArmMotionProfile(ArmSubsystem.ArmEncoderConstants.INTAKE_REAR - customArmPos, armState)
-									.start();
-						} else if (armState == ArmSubsystem.ArmStateConstants.HEADING_HIGH_DROP_FRONT
-								|| armState == ArmSubsystem.ArmStateConstants.HIGH_DROP_FRONT) {
-							armState = ArmSubsystem.ArmStateConstants.HEADING_HIGH_DROP_REAR;
-							new ArmMotionProfile(ArmSubsystem.ArmEncoderConstants.HIGH_DROP_REAR, armState).start();
-						} else if (armState == ArmSubsystem.ArmStateConstants.MID_DROP_FRONT
-								|| armState == ArmSubsystem.ArmStateConstants.HEADING_MID_DROP_FRONT) {
-							armState = ArmSubsystem.ArmStateConstants.HEADING_MID_DROP_REAR;
-							new ArmMotionProfile(ArmSubsystem.ArmEncoderConstants.MID_DROP_REAR, armState).start();
-						} else if (armState == ArmSubsystem.ArmStateConstants.STORE_FRONT
-								|| armState == ArmSubsystem.ArmStateConstants.HEADING_STORE_FRONT) {
-							armState = ArmSubsystem.ArmStateConstants.HEADING_STORE_REAR;
-							new ArmMotionProfile(ArmSubsystem.ArmEncoderConstants.STORE_REAR, armState).start();
-						} else if (armState == ArmSubsystem.ArmStateConstants.INTAKE_FRONT
-								|| armState == ArmSubsystem.ArmStateConstants.HEADING_INTAKE_FRONT) {
-							armState = ArmSubsystem.ArmStateConstants.HEADING_INTAKE_REAR;
+					// if (armIsFront) {
+					if (armState == ArmSubsystem.ArmStateConstants.EXCHANGE_FRONT
+							|| armState == ArmSubsystem.ArmStateConstants.HEADING_EXCHANGE_FRONT) {
+						armState = ArmSubsystem.ArmStateConstants.HEADING_EXCHANGE_REAR;
+						new ArmMotionProfile(ArmSubsystem.ArmEncoderConstants.EXCHANGE_REAR, armState).start();
+					} else if (armState == ArmSubsystem.ArmStateConstants.HEADING_CUSTOM_UP
+							|| armState == ArmSubsystem.ArmStateConstants.CUSTOM) {
+						armState = ArmSubsystem.ArmStateConstants.HEADING_CUSTOM_DOWN;
+						new ArmMotionProfile(ArmSubsystem.ArmEncoderConstants.INTAKE_REAR - customArmPos, armState)
+								.start();
+					} else if (armState == ArmSubsystem.ArmStateConstants.HEADING_HIGH_DROP_FRONT
+							|| armState == ArmSubsystem.ArmStateConstants.HIGH_DROP_FRONT) {
+						armState = ArmSubsystem.ArmStateConstants.HEADING_HIGH_DROP_REAR;
+						new ArmMotionProfile(ArmSubsystem.ArmEncoderConstants.HIGH_DROP_REAR, armState).start();
+					} else if (armState == ArmSubsystem.ArmStateConstants.MID_DROP_FRONT
+							|| armState == ArmSubsystem.ArmStateConstants.HEADING_MID_DROP_FRONT) {
+						armState = ArmSubsystem.ArmStateConstants.HEADING_MID_DROP_REAR;
+						new ArmMotionProfile(ArmSubsystem.ArmEncoderConstants.MID_DROP_REAR, armState).start();
+					} else if (armState == ArmSubsystem.ArmStateConstants.STORE_FRONT
+							|| armState == ArmSubsystem.ArmStateConstants.HEADING_STORE_FRONT) {
+						armState = ArmSubsystem.ArmStateConstants.HEADING_STORE_REAR;
+						new ArmMotionProfile(ArmSubsystem.ArmEncoderConstants.STORE_REAR, armState).start();
+					} else if (armState == ArmSubsystem.ArmStateConstants.INTAKE_FRONT
+							|| armState == ArmSubsystem.ArmStateConstants.HEADING_INTAKE_FRONT) {
+						armState = ArmSubsystem.ArmStateConstants.HEADING_INTAKE_REAR;
 
-							new ArmMotionProfile(ArmSubsystem.ArmEncoderConstants.INTAKE_REAR, armState).start();
-						} else if (armState == ArmSubsystem.ArmStateConstants.SWITCH_FRONT
-								|| armState == ArmSubsystem.ArmStateConstants.HEADING_SWITCH_FRONT) {
-							armState = ArmSubsystem.ArmStateConstants.HEADING_SWITCH_REAR;
-							new ArmMotionProfile(ArmSubsystem.ArmEncoderConstants.SWITCH_REAR, armState).start();
+						new ArmMotionProfile(ArmSubsystem.ArmEncoderConstants.INTAKE_REAR, armState).start();
+					} else if (armState == ArmSubsystem.ArmStateConstants.SWITCH_FRONT
+							|| armState == ArmSubsystem.ArmStateConstants.HEADING_SWITCH_FRONT) {
+						armState = ArmSubsystem.ArmStateConstants.HEADING_SWITCH_REAR;
+						new ArmMotionProfile(ArmSubsystem.ArmEncoderConstants.SWITCH_REAR, armState).start();
 
-						}
-					} else {
-						if (armState == ArmSubsystem.ArmStateConstants.EXCHANGE_REAR
-								|| armState == ArmSubsystem.ArmStateConstants.HEADING_EXCHANGE_REAR) {
-							armState = ArmSubsystem.ArmStateConstants.HEADING_EXCHANGE_FRONT;
-							new ArmMotionProfile(ArmSubsystem.ArmEncoderConstants.EXCHANGE_FRONT, armState).start();
-						} else if (armState == ArmSubsystem.ArmStateConstants.HEADING_CUSTOM_DOWN
-								|| armState == ArmSubsystem.ArmStateConstants.CUSTOM) {
-							armState = ArmSubsystem.ArmStateConstants.HEADING_CUSTOM_UP;
-							new ArmMotionProfile(ArmSubsystem.ArmEncoderConstants.INTAKE_REAR - customArmPos, armState)
-									.start();
-						} else if (armState == ArmSubsystem.ArmStateConstants.HEADING_HIGH_DROP_REAR
-								|| armState == ArmSubsystem.ArmStateConstants.HIGH_DROP_REAR) {
-							armState = ArmSubsystem.ArmStateConstants.HEADING_HIGH_DROP_FRONT;
-							new ArmMotionProfile(ArmSubsystem.ArmEncoderConstants.HIGH_DROP_FRONT, armState).start();
-						} else if (armState == ArmSubsystem.ArmStateConstants.MID_DROP_REAR
-								|| armState == ArmSubsystem.ArmStateConstants.HEADING_MID_DROP_REAR) {
-							armState = ArmSubsystem.ArmStateConstants.HEADING_MID_DROP_FRONT;
-							new ArmMotionProfile(ArmSubsystem.ArmEncoderConstants.MID_DROP_FRONT, armState).start();
-
-						} else if (armState == ArmSubsystem.ArmStateConstants.STORE_REAR
-								|| armState == ArmSubsystem.ArmStateConstants.HEADING_STORE_REAR) {
-							armState = ArmSubsystem.ArmStateConstants.HEADING_STORE_FRONT;
-							new ArmMotionProfile(ArmSubsystem.ArmEncoderConstants.STORE_FRONT, armState).start();
-
-						} else if (armState == ArmSubsystem.ArmStateConstants.INTAKE_REAR
-								|| armState == ArmSubsystem.ArmStateConstants.HEADING_INTAKE_REAR) {
-							armState = ArmSubsystem.ArmStateConstants.HEADING_INTAKE_FRONT;
-
-							new ArmMotionProfile(ArmSubsystem.ArmEncoderConstants.INTAKE_FRONT, armState).start();
-						} else if (armState == ArmSubsystem.ArmStateConstants.SWITCH_REAR
-								|| armState == ArmSubsystem.ArmStateConstants.HEADING_SWITCH_REAR) {
-							armState = ArmSubsystem.ArmStateConstants.HEADING_SWITCH_FRONT;
-							new ArmMotionProfile(ArmSubsystem.ArmEncoderConstants.SWITCH_FRONT, armState).start();
-						}
 					}
+					// } else {
+					if (armState == ArmSubsystem.ArmStateConstants.EXCHANGE_REAR
+							|| armState == ArmSubsystem.ArmStateConstants.HEADING_EXCHANGE_REAR) {
+						armState = ArmSubsystem.ArmStateConstants.HEADING_EXCHANGE_FRONT;
+						new ArmMotionProfile(ArmSubsystem.ArmEncoderConstants.EXCHANGE_FRONT, armState).start();
+					} else if (armState == ArmSubsystem.ArmStateConstants.HEADING_CUSTOM_DOWN
+							|| armState == ArmSubsystem.ArmStateConstants.CUSTOM) {
+						armState = ArmSubsystem.ArmStateConstants.HEADING_CUSTOM_UP;
+						new ArmMotionProfile(ArmSubsystem.ArmEncoderConstants.INTAKE_REAR - customArmPos, armState)
+								.start();
+					} else if (armState == ArmSubsystem.ArmStateConstants.HEADING_HIGH_DROP_REAR
+							|| armState == ArmSubsystem.ArmStateConstants.HIGH_DROP_REAR) {
+						armState = ArmSubsystem.ArmStateConstants.HEADING_HIGH_DROP_FRONT;
+						new ArmMotionProfile(ArmSubsystem.ArmEncoderConstants.HIGH_DROP_FRONT, armState).start();
+					} else if (armState == ArmSubsystem.ArmStateConstants.MID_DROP_REAR
+							|| armState == ArmSubsystem.ArmStateConstants.HEADING_MID_DROP_REAR) {
+						armState = ArmSubsystem.ArmStateConstants.HEADING_MID_DROP_FRONT;
+						new ArmMotionProfile(ArmSubsystem.ArmEncoderConstants.MID_DROP_FRONT, armState).start();
+
+					} else if (armState == ArmSubsystem.ArmStateConstants.STORE_REAR
+							|| armState == ArmSubsystem.ArmStateConstants.HEADING_STORE_REAR) {
+						armState = ArmSubsystem.ArmStateConstants.HEADING_STORE_FRONT;
+						new ArmMotionProfile(ArmSubsystem.ArmEncoderConstants.STORE_FRONT, armState).start();
+
+					} else if (armState == ArmSubsystem.ArmStateConstants.INTAKE_REAR
+							|| armState == ArmSubsystem.ArmStateConstants.HEADING_INTAKE_REAR) {
+						armState = ArmSubsystem.ArmStateConstants.HEADING_INTAKE_FRONT;
+
+						new ArmMotionProfile(ArmSubsystem.ArmEncoderConstants.INTAKE_FRONT, armState).start();
+					} else if (armState == ArmSubsystem.ArmStateConstants.SWITCH_REAR
+							|| armState == ArmSubsystem.ArmStateConstants.HEADING_SWITCH_REAR) {
+						armState = ArmSubsystem.ArmStateConstants.HEADING_SWITCH_FRONT;
+						new ArmMotionProfile(ArmSubsystem.ArmEncoderConstants.SWITCH_FRONT, armState).start();
+					}
+					// }
 				}
 			}
 		} else if (oi.operator.flipAndIntakeLow() && !prevStateFlipAndIntakeLow) {
@@ -1011,7 +1006,7 @@ public class Robot extends TimedRobot {
 				}
 				if (armIsFront) {
 					armState = ArmSubsystem.ArmStateConstants.HEADING_EXCHANGE_REAR;
-				
+
 					new ArmMotionProfile(ArmSubsystem.ArmEncoderConstants.EXCHANGE_REAR, armState).start();
 				} else {
 					armState = ArmSubsystem.ArmStateConstants.HEADING_EXCHANGE_FRONT;
@@ -1052,13 +1047,13 @@ public class Robot extends TimedRobot {
 			}
 			liftState = LiftSubsystem.LiftStateConstants.CUSTOM_STATE;
 			armState = ArmSubsystem.ArmStateConstants.CUSTOM;
-			if(lift.isSecondStageAtBottom() && lift.isCarriageAtBottom()){
-				if(oi.operator.getOperatorY() < 0){
+			if (lift.isSecondStageAtBottom() && lift.isCarriageAtBottom()) {
+				if (oi.operator.getOperatorY() < 0) {
 					lift.setLift(0);
-				}else{
+				} else {
 					lift.setLift(oi.operator.getOperatorY());
 				}
-			}else{
+			} else {
 				lift.setLift(oi.operator.getOperatorY());
 			}
 			customLiftPos = (int) lift.getRawLift();
@@ -1099,9 +1094,9 @@ public class Robot extends TimedRobot {
 				arm.setArmBrake(true);
 				// if(armState == ArmSubsystem.)
 			}
-			if (armState == ArmSubsystem.ArmStateConstants.INTAKE_FRONT ) {
+			if (armState == ArmSubsystem.ArmStateConstants.INTAKE_FRONT) {
 				arm.setArm(0);
-			} else if (armState == ArmSubsystem.ArmStateConstants.INTAKE_REAR ) {
+			} else if (armState == ArmSubsystem.ArmStateConstants.INTAKE_REAR) {
 				arm.setArm(0);
 			}
 
@@ -1136,23 +1131,20 @@ public class Robot extends TimedRobot {
 
 			}
 			Robot.intake.setIntakeMotors(0, 0);
-			setLEDs(8);
 		} else if (oi.operator.runIntakeWithWheelsClosed()) {
 			new RunIntakeWheels(1).start();
-//			new IntakeWithWheelsAndClose().start();
-			setLEDs(4);
+			// new IntakeWithWheelsAndClose().start();
 		} else if (isOpen == false && !oi.operator.runIntakeWithWheelsClosed()
 				&& !(oi.operator.openIntakeToggle() || oi.operator.openIntakeToggleBB())) {
 			new SetIntakePistons(false, true).start();
 			Robot.intake.setIntakeMotors(0, 0);
-			setLEDs(0);
 		} else {
 			Robot.intake.setIntakeMotors(0, 0);
-			setLEDs(8);
 		}
 		if (!arm.getInfraredSensor()) {
 			setLEDs(5);
-		} else if (arm.getInfraredSensor()) {
+		}
+		if (arm.getInfraredSensor()) {
 			setLEDs(6);
 		}
 		prevStateFlipArm = oi.operator.flipArm();
@@ -1189,7 +1181,7 @@ public class Robot extends TimedRobot {
 		if (arm.getArmHalZeroFront()) {
 			arm.bottomMotor.setSelectedSensorPosition(ArmSubsystem.ArmEncoderConstants.INTAKE_FRONT - 5, 0, 20);
 		} else if (arm.getArmHalZeroBack()) {
-			arm.bottomMotor.setSelectedSensorPosition(ArmSubsystem.ArmEncoderConstants.INTAKE_REAR , 0, 20);
+			arm.bottomMotor.setSelectedSensorPosition(ArmSubsystem.ArmEncoderConstants.INTAKE_REAR, 0, 20);
 		}
 		if (lift.isSecondStageAtBottom()) {
 			lidarOffset = lidar.getSample();
@@ -1204,7 +1196,8 @@ public class Robot extends TimedRobot {
 		SmartDashboard.putNumber("Arm Current", arm.bottomMotor.getOutputCurrent());
 		SmartDashboard.putBoolean("ir", arm.getInfraredSensor());
 		if (lift.getLiftState() == LiftSubsystem.LiftHalConstants.CARRIAGE_HIGH_SECOND_HIGH) {
-//			lift.mainLiftMotor.setSelectedSensorPosition(LiftSubsystem.LiftEncoderConstants.HIGH_SCALE_STATE, 0, 20);
+			// lift.mainLiftMotor.setSelectedSensorPosition(LiftSubsystem.LiftEncoderConstants.HIGH_SCALE_STATE,
+			// 0, 20);
 		}
 		prevStateIntakeToggle = oi.operator.openIntakeToggleBB();
 		prevStateIntakeToggle2 = oi.operator.openIntakeToggle();
@@ -1345,11 +1338,6 @@ public class Robot extends TimedRobot {
 	}
 
 	public void setLEDs(int newState) {
-//		if (newState != previousState) {
-//			byte[] stateArray = new byte[1];
-//			stateArray[0] = (byte) newState;
-//			sp.write(stateArray, 1);
-//		}
-//		previousState = newState;
+		leds.submit(rLEDs = new RunnableLEDs(newState));
 	}
 }
