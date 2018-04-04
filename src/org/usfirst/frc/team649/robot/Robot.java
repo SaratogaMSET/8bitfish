@@ -27,6 +27,7 @@ import org.usfirst.frc.team649.robot.subsystems.HangSubsystem;
 import org.usfirst.frc.team649.robot.subsystems.IntakeSubsystem;
 import org.usfirst.frc.team649.robot.subsystems.LiftSubsystem;
 import org.usfirst.frc.team649.robot.util.Lidar;
+import org.usfirst.frc.team649.robot.util.Logging;
 import org.usfirst.frc.team649.robot.util.RunnableLEDs;
 
 import com.ctre.phoenix.motorcontrol.NeutralMode;
@@ -88,7 +89,6 @@ public class Robot extends TimedRobot {
 	public static boolean isZero;
 	public Timer time;
 	public Timer timeAccel;
-	public HangSubsystem hang;
 
 	public static boolean isArmPidRunning;
 	public static boolean isDrivePIDRunning;
@@ -183,41 +183,25 @@ public class Robot extends TimedRobot {
 
 	public void robotInit() {
 		rLEDs = new RunnableLEDs();
-		hang = new HangSubsystem();
+		
+		drive = new DrivetrainSubsystem();
+		gyro = new GyroSubsystem();
+		arm = new ArmSubsystem();
+		intake = new IntakeSubsystem();
+		lift = new LiftSubsystem();
+		
 		drivePIDRunning = false;
 		prevWinchVel = 0;
 		oi = new OI();
 		lidarCount = 0;
 		shouldCanclArmMP = false;
-		drive = new DrivetrainSubsystem();
-		gyro = new GyroSubsystem();
-		arm = new ArmSubsystem();
+		
 		// switches = new AutoSelector();
-		intake = new IntakeSubsystem();
 		intakeTimer = new Timer();
-		lift = new LiftSubsystem();
-		prevLiftVel = 0;
-		maxLiftVel = 0;
-		// automaster = new autoMaster();
 		lidar = new Lidar(I2C.Port.kOnboard, 0xC4 >> 1);
 		compressor = new Compressor(4);
 		isPIDActive = false;
 		autoTest = new AutoTest();
-		accelTimer = new Timer();
-		k_p = drive.getPIDController().getP();
-		k_i = drive.getPIDController().getI();
-		k_d = drive.getPIDController().getD();
-		secondStageLiftMaxVel = 0;
-		carriageStageMaxVel = 0;
-		distance = 50;
-		tuningConstant = 1;
-		accel = 0;
-		lastAccel = 0;
-		isZero = false;
-		time = new Timer();
-		timeAccel = new Timer();
-		driveAccel = 0;
-		driveVel = 0;
 		canFlipArm = false;
 		prevDriveVel = 0;
 		liftState = 2;
@@ -227,8 +211,6 @@ public class Robot extends TimedRobot {
 		} else {
 			armState = ArmSubsystem.ArmStateConstants.INTAKE_FRONT;
 		}
-		rightDTMaxVel = 0;
-		leftDTMaxVel = 0;
 		timesCalled = 0;
 		lidarOffset = 0;
 		lidarValue = lidar.getSample();
@@ -391,12 +373,11 @@ public class Robot extends TimedRobot {
 			trajectoryRightScaleSingle = Pathfinder.generate(pointsRightScaleSingle, configRightScaleSingle);
 			modifierRightScaleSingle = new TankModifier(trajectoryRightScaleSingle).modify(0.66);
 		}
-		hang.resetHook();
 	}
 
 	@Override
 	public void disabledInit() {
-
+		Logging.writeToFile();
 	}
 
 	@Override
@@ -557,6 +538,7 @@ public class Robot extends TimedRobot {
 	@SuppressWarnings("unused")
 	@Override
 	public void teleopInit() {
+		Logging.createLogFile();
 		armVelMax = 0;
 		intakeTimer.start();
 		isZero = true;
@@ -688,15 +670,8 @@ public class Robot extends TimedRobot {
 	public void teleopPeriodic() {
 		Scheduler.getInstance().run();
 		teleopRun();
-		// if (oi.buttonBoard.getRawButton(1)) {
-		// SmartDashboard.putBoolean("In DriveTest", true);
-		// new DrivetrainMotionProfile(100).start();
-		// }else if (oi.buttonBoard.getRawButton(2)) {
-		// new DrivetrainMotionProfile(150).start();
-		// } else if (oi.buttonBoard.getRawButton(3)) {
-		// new DrivetrainMotionProfile(50).start();
-		// }
-		// SmartDashboard.putBoolean("In DriveTest", false);
+		Logging.writeToArray();
+		
 
 	}
 
@@ -1205,12 +1180,6 @@ public class Robot extends TimedRobot {
 		prevStateFlipAndIntakeLow = oi.operator.flipAndIntakeLow();
 		prevStateFlipAndStore = oi.operator.flipAndStore();
 
-		if (oi.operatorJoystick.getRawButton(8)) {
-			hang.grabHook();
-		}
-		if (oi.operatorJoystick.getRawButton(7)) {
-			hang.resetHook();
-		}
 	}
 
 	// if (DriverStation.getInstance().getMatchTime() <= 30.0 &&
