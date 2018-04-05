@@ -27,6 +27,8 @@ public class OI {
 	public boolean oldValue7;
 	public boolean oldValue8;
 	public boolean oldValue9;
+	public boolean intakeBBPrev;
+	public boolean shiftPrev;
 
 	public OI() {
 		buttonBoard = new Joystick(RobotMap.BUTTON_BOARD);
@@ -37,7 +39,8 @@ public class OI {
 		// gamePad = new Joystick(3);
 		driver = new Driver();
 		operator = new Operator();
-
+		shiftPrev = false;
+		intakeBBPrev = false;
 		oldValue1 = false;
 		oldValue2 = false;
 		oldValue3 = false;
@@ -59,7 +62,27 @@ public class OI {
 			oldValue1 = value;
 			return false;
 		}
-
+		public boolean newBBIntake(){
+			boolean val = buttonBoard2.getRawButton(4);
+			if(val == true && intakeBBPrev == false){
+				intakeBBPrev = val;
+				return true;
+			}
+			intakeBBPrev = val;
+			return false;
+		}
+		public boolean newShiftToggle(){
+			boolean val = driver.shiftUp();
+			if(val && !shiftPrev){
+				shiftPrev = val;
+				return true;
+			}
+			shiftPrev = val;
+			return false;
+		}
+		public boolean lowSpeedDeploy(){
+			return buttonBoard2.getRawButton(2);
+		}
 		// use prev states
 		public boolean getLiftUpSmall() {
 			return buttonBoard.getRawButton(12);

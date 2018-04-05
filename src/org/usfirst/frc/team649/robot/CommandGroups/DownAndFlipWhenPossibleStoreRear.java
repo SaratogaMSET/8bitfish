@@ -19,7 +19,7 @@ public class DownAndFlipWhenPossibleStoreRear extends CommandGroup {
     public DownAndFlipWhenPossibleStoreRear() {
     	addSequential(new ChangeRobotLiftState(LiftSubsystem.LiftStateConstants.HEADING_INTAKE_EXCHANGE_STORE_STATE));
     	addSequential(new ChangeRobotArmState(ArmSubsystem.ArmStateConstants.HEADING_STORE_FRONT));
-    	addParallel(new ArmMotionProfile(ArmSubsystem.ArmEncoderConstants.STORE_FRONT,Robot.armState));
+    	addParallel(new ArmMotionProfile(ArmSubsystem.ArmEncoderConstants.STORE_FRONT,Robot.armState,false));
     	addParallel(new ArmMotionProfileDelayed(ArmSubsystem.ArmEncoderConstants.STORE_REAR,Robot.armState));
         addSequential(new LiftMotionProfile(LiftSubsystem.LiftEncoderConstants.LOW_STATE,Robot.liftState,0));
     }

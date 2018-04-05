@@ -29,6 +29,9 @@ public class ArmMotionProfileDelayed extends Command {
 
     // Called just before this Command runs the first time
     protected void initialize() {
+
+		SmartDashboard.putBoolean("did get here", false);
+
 //    	requires(Robot.arm);
 //    	if(front){
 //    		Robot.armState = ArmSubsystem.ArmStateConstants.INTAKE_FRONT;
@@ -40,6 +43,9 @@ public class ArmMotionProfileDelayed extends Command {
 		Robot.isArmPidRunning = true;
     	doneTime = new Timer();
     	donePos = 0;
+    	Robot.arm.setArmBrake(false);
+    	Robot.intake.setIntakeMotors(-0.12, -0.12);
+
 //    	doneTime.start();
 //    	if(state == ArmSubsystem.ArmStateConstants.HEADING_INTAKE_FRONT|| state == ArmSubsystem.ArmStateConstants.HEADING_INTAKE_REAR){
 //    		Robot.intake.setIntakeMotors(-0.7, -0.7);
@@ -51,6 +57,8 @@ public class ArmMotionProfileDelayed extends Command {
     protected void execute() {
     	if(Robot.isZero && Robot.lift.isCarriageAtBottom()){
     		if(!firstTime){
+    	    	Robot.arm.setArmBrake(false);
+    	    	Robot.armState = state;
     			if(Robot.armState > 0){
         			Robot.armState = state - 1;
     			}else{
@@ -61,7 +69,7 @@ public class ArmMotionProfileDelayed extends Command {
     		firstTime = true;
     		if(doneTime.get() == 0){
     			doneTime.start();
-    	    	Robot.arm.setArmBrake(false);
+    			SmartDashboard.putBoolean("did get here", true);
 
     		}
     		Robot.arm.bottomMotor.set(ControlMode.MotionMagic, value);
@@ -90,8 +98,6 @@ public class ArmMotionProfileDelayed extends Command {
         	else if(Robot.arm.getArmHalZeroBack() && state == ArmSubsystem.ArmStateConstants.HEADING_INTAKE_REAR){
         		return true;
         	}else if(doneTime.get()>2){
-        	
-        	
         		return true;
         	}else if(Robot.arm.getArmHalZeroFront() && state == ArmSubsystem.ArmStateConstants.HEADING_INTAKE_FRONT){
         		return true;
@@ -119,6 +125,7 @@ public class ArmMotionProfileDelayed extends Command {
         	Robot.arm.bottomMotor.set(ControlMode.PercentOutput, 0);
 
     	}
+    	Robot.isRunnigWithFlip = false;
     }
 
     // Called when another command which requires one or more of the same

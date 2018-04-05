@@ -58,7 +58,7 @@ public class ArmSubsystem extends Subsystem {
 	public static class ArmEncoderConstants{
 		public static final int INTAKE_FRONT = -5;
 		public static final int INTAKE_REAR = -4265;
-		public static final int SWITCH_FRONT = -1450;
+		public static final int SWITCH_FRONT = -1400;
 		public static final int SWITCH_REAR = -2820;
 		public static final int EXCHANGE_FRONT = -400;
 		public static final int EXCHANGE_REAR = -3880;
@@ -67,7 +67,7 @@ public class ArmSubsystem extends Subsystem {
 		public static final int HIGH_DROP_FRONT = -800;
 		public static final int HIGH_DROP_REAR = -3470;
 		public static final int STORE_FRONT = -1500;
-		public static final int STORE_REAR = -2770;
+		public static final int STORE_REAR = -2870;
 		public static final int ADJ = -150;
 		public static final int MID = (INTAKE_FRONT + INTAKE_REAR)/2;
 //		public static final int INTAKE_FRONT = 402;
@@ -96,7 +96,7 @@ public class ArmSubsystem extends Subsystem {
 		bottomMotor = new TalonSRX(RobotMap.Arm.BOTTOM_ARM_MOTOR);
 		bottomMotor.configSelectedFeedbackSensor(FeedbackDevice.CTRE_MagEncoder_Relative, 0, Robot.timeoutMs);
 		topMotor = new TalonSRX(RobotMap.Arm.TOP_ARM_MOTOR);
-		infraredSensor = new DigitalInput(RobotMap.Arm.INFRARED_SENSOR);
+//		infraredSensor = new DigitalInput(RobotMap.Arm.INFRARED_SENSOR);
 		bottomMotor.configNominalOutputForward(0, Robot.timeoutMs);
 		bottomMotor.configNominalOutputReverse(0, Robot.timeoutMs);
 		bottomMotor.configPeakOutputForward(1.0, Robot.timeoutMs);
@@ -133,9 +133,9 @@ public class ArmSubsystem extends Subsystem {
 		bottomMotor.set(ControlMode.PercentOutput, -power);
 //		topMotor.set(ControlMode.Follower, RobotMap.Arm.BOTTOM_ARM_MOTOR);
 	}
-	public boolean getInfraredSensor() {
-		return !infraredSensor.get();
-	}
+//	public boolean getInfraredSensor() {
+////		return !infraredSensor.get();
+//	}
 	public boolean getArmHalZeroFront(){
 		return !frontHal.get();
 	}

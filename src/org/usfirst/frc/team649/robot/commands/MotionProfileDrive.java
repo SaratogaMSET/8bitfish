@@ -12,10 +12,11 @@ import jaci.pathfinder.Pathfinder;
  *
  */
 public class MotionProfileDrive extends Command {
-
-    public MotionProfileDrive() {
+	boolean back;
+    public MotionProfileDrive(boolean isBack) {
         // Use requires() here to declare subsystem dependencies
         // eg. requires(chassis);
+    	back = isBack;
     }
 
     // Called just before this Command runs the first time
@@ -40,9 +41,15 @@ public class MotionProfileDrive extends Command {
 		}else{
 			turn = 0.8 * (-1.0/80.0) * angleDifference;
 		}
+		if(back){
+			Robot.drive.motors[0].set(ControlMode.PercentOutput, l);
+			Robot.drive.motors[2].set(ControlMode.PercentOutput, r);
+		}else{
+			Robot.drive.motors[0].set(ControlMode.PercentOutput, l+turn);
+			Robot.drive.motors[2].set(ControlMode.PercentOutput, r-turn);
+		}
 		SmartDashboard.putNumber("turn", turn);
-		Robot.drive.motors[0].set(ControlMode.PercentOutput, l+turn);
-		Robot.drive.motors[2].set(ControlMode.PercentOutput, r-turn);
+		
     }
 
     // Make this return true when this Command no longer needs to run execute()

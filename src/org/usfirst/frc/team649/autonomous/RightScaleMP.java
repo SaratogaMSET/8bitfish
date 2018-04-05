@@ -10,7 +10,7 @@ import edu.wpi.first.wpilibj.command.CommandGroup;
 public class RightScaleMP extends CommandGroup {
 
     public RightScaleMP() {
-    	addSequential(new MotionProfileDrive());
+    	addSequential(new MotionProfileDrive(false));
     	
         // Add Commands here:
         // e.g. addSequential(new Command1());

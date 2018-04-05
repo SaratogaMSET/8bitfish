@@ -61,21 +61,21 @@ public class RobotMap {
 	}
 	public static class Camera{
         public static final boolean practiceBot = false;
-//        public static final String axisPort = "10.6.49.15";
-//        public static final String axisName = "greenAxisCamera";
-//        public static final int axisResWidth = 320;
-//        public static final int axisResHeight = 480;
+        public static final String axisPort = "10.6.49.7";
+        public static final String axisName = "tanAxisCamera";
+        public static final int axisResWidth = 320;
+        public static final int axisResHeight = 240;
+        public static final int axisFPS = 30;
 //        public static final String axis2Port = "10.6.49.17";
 //        public static final String axis2Name = "blackAxisCamera";
-//        public static final int axisFPS = 30;
 //        public static final int axis2ResWidth = 320;
 //        public static final int axis2ResHeight = 480;
 //        public static final int axis2FPS = 30;
-        public static final String axis3Port = "10.6.49.13";
-        public static final String axis3Name = "whiteAxisCamera";
-        public static final int axis3ResWidth = 320;
-        public static final int axis3ResHeight = 480;
-        public static final int axis3FPS = 30;
+//        public static final String axis3Port = "10.6.49.13";
+//        public static final String axis3Name = "whiteAxisCamera";
+//        public static final int axis3ResWidth = 320;
+//        public static final int axis3ResHeight = 480;
+//        public static final int axis3FPS = 30;
 //        public static final String axis4Port = "10.6.49.9";
 //        public static final String axis4Name = "greenAxisCamera";
 //        public static final int axis4ResWidth = 320;

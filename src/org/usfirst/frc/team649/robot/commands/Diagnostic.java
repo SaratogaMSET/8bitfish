@@ -192,7 +192,7 @@ public class Diagnostic extends Command {
     }
     public void SmartDashboard() {
     	// arm
-    	SmartDashboard.putBoolean("Arm IR", Robot.arm.getInfraredSensor());
+//    	SmartDashboard.putBoolean("Arm IR", Robot.arm.getInfraredSensor());
     	SmartDashboard.putNumber("Arm Raw Position", Robot.arm.bottomMotor.getSelectedSensorPosition(0));
     	
     	// lift

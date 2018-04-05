@@ -33,7 +33,7 @@ public class RightFarScale extends CommandGroup {
         addSequential(new DrivetrainMotionProfileIn(AutoTest.RightScaleFarVal.SECOND_DRIVE));// drive straight
         addSequential(new ChangeRobotLiftState(LiftSubsystem.LiftStateConstants.HIGH_SCALE_STATE));
     	addSequential(new ChangeRobotArmState(ArmSubsystem.ArmStateConstants.HEADING_HIGH_DROP_FRONT));
-    	addParallel(new ArmMotionProfile(ArmSubsystem.ArmEncoderConstants.HIGH_DROP_FRONT,Robot.armState));
+    	addParallel(new ArmMotionProfile(ArmSubsystem.ArmEncoderConstants.HIGH_DROP_FRONT,Robot.armState,false));
         addParallel(new GyroPID(AutoTest.RightScaleFarVal.SECOND_ANGLE_TURN));
         addSequential(new LiftMotionProfile(LiftSubsystem.LiftEncoderConstants.HIGH_SCALE_STATE,Robot.liftState,1.25));
 //        addSequential(new DrivetrainMotionProfileIn(AutoTest.RightScaleFarVal.THIRD_DRIVE));

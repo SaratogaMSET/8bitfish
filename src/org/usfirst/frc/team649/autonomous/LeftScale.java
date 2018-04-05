@@ -34,7 +34,7 @@ public class LeftScale extends CommandGroup {
         addSequential(new ChangeRobotLiftState(LiftSubsystem.LiftStateConstants.HIGH_SCALE_STATE));
     	addSequential(new ChangeRobotArmState(ArmSubsystem.ArmStateConstants.HEADING_HIGH_DROP_FRONT));
         addParallel(new LiftMotionProfile(LiftSubsystem.LiftEncoderConstants.HIGH_SCALE_STATE,Robot.liftState,1.25));
-    	addParallel(new ArmMotionProfile(ArmSubsystem.ArmEncoderConstants.HIGH_DROP_FRONT,Robot.armState));
+    	addParallel(new ArmMotionProfile(ArmSubsystem.ArmEncoderConstants.HIGH_DROP_FRONT,Robot.armState,false));
         addSequential(new GyroPID(AutoTest.LeftScaleVal.SECOND_ANGLE_TURN));
         addSequential(new DrivetrainMotionProfileIn(AutoTest.LeftScaleVal.THIRD_DRIVE));
         addSequential(new Delay(0.5));// drive straight

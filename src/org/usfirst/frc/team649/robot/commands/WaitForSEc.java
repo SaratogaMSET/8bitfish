@@ -1,35 +1,24 @@
 package org.usfirst.frc.team649.robot.commands;
 
-import org.usfirst.frc.team649.robot.Robot;
-
+import edu.wpi.first.wpilibj.Timer;
 import edu.wpi.first.wpilibj.command.Command;
-import jaci.pathfinder.Trajectory;
-import jaci.pathfinder.followers.EncoderFollower;
-import jaci.pathfinder.modifiers.TankModifier;
 
 /**
  *
  */
-public class SwitchMPModes extends Command {
-	TankModifier tank;
-    public SwitchMPModes(TankModifier path) {
+public class WaitForSEc extends Command {
+	double time;
+	Timer timer;
+    public WaitForSEc(double time) {
         // Use requires() here to declare subsystem dependencies
         // eg. requires(chassis);
-    	tank = path;
+    	this.time = time;
+    	timer = new Timer();
     }
 
     // Called just before this Command runs the first time
     protected void initialize() {
-    	Robot.left.reset();
-    	Robot.right.reset();
- 
-    	Robot.left = new EncoderFollower(tank.getLeftTrajectory());
-    	Robot.right = new EncoderFollower(tank.getRightTrajectory());
-    	Robot.left.configureEncoder(0, 4096 * 2, 0.127);
-		Robot.right.configureEncoder(0, 4096 * 2, 0.127);
-		Robot.left.configurePIDVA(2, 0.0, 0, 1 / 4.5, 0);
-		Robot.right.configurePIDVA(2, 0.0, 0, 1 / 4.5, 0);
-
+    	timer.start();
     }
 
     // Called repeatedly when this Command is scheduled to run
@@ -38,13 +27,13 @@ public class SwitchMPModes extends Command {
 
     // Make this return true when this Command no longer needs to run execute()
     protected boolean isFinished() {
-        return true;
+        return timer.get() > time;
     }
 
     // Called once after isFinished returns true
     protected void end() {
-    	Robot.left.reset();
-    	Robot.right.reset();
+    	timer.stop();
+    	timer.reset();
     }
 
     // Called when another command which requires one or more of the same
