@@ -696,7 +696,6 @@ public class Robot extends TimedRobot {
 
 		drive.changeBrakeCoast(false);
 		// lift.setLiftMotion(LiftSubsystem.LiftEncoderConstants.LOW_SCALE_STATE);
-
 	}
 
 	@Override
@@ -1199,12 +1198,12 @@ public class Robot extends TimedRobot {
 		} else {
 			Robot.intake.setIntakeMotors(0, 0);
 		}
-//		if (!arm.getInfraredSensor()) {
-//			setLEDs(5);
-//		}
-//		if (arm.getInfraredSensor()) {
-//			setLEDs(6);
-//		}
+		if (!arm.getInfraredSensor()) {
+			setLEDs(6);
+		}
+		if (arm.getInfraredSensor()) {
+			setLEDs(5);
+		}
 		prevStateFlipArm = oi.operator.flipArm();
 		if (arm.getArmRaw() > (ArmSubsystem.ArmEncoderConstants.INTAKE_FRONT
 				+ ArmSubsystem.ArmEncoderConstants.INTAKE_REAR) / 2) {
@@ -1398,6 +1397,6 @@ public class Robot extends TimedRobot {
 
 	public void setLEDs(int newState) {
 		ledState = newState;
-//		DriverStation.reportWarning("led code " + newState, false);
+		DriverStation.reportWarning("led code " + newState, false);
 	}
 }

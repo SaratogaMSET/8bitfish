@@ -96,7 +96,7 @@ public class ArmSubsystem extends Subsystem {
 		bottomMotor = new TalonSRX(RobotMap.Arm.BOTTOM_ARM_MOTOR);
 		bottomMotor.configSelectedFeedbackSensor(FeedbackDevice.CTRE_MagEncoder_Relative, 0, Robot.timeoutMs);
 		topMotor = new TalonSRX(RobotMap.Arm.TOP_ARM_MOTOR);
-//		infraredSensor = new DigitalInput(RobotMap.Arm.INFRARED_SENSOR);
+		infraredSensor = new DigitalInput(RobotMap.Arm.INFRARED_SENSOR);
 		bottomMotor.configNominalOutputForward(0, Robot.timeoutMs);
 		bottomMotor.configNominalOutputReverse(0, Robot.timeoutMs);
 		bottomMotor.configPeakOutputForward(1.0, Robot.timeoutMs);
@@ -133,9 +133,9 @@ public class ArmSubsystem extends Subsystem {
 		bottomMotor.set(ControlMode.PercentOutput, -power);
 //		topMotor.set(ControlMode.Follower, RobotMap.Arm.BOTTOM_ARM_MOTOR);
 	}
-//	public boolean getInfraredSensor() {
-////		return !infraredSensor.get();
-//	}
+	public boolean getInfraredSensor() {
+		return !infraredSensor.get();
+	}
 	public boolean getArmHalZeroFront(){
 		return !frontHal.get();
 	}

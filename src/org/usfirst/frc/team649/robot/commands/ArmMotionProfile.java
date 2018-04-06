@@ -27,7 +27,7 @@ public class ArmMotionProfile extends Command {
     // Called just before this Command runs the first time
     protected void initialize() {
     	SmartDashboard.putBoolean("ran is fin", false);
-    	if(isSlow){
+    	if(isSlow || ((state == ArmSubsystem.ArmStateConstants.HEADING_INTAKE_FRONT || state == ArmSubsystem.ArmStateConstants.HEADING_INTAKE_REAR) && Robot.arm.getInfraredSensor())){
     		Robot.arm.bottomMotor.configMotionAcceleration(450, Robot.timeoutMs);
 
     	}else{

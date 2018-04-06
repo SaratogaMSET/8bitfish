@@ -4,12 +4,14 @@ import org.usfirst.frc.team649.robot.Robot;
 import org.usfirst.frc.team649.robot.commands.ArmMotionProfile;
 import org.usfirst.frc.team649.robot.commands.ChangeRobotArmState;
 import org.usfirst.frc.team649.robot.commands.ChangeRobotLiftState;
+import org.usfirst.frc.team649.robot.commands.DriveBackForTime;
 import org.usfirst.frc.team649.robot.commands.DrivetrainPIDCommand;
 import org.usfirst.frc.team649.robot.commands.LiftMotionProfile;
 import org.usfirst.frc.team649.robot.commands.MotionProfileDrive;
 import org.usfirst.frc.team649.robot.commands.RunIntakeForTime;
 import org.usfirst.frc.team649.robot.commands.RunIntakeWheels;
 import org.usfirst.frc.team649.robot.commands.SetIntakePistons;
+import org.usfirst.frc.team649.robot.commands.WaitForSEc;
 import org.usfirst.frc.team649.robot.subsystems.ArmSubsystem;
 import org.usfirst.frc.team649.robot.subsystems.LiftSubsystem;
 
@@ -21,24 +23,20 @@ import edu.wpi.first.wpilibj.command.CommandGroup;
 public class LeftScaleSWSCMP extends CommandGroup {
 
     public LeftScaleSWSCMP() {
-    	addSequential(new ChangeRobotLiftState(9));
-    	addSequential(new ChangeRobotArmState(ArmSubsystem.ArmStateConstants.HEADING_HIGH_DROP_FRONT));
-    	addParallel(new ArmMotionProfile(ArmSubsystem.ArmEncoderConstants.HIGH_DROP_FRONT,Robot.armState,false));
-    	addParallel(new LiftMotionProfile(LiftSubsystem.LiftEncoderConstants.HIGH_SCALE_STATE,Robot.liftState,1.25));
-    	addSequential(new MotionProfileDrive(false));    	
-    	addParallel(new DrivetrainPIDCommand(-15));
-    	addParallel(new ChangeRobotLiftState(1));
-    	addSequential(new RunIntakeForTime(0.5,false));
-    	addSequential(new LiftMotionProfile(LiftSubsystem.LiftEncoderConstants.LOW_STATE,Robot.liftState,0.1));
-    	addSequential(new ChangeRobotArmState(ArmSubsystem.ArmStateConstants.HEADING_INTAKE_REAR));
-    	addSequential(new ArmMotionProfile(ArmSubsystem.ArmEncoderConstants.INTAKE_REAR,Robot.armState,false));
+    	addSequential(new MotionProfileDrive(false)); 
+    	addParallel(new RunIntakeForTime(0.5,false));
+    	addParallel(new DriveBackForTime(-0.3,0.9));
+//    	addSequential(new SwitchMPModes(Robot.modifierSideBack));
+    	addSequential(new DownAndFlipWhenPossibleIntakeRear());
     	addSequential(new SetIntakePistons(true,false));
-    	addSequential(new DrivetrainPIDCommand(-20));
-    	addSequential(new RunIntakeWheels(0.6));
-    	addSequential(new SetIntakePistons(false,false));    	
-    	addParallel(new ChangeRobotArmState(ArmSubsystem.ArmStateConstants.HEADING_SWITCH_REAR));
-    	addSequential(new ArmMotionProfile(ArmSubsystem.ArmEncoderConstants.SWITCH_REAR,Robot.armState,false));
-    	addSequential(new DrivetrainPIDCommand(-10));
+    	addParallel(new RunIntakeWheels(0.5));
+    	addSequential(new DriveBackForTime(-0.3,1));
+    	addSequential(new SetIntakePistons(false,false));
+    	addSequential(new WaitForSEc(0.75));
+    	addSequential(new ChangeRobotArmState(ArmSubsystem.ArmStateConstants.HEADING_STORE_REAR));
+    	addParallel(new DriveBackForTime(0.3,0.5));
+    	addSequential(new ArmMotionProfile(ArmSubsystem.ArmEncoderConstants.STORE_REAR,Robot.armState,true));
+    	addSequential(new DriveBackForTime(-0.3,0.5));
     	addSequential(new RunIntakeForTime(1,false));
     }
 }

@@ -42,7 +42,7 @@ public class RightScaleDoubleScaleMP extends CommandGroup {
     	addSequential(new WaitForSEc(0.75));
     	addSequential(new ChangeRobotArmState(ArmSubsystem.ArmStateConstants.HEADING_HIGH_DROP_FRONT));
     	addSequential(new ChangeRobotLiftState(LiftSubsystem.LiftStateConstants.HEADING_HIGH_SCALE_STATE));
-    	addParallel(new DrivetrainMotionProfileIn(55));
+    	addParallel(new DrivetrainMotionProfileIn(60));
     	addParallel(new ArmMotionProfile(ArmSubsystem.ArmEncoderConstants.HIGH_DROP_FRONT,Robot.armState,true));
 
     	addSequential(new LiftMotionProfile(LiftSubsystem.LiftEncoderConstants.HIGH_SCALE_STATE,Robot.liftState,0));
