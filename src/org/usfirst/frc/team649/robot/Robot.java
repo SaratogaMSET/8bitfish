@@ -1236,7 +1236,7 @@ public class Robot extends TimedRobot {
 			SmartDashboard.putString("intake", "rev");
 		}
 		if (arm.getArmHalZeroFront()) {
-			arm.bottomMotor.setSelectedSensorPosition(ArmSubsystem.ArmEncoderConstants.INTAKE_FRONT - 5, 0, 20);
+			arm.bottomMotor.setSelectedSensorPosition(ArmSubsystem.ArmEncoderConstants.INTAKE_FRONT, 0, 20);
 		} else if (arm.getArmHalZeroBack()) {
 			arm.bottomMotor.setSelectedSensorPosition(ArmSubsystem.ArmEncoderConstants.INTAKE_REAR, 0, 20);
 		}
@@ -1253,8 +1253,7 @@ public class Robot extends TimedRobot {
 		SmartDashboard.putNumber("Arm Current", arm.bottomMotor.getOutputCurrent());
 //		SmartDashboard.putBoolean("ir", arm.getInfraredSensor());
 		if (lift.getLiftState() == LiftSubsystem.LiftHalConstants.CARRIAGE_HIGH_SECOND_HIGH) {
-			// lift.mainLiftMotor.setSelectedSensorPosition(LiftSubsystem.LiftEncoderConstants.HIGH_SCALE_STATE,
-			// 0, 20);
+			 lift.mainLiftMotor.setSelectedSensorPosition(LiftSubsystem.LiftEncoderConstants.HIGH_SCALE_STATE,0, 20);
 		}
 
 		prevStateIntakeToggle = oi.operator.openIntakeToggleBB();
