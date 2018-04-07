@@ -133,7 +133,6 @@ public class DrivetrainSubsystem extends PIDSubsystem {
 		motors[2].config_kI(0, 0.03, Robot.timeoutMs);
 		motors[2].config_kD(0, 1.25, Robot.timeoutMs);
 		motors[2].config_kF(0, 0.060176, Robot.timeoutMs);
-		motors[2].setInverted(true);
 
 		
 		motors[3].configNominalOutputForward(0, Robot.timeoutMs);
@@ -185,8 +184,8 @@ public class DrivetrainSubsystem extends PIDSubsystem {
 	public void shift(boolean isHigh){
 		isHighGear = isHigh;
 		SmartDashboard.putBoolean("Gear", isHigh);
-		driveSolLeft.set(isHigh ? DoubleSolenoid.Value.kForward : DoubleSolenoid.Value.kReverse);
-		driveSolRight.set(!isHigh ? DoubleSolenoid.Value.kReverse : DoubleSolenoid.Value.kForward);
+		driveSolLeft.set(!isHigh ? DoubleSolenoid.Value.kForward : DoubleSolenoid.Value.kReverse);
+		driveSolRight.set(isHigh ? DoubleSolenoid.Value.kReverse : DoubleSolenoid.Value.kForward);
 		if(isHigh){
 			SmartDashboard.putBoolean("Gear Finish0", true);
 //			leftEncoder.setDistancePerPulse(AutoPIDConstants.DISTANCE_PER_PULSE_HIGH);

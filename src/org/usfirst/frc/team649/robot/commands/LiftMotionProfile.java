@@ -20,6 +20,8 @@ public class LiftMotionProfile extends Command {
 	Timer startTime;
 	int state;
 	double waitTime;
+	Timer stallTime;
+	double prevEncoder;
 	
 	boolean wasCancl;
 	
@@ -29,6 +31,7 @@ public class LiftMotionProfile extends Command {
         waitTime = time;
         SmartDashboard.putNumber("Val", value);
         SmartDashboard.putBoolean("started", true);
+        stallTime = new Timer();
     }
 
     // Called just before this Command runs the first time
@@ -70,7 +73,8 @@ public class LiftMotionProfile extends Command {
     	if(Robot.isZero && startTime.get() > waitTime){
     		if(timeout.get() == 0){
     			timeout.start();
-    			
+    			stallTime.start();
+    			prevEncoder = Robot.lift.getRawLift();
     		}
         	Robot.lift.mainLiftMotor.set(ControlMode.MotionMagic, value);
     	}
@@ -79,6 +83,16 @@ public class LiftMotionProfile extends Command {
 
     // Make this return true when this Command no longer needs to run execute()
     protected boolean isFinished() {
+    	if(stallTime.get() > 1){
+    		if(Math.abs(Math.abs(Robot.lift.getRawLift()) - Math.abs(prevEncoder)) < 10 && Robot.lift.getLiftState() != LiftSubsystem.LiftHalConstants.CARRIAGE_HIGH_SECOND_HIGH && Robot.lift.getLiftState() != LiftSubsystem.LiftHalConstants.LOWEST_STATE){
+    			Robot.liftState = LiftSubsystem.LiftStateConstants.INTAKE_EXCHANGE_STORE_STATE;
+    			return true;
+    		}else{
+    			stallTime.stop();
+    			stallTime.reset();
+    			prevEncoder = Robot.lift.getRawLift();
+    		}
+    	}
     	if(Robot.isZero){
     		if(doneTime.get() > 0.15){
         		return true;

@@ -192,7 +192,7 @@ public class Diagnostic extends Command {
     }
     public void SmartDashboard() {
     	// arm
-//    	SmartDashboard.putBoolean("Arm IR", Robot.arm.getInfraredSensor());
+    	SmartDashboard.putBoolean("Arm IR", Robot.arm.getInfraredSensor());
     	SmartDashboard.putNumber("Arm Raw Position", Robot.arm.bottomMotor.getSelectedSensorPosition(0));
     	
     	// lift
@@ -204,6 +204,7 @@ public class Diagnostic extends Command {
     	SmartDashboard.putBoolean("Arm back", Robot.arm.getArmHalZeroBack());
     	SmartDashboard.putBoolean("Arm front", Robot.arm.getArmHalZeroFront());
     	// drivetrain
+    	SmartDashboard.putNumber("lidar", Robot.lidar.getSample());
     	SmartDashboard.putNumber("DT Left Side Encoder", Robot.drive.motors[0].getSelectedSensorPosition(0));
     	SmartDashboard.putNumber("DT Right Side Encoder", Robot.drive.motors[2].getSelectedSensorPosition(0));
     	

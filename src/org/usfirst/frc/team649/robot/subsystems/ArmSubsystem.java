@@ -57,8 +57,8 @@ public class ArmSubsystem extends Subsystem {
 	}
 	public static class ArmEncoderConstants{
 		public static final int INTAKE_FRONT = 5;
-		public static final int INTAKE_REAR = -4250;
-		public static final int SWITCH_FRONT = -1450;
+		public static final int INTAKE_REAR = -4235;
+		public static final int SWITCH_FRONT = -1630;
 		public static final int SWITCH_REAR = -2850;
 		public static final int EXCHANGE_FRONT = -400;
 		public static final int EXCHANGE_REAR = -3850;
@@ -67,7 +67,7 @@ public class ArmSubsystem extends Subsystem {
 		public static final int HIGH_DROP_FRONT = -800;
 		public static final int HIGH_DROP_REAR = -3500;
 		public static final int STORE_FRONT = -1525;
-		public static final int STORE_REAR = -2725;
+		public static final int STORE_REAR = -2605;
 		public static final int ADJ = 150;
 		public static final int MID = (INTAKE_FRONT + INTAKE_REAR)/2;
 //		public static final int INTAKE_FRONT = 402;
@@ -101,7 +101,7 @@ public class ArmSubsystem extends Subsystem {
 		bottomMotor.configNominalOutputReverse(0, Robot.timeoutMs);
 		bottomMotor.configPeakOutputForward(1.0, Robot.timeoutMs);
 		bottomMotor.configPeakOutputReverse(-1.0, Robot.timeoutMs);
-		bottomMotor.setSensorPhase(false);
+		bottomMotor.setSensorPhase(true);
 		bottomMotor.setInverted(true);
 		bottomMotor.setStatusFramePeriod(StatusFrameEnhanced.Status_10_MotionMagic, 10, Robot.timeoutMs);
 		frontHal = new DigitalInput(RobotMap.Arm.ARM_HAL_FRONT);

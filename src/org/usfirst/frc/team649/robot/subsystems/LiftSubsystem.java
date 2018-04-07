@@ -66,7 +66,7 @@ public class LiftSubsystem extends PIDSubsystem {
     	public static int SWITCH_STATE = 20000;
     	public static int LOW_SCALE_STATE = 35500;
     	public static int MID_SCALE_STATE = 40500;
-    	public static int HIGH_SCALE_STATE = 45100;
+    	public static int HIGH_SCALE_STATE = 44900;
     	public static int ADJ_DIST = 4000;
     	public static int INTAKE_2_STATE = 3500;	
     }
@@ -86,7 +86,7 @@ public class LiftSubsystem extends PIDSubsystem {
     	mainLiftMotor = new TalonSRX(RobotMap.Lift.RIGHT_WINCH_MOTOR);
     	mainLiftMotor.configSelectedFeedbackSensor(FeedbackDevice.CTRE_MagEncoder_Relative, 0, Robot.timeoutMs);
     	mainLiftMotor.setInverted(true);
-    	mainLiftMotor.setSensorPhase(true);
+    	mainLiftMotor.setSensorPhase(false);
     	followerLiftMotor = new TalonSRX(RobotMap.Lift.LEFT_WINCH_MOTOR);
     	followerLiftMotor.setInverted(false);
     	followerLiftMotor.set(ControlMode.Follower, RobotMap.Lift.RIGHT_WINCH_MOTOR);

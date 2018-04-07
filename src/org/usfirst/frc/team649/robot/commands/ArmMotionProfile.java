@@ -27,12 +27,27 @@ public class ArmMotionProfile extends Command {
     // Called just before this Command runs the first time
     protected void initialize() {
     	SmartDashboard.putBoolean("ran is fin", false);
-    	if(isSlow || ((state == ArmSubsystem.ArmStateConstants.HEADING_INTAKE_FRONT || state == ArmSubsystem.ArmStateConstants.HEADING_INTAKE_REAR) && Robot.arm.getInfraredSensor())){
+    	if(isSlow){
     		Robot.arm.bottomMotor.configMotionAcceleration(450, Robot.timeoutMs);
-
+    		Robot.arm.bottomMotor.config_kP(0, 1, Robot.timeoutMs);
+    		Robot.arm.bottomMotor.config_kI(0, 0, Robot.timeoutMs);
+    		Robot.arm.bottomMotor.config_kD(0, 0, Robot.timeoutMs);
+    		Robot.arm.bottomMotor.config_kF(0, 1.25, Robot.timeoutMs);
+    	}else if((state == ArmSubsystem.ArmStateConstants.HEADING_INTAKE_FRONT || state == ArmSubsystem.ArmStateConstants.HEADING_INTAKE_REAR) && Robot.arm.getInfraredSensor()){
+    		Robot.arm.bottomMotor.configMotionAcceleration(525, Robot.timeoutMs);
+    		Robot.arm.bottomMotor.configMotionAcceleration(450, Robot.timeoutMs);
+    		Robot.arm.bottomMotor.config_kP(0, 1, Robot.timeoutMs);
+    		Robot.arm.bottomMotor.config_kI(0, 0, Robot.timeoutMs);
+    		Robot.arm.bottomMotor.config_kD(0, 0, Robot.timeoutMs);
+    		Robot.arm.bottomMotor.config_kF(0, 1.25, Robot.timeoutMs);
     	}else{
+    	
     		Robot.arm.bottomMotor.configMotionAcceleration(650, Robot.timeoutMs);
-
+    		Robot.arm.bottomMotor.configMotionAcceleration(450, Robot.timeoutMs);
+    		Robot.arm.bottomMotor.config_kP(0, 1, Robot.timeoutMs);
+    		Robot.arm.bottomMotor.config_kI(0, 0, Robot.timeoutMs);
+    		Robot.arm.bottomMotor.config_kD(0, 0.02, Robot.timeoutMs);
+    		Robot.arm.bottomMotor.config_kF(0, 1.25, Robot.timeoutMs);
     	}
     	state = Robot.armState;
 		Robot.isArmPidRunning = true;

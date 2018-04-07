@@ -67,7 +67,6 @@ public class ArmMotionProfileDelayed extends Command {
     			Robot.shouldCanclArmMP = true;
     			if((state == ArmSubsystem.ArmStateConstants.HEADING_INTAKE_FRONT || state == ArmSubsystem.ArmStateConstants.HEADING_INTAKE_REAR) && Robot.arm.getInfraredSensor()){
     	    		Robot.arm.bottomMotor.configMotionAcceleration(525, Robot.timeoutMs);
-
     	    	}else{
     	    		Robot.arm.bottomMotor.configMotionAcceleration(650, Robot.timeoutMs);
 
