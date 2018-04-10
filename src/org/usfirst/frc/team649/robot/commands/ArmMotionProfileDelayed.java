@@ -71,14 +71,18 @@ public class ArmMotionProfileDelayed extends Command {
     	    		Robot.arm.bottomMotor.configMotionAcceleration(650, Robot.timeoutMs);
 
     	    	}
+    			Robot.isArmPidRunning = true;
+    			if(doneTime.get() == 0){
+        			doneTime.start();
+        			SmartDashboard.putBoolean("did get here", true);
+
+        		}
     		}
     		firstTime = true;
-    		if(doneTime.get() == 0){
-    			doneTime.start();
-    			SmartDashboard.putBoolean("did get here", true);
+    	
+    		Robot.arm.bottomMotor.set(ControlMode.MotionMagic, value);    	Robot.arm.setArmBrake(true);
+        	Robot.arm.setArmBrake(false);
 
-    		}
-    		Robot.arm.bottomMotor.set(ControlMode.MotionMagic, value);
     	}
     }
 
@@ -120,6 +124,12 @@ public class ArmMotionProfileDelayed extends Command {
     
     	}else{
     			Robot.armState--;
+    	}
+    	if(value == ArmSubsystem.ArmEncoderConstants.INTAKE_FRONT){
+    		Robot.armState = ArmSubsystem.ArmStateConstants.INTAKE_FRONT;
+    	}else if(value == ArmSubsystem.ArmEncoderConstants.INTAKE_REAR){
+    		Robot.armState = ArmSubsystem.ArmStateConstants.INTAKE_REAR;
+
     	}
 		Robot.shouldCanclArmMP = false;
 

@@ -3,6 +3,7 @@ package org.usfirst.frc.team649.robot.CommandGroups;
 import org.usfirst.frc.team649.robot.Robot;
 import org.usfirst.frc.team649.robot.commands.ArmMotionProfile;
 import org.usfirst.frc.team649.robot.commands.ChangeRobotArmState;
+import org.usfirst.frc.team649.robot.commands.DriveBackForTime;
 import org.usfirst.frc.team649.robot.commands.DrivetrainPIDCommand;
 import org.usfirst.frc.team649.robot.commands.MotionProfileDrive;
 import org.usfirst.frc.team649.robot.commands.RunIntakeForTime;
@@ -19,6 +20,7 @@ public class LeftMPSwitch extends CommandGroup {
     	addSequential(new ChangeRobotArmState(ArmSubsystem.ArmStateConstants.HEADING_SWITCH_FRONT));
     	addParallel(new ArmMotionProfile(ArmSubsystem.ArmEncoderConstants.SWITCH_FRONT,Robot.armState,false));
         addSequential(new MotionProfileDrive(false));
+        addSequential(new DriveBackForTime(0.35,1));
         addSequential(new RunIntakeForTime(1,false));
 //        addSequential(new DrivetrainPIDCommand(-25));
         

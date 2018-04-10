@@ -14,9 +14,9 @@ public class RobotMap {
 //		public static final int[] LEFT_SIDE_ENCODER = { 4, 5 };
 //		public static final int[] RIGHT_SIDE_ENCODER = { 6, 7 };
 		// FL,BL,BR,FR
-		public static final int[] MOTOR_PORTS = {12, 13, 20, 19}; //18-->20
+		public static final int[] MOTOR_PORTS = {12, 13, 18, 19}; //18-->20
 		public static final int[] RIGHT_DRIVE_SOL = {4, 4, 1}; // 4,4,5
-		public static final int[] LEFT_DRIVE_SOL = { 3,2, 3 };
+		public static final int[] LEFT_DRIVE_SOL = { 3, 2, 3 };
 	}
 	public static class Lift {
 		//mag srx encoder on 11

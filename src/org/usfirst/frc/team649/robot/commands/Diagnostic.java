@@ -49,6 +49,7 @@ public class Diagnostic extends Command {
     	prevStateShift = solState(Robot.drive.driveSolRight.get());
     	state = -1;
     	
+    	
     	time1.start();
     	time2.start();
     	time3.start();

@@ -47,20 +47,20 @@ public class LiftMotionProfile extends Command {
     	wasCancl = false;
     	if(value > Robot.lift.getRawLift()){
     		Robot.lift.mainLiftMotor.configMotionCruiseVelocity(3200, Robot.timeoutMs);
-			Robot.lift.mainLiftMotor.configMotionAcceleration(4000, Robot.timeoutMs); // 400 actual
+			Robot.lift.mainLiftMotor.configMotionAcceleration(4500, Robot.timeoutMs); // 400 actual
 			Robot.lift.mainLiftMotor.selectProfileSlot(0, 0);
 			Robot.lift.mainLiftMotor.config_kF(0, 0.307, Robot.timeoutMs);
 			Robot.lift.mainLiftMotor.config_kP(0, 5.8, Robot.timeoutMs);
 			Robot.lift.mainLiftMotor.config_kI(0, 0, Robot.timeoutMs);
 			Robot.lift.mainLiftMotor.config_kD(0, 0.05, Robot.timeoutMs);
     	}else{
-    		Robot.lift.mainLiftMotor.configMotionCruiseVelocity(4200, Robot.timeoutMs);
-			Robot.lift.mainLiftMotor.configMotionAcceleration(4000, Robot.timeoutMs); // 400 actual
+    		Robot.lift.mainLiftMotor.configMotionCruiseVelocity(4400, Robot.timeoutMs);
+			Robot.lift.mainLiftMotor.configMotionAcceleration(4800, Robot.timeoutMs); // 400 actual
 			Robot.lift.mainLiftMotor.selectProfileSlot(0, 0);
-			Robot.lift.mainLiftMotor.config_kF(0, 0.3197, Robot.timeoutMs);
-			Robot.lift.mainLiftMotor.config_kP(0, 4, Robot.timeoutMs);
+			Robot.lift.mainLiftMotor.config_kF(0, 0.335, Robot.timeoutMs);
+			Robot.lift.mainLiftMotor.config_kP(0, 3, Robot.timeoutMs);
 			Robot.lift.mainLiftMotor.config_kI(0, 0, Robot.timeoutMs);
-			Robot.lift.mainLiftMotor.config_kD(0, 0, Robot.timeoutMs);
+			Robot.lift.mainLiftMotor.config_kD(0, 0.04 , Robot.timeoutMs);
     	}
 //    	timeout.start();
     	
@@ -83,16 +83,16 @@ public class LiftMotionProfile extends Command {
 
     // Make this return true when this Command no longer needs to run execute()
     protected boolean isFinished() {
-    	if(stallTime.get() > 1){
-    		if(Math.abs(Math.abs(Robot.lift.getRawLift()) - Math.abs(prevEncoder)) < 10 && Robot.lift.getLiftState() != LiftSubsystem.LiftHalConstants.CARRIAGE_HIGH_SECOND_HIGH && Robot.lift.getLiftState() != LiftSubsystem.LiftHalConstants.LOWEST_STATE){
-    			Robot.liftState = LiftSubsystem.LiftStateConstants.INTAKE_EXCHANGE_STORE_STATE;
-    			return true;
-    		}else{
-    			stallTime.stop();
-    			stallTime.reset();
-    			prevEncoder = Robot.lift.getRawLift();
-    		}
-    	}
+//    	if(stallTime.get() > 1){
+//    		if(Math.abs(Math.abs(Robot.lift.getRawLift()) - Math.abs(prevEncoder)) < 10 && Robot.lift.getLiftState() != LiftSubsystem.LiftHalConstants.CARRIAGE_HIGH_SECOND_HIGH && Robot.lift.getLiftState() != LiftSubsystem.LiftHalConstants.LOWEST_STATE){
+//    			Robot.liftState = LiftSubsystem.LiftStateConstants.INTAKE_EXCHANGE_STORE_STATE;
+//    			return true;
+//    		}else{
+//    			stallTime.stop();
+//    			stallTime.reset();
+//    			prevEncoder = Robot.lift.getRawLift();
+//    		}
+//    	}
     	if(Robot.isZero){
     		if(doneTime.get() > 0.15){
         		return true;
