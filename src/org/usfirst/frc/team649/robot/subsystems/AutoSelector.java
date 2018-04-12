@@ -11,6 +11,7 @@ import edu.wpi.first.wpilibj.AnalogPotentiometer;
 import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.command.CommandGroup;
 import edu.wpi.first.wpilibj.command.Subsystem;
+import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 
 /**
  *
@@ -64,6 +65,9 @@ public class AutoSelector {
 			
 			int robotPosSwitchNum = (int) Math.floor(robotPosVoltage * ((double)VOLTS_PER_SWITCH/TICKS_PER_SWITCH)); // start zone number of robot (0-2)
 			int autoRunNum = (int) Math.floor(voltage * ((double)VOLTS_PER_SWITCH/TICKS_PER_SWITCH)); // which auto to run (scale, double scale, switch, etc.)
+
+			SmartDashboard.putNumber("ROBOT POS SWITCH", robotPosSwitchNum);
+			SmartDashboard.putNumber("AUTO RUN NUM", autoRunNum);
 
 			/*
 			 * structure: regardless of where you start, a certain number switch will give you a scoring run. if that run isnt available (switch, the field config is far) then just drive straight.
@@ -147,7 +151,7 @@ public class AutoSelector {
 						return RightScaleSingleMP.class;
 					}
 					else {
-						// left far scale single
+						// right far scale single
 						return RightFarScale.class;
 					}
 				case 4:
@@ -156,7 +160,7 @@ public class AutoSelector {
 						return RightScaleDoubleScaleMP.class;
 					}
 					else {
-						// TODO: change to left far scale double
+						// TODO: change to right far scale double
 						return DriveStraight.class;
 					}
 				}
