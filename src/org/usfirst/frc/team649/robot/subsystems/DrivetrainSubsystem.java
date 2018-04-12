@@ -120,7 +120,7 @@ public class DrivetrainSubsystem extends PIDSubsystem {
 
 		motors[1].set(ControlMode.Follower,RobotMap.Drivetrain.MOTOR_PORTS[0]);
 		motors[2].configSelectedFeedbackSensor(FeedbackDevice.QuadEncoder, 0, Robot.timeoutMs);
-		motors[2].setSensorPhase(false);
+		motors[2].setSensorPhase(false); //
 		motors[2].setInverted(true);
 		motors[2].configNominalOutputForward(0, Robot.timeoutMs);
 		motors[2].configNominalOutputReverse(0, Robot.timeoutMs);

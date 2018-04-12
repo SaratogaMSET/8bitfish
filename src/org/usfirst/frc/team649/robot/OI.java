@@ -4,6 +4,7 @@ import org.usfirst.frc.team649.robot.OI.Driver;
 import org.usfirst.frc.team649.robot.OI.Operator;
 
 import edu.wpi.first.wpilibj.Joystick;
+import edu.wpi.first.wpilibj.Timer;
 import edu.wpi.first.wpilibj.buttons.Button;
 
 //operater interface check for joystick control
@@ -29,9 +30,11 @@ public class OI {
 	public boolean oldValue9;
 	public boolean intakeBBPrev;
 	public boolean shiftPrev;
+	public Timer time;
 
 	public OI() {
 		buttonBoard = new Joystick(RobotMap.BUTTON_BOARD);
+		time = new Timer();
 		buttonBoard2 = new Joystick(RobotMap.BUTTON_BOARD_2);
 		operatorJoystick = new Joystick(RobotMap.OPERATOR_JOYSTICK);
 		driveJoystickHorizontal = new Joystick(RobotMap.DRIVE_JOYSTICK_HORIZONTAL);
@@ -70,6 +73,18 @@ public class OI {
 			}
 			intakeBBPrev = val;
 			return false;
+		}
+		public void intakePrev(){
+			if(buttonBoard2.getRawButton(4) != intakeBBPrev){
+				if(time.get() > 0.05){
+					intakeBBPrev = buttonBoard2.getRawButton(4);
+					time.stop();
+					time.reset();
+					
+				}else{
+					time.start();
+				}
+			}
 		}
 		public boolean newShiftToggle(){
 			boolean val = driver.shiftUp();
@@ -141,7 +156,7 @@ public class OI {
 		}
 
 		public boolean openIntakeToggle() {
-			return operatorJoystick.getRawButton(3);
+			return buttonBoard2.getRawButton(4);
 		}
 		
 		public boolean openIntakeToggleBB(){
