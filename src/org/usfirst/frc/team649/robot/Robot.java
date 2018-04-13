@@ -1,16 +1,10 @@
 
 package org.usfirst.frc.team649.robot;
-
-import java.util.concurrent.Executors;
 import java.util.concurrent.ScheduledExecutorService;
-import java.util.concurrent.TimeUnit;
-
 import org.opencv.core.Mat;
 import org.usfirst.frc.team649.autonomous.AutoTest;
 import org.usfirst.frc.team649.autonomous.DriveStraight;
-import org.usfirst.frc.team649.autonomous.LeftFarScale;
 import org.usfirst.frc.team649.autonomous.LeftSwitch;
-import org.usfirst.frc.team649.autonomous.RightFarScale;
 import org.usfirst.frc.team649.autonomous.RightSwitch;
 import org.usfirst.frc.team649.autonomous.autoMaster;
 import org.usfirst.frc.team649.robot.CommandGroups.DownAndFlipWhenPossible2ndIntakeFront;
@@ -21,18 +15,10 @@ import org.usfirst.frc.team649.robot.CommandGroups.DownAndFlipWhenPossibleStoreF
 import org.usfirst.frc.team649.robot.CommandGroups.DownAndFlipWhenPossibleStoreRear;
 import org.usfirst.frc.team649.robot.CommandGroups.LeftMPSwitch;
 import org.usfirst.frc.team649.robot.CommandGroups.LeftScaleDoubleScaleMP;
-import org.usfirst.frc.team649.robot.CommandGroups.LeftScaleSWSCMP;
-import org.usfirst.frc.team649.robot.CommandGroups.RighScaleSWSCMP;
 import org.usfirst.frc.team649.robot.CommandGroups.RightMPSwitch;
 import org.usfirst.frc.team649.robot.CommandGroups.RightScaleDoubleScaleMP;
 import org.usfirst.frc.team649.robot.commands.ArmMotionProfile;
-import org.usfirst.frc.team649.robot.commands.Diagnostic;
-import org.usfirst.frc.team649.robot.commands.DriveBackForTime;
-import org.usfirst.frc.team649.robot.commands.DrivetrainMotionProfile;
-import org.usfirst.frc.team649.robot.commands.DrivetrainMotionProfileIn;
-import org.usfirst.frc.team649.robot.commands.GyroPID;
 import org.usfirst.frc.team649.robot.commands.LiftMotionProfile;
-import org.usfirst.frc.team649.robot.commands.MotionProfileDrive;
 import org.usfirst.frc.team649.robot.commands.RunIntakeWheels;
 import org.usfirst.frc.team649.robot.commands.SetIntakePistons;
 import org.usfirst.frc.team649.robot.commands.ZeroArmRoutine;
@@ -40,16 +26,13 @@ import org.usfirst.frc.team649.robot.subsystems.ArmSubsystem;
 import org.usfirst.frc.team649.robot.subsystems.AutoSelector;
 import org.usfirst.frc.team649.robot.subsystems.DrivetrainSubsystem;
 import org.usfirst.frc.team649.robot.subsystems.GyroSubsystem;
-import org.usfirst.frc.team649.robot.subsystems.HangSubsystem;
 import org.usfirst.frc.team649.robot.subsystems.IntakeSubsystem;
 import org.usfirst.frc.team649.robot.subsystems.LiftSubsystem;
 import org.usfirst.frc.team649.robot.util.CameraServer;
 import org.usfirst.frc.team649.robot.util.Lidar;
 import org.usfirst.frc.team649.robot.util.RunnableLEDs;
-
-import com.ctre.phoenix.motorcontrol.ControlMode;
+import org.usfirst.frc.team649.robot.util.VoltageLog;
 import com.ctre.phoenix.motorcontrol.NeutralMode;
-
 import edu.wpi.cscore.AxisCamera;
 import edu.wpi.cscore.CvSink;
 import edu.wpi.cscore.CvSource;
@@ -57,6 +40,7 @@ import edu.wpi.first.wpilibj.Compressor;
 import edu.wpi.first.wpilibj.DoubleSolenoid;
 import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.I2C;
+import edu.wpi.first.wpilibj.PowerDistributionPanel;
 import edu.wpi.first.wpilibj.SerialPort;
 import edu.wpi.first.wpilibj.TimedRobot;
 import edu.wpi.first.wpilibj.Timer;
@@ -110,7 +94,6 @@ public class Robot extends TimedRobot {
 	public static boolean isZero;
 	public Timer time;
 	public Timer timeAccel;
-	public HangSubsystem hang;
 
 	public static boolean isArmPidRunning;
 	public static boolean isDrivePIDRunning;
@@ -191,7 +174,9 @@ public class Robot extends TimedRobot {
 	public static int ledState;
 	private ScheduledExecutorService leds;
 	private Runnable rLEDs;
-
+	public static VoltageLog log;
+	public static PowerDistributionPanel pdp;
+	
 	public static boolean enteredManualMode;
 	public boolean hasEndgameStarted;
 	public DriverStation.Alliance alliance;
@@ -203,11 +188,14 @@ public class Robot extends TimedRobot {
 	public static boolean isIntakeOpen;
 	public static boolean shouldCanclArmMP;
 	public static boolean isRunnigWithFlip;
-	public static int pos = 4; // left mid right forward
+	public static int pos = 2; // left mid right forward
 
 	@Override
     
 	public void robotInit() {
+		compressor = new Compressor(4);
+		pdp = new PowerDistributionPanel(RobotMap.POWER_DISTRIBUTION_PANEL);
+		log = new VoltageLog(pdp,compressor);
 		lift = new LiftSubsystem();
 		drive = new DrivetrainSubsystem();
 		gyro = new GyroSubsystem();
@@ -216,8 +204,7 @@ public class Robot extends TimedRobot {
 		
 		oi = new OI();
 
-		rLEDs = new RunnableLEDs();
-		compressor = new Compressor(4);
+//		rLEDs = new RunnableLEDs();
 		
 		drivePIDRunning = false;
 		
@@ -260,26 +247,26 @@ public class Robot extends TimedRobot {
 //		sp = new SerialPort(115200, SerialPort.Port.kUSB1, 8, SerialPort.Parity.kNone, SerialPort.StopBits.kOne);
 //		leds = Executors.newSingleThreadScheduledExecutor();
 //		leds.scheduleWithFixedDelay(rLEDs, 100L, 100L, TimeUnit.MILLISECONDS);
-//		new Thread(() -> {
-//			// 10.6.49.7 = tanAxisCamera
-//			AxisCamera camera = CameraServer.getInstance().addAxisCamera(RobotMap.Camera.axisName,
-//					RobotMap.Camera.axisPort);
-//			camera.setResolution(RobotMap.Camera.axisResWidth, RobotMap.Camera.axisResWidth);
-//			camera.setFPS(RobotMap.Camera.axisFPS);
-//			CvSink cvSink = CameraServer.getInstance().getVideo(RobotMap.Camera.axisName);
-//			CvSource outputStream = CameraServer.getInstance().putVideo("649Camera", 320, 480);
-//
-//			Mat frame = new Mat();
-//
-//			while (!Thread.interrupted()) {
-//
-//				if (cvSink.grabFrame(frame) == 0) {
-//					continue;
-//				}
-//				outputStream.putFrame(frame);
-//
-//			}
-//		}).start();
+		new Thread(() -> {
+			// 10.6.49.7 = tanAxisCamera
+			AxisCamera camera = CameraServer.getInstance().addAxisCamera(RobotMap.Camera.axisName,
+					RobotMap.Camera.axisPort);
+			camera.setResolution(RobotMap.Camera.axisResWidth, RobotMap.Camera.axisResWidth);
+			camera.setFPS(RobotMap.Camera.axisFPS);
+			CvSink cvSink = CameraServer.getInstance().getVideo(RobotMap.Camera.axisName);
+			CvSource outputStream = CameraServer.getInstance().putVideo("649Camera", 320, 480);
+
+			Mat frame = new Mat();
+
+			while (!Thread.interrupted()) {
+
+				if (cvSink.grabFrame(frame) == 0) {
+					continue;
+				}
+				outputStream.putFrame(frame);
+
+			}
+		}).start();
 		//
 		// Waypoint[] pointsRightScaleSingle2 = new Waypoint[] {
 		// new Waypoint(-12.9,-2.9,0),
@@ -447,16 +434,18 @@ public class Robot extends TimedRobot {
 
 	@Override
 	public void disabledInit() {
-
+		log.endLogging();
 	}
 
 	@Override
 	public void disabledPeriodic() {
 		Scheduler.getInstance().run();
+
 	}
 
 	@Override
 	public void autonomousInit() {
+		log.startLoggingWithInterval("practicing", 100L);
 		hasFMS = false;
 		shouldSwitchTurnRatio = false;
 		for (int i = 0; i < 4; i++) {
@@ -530,7 +519,7 @@ public class Robot extends TimedRobot {
 		
 					// new LeftScaleSingleMP().start();
 //					 new LeftScaleSWSCMP().start();
-					// new LeftSwitch().start();
+					// new LeftSwitch().start(); 
 					// new LeftScale().start();
 
 				} else if (gameData.charAt(0) == 'R' && gameData.charAt(1) == 'R') {
@@ -616,6 +605,7 @@ public class Robot extends TimedRobot {
 	@SuppressWarnings("unused")
 	@Override
 	public void teleopInit() {
+		log.startLoggingWithInterval("practicing", 100L);
 		armVelMax = 0;
 		intakeTimer.start();
 		isZero = true;
@@ -723,6 +713,14 @@ public class Robot extends TimedRobot {
 		// } else {
 		// drive.shift(false);
 		// }
+		if (oi.operator.turnOffCompressorManually())
+		{
+			compressor.stop();
+		}
+		if (oi.operator.turnOnCompressorManually())
+		{
+			compressor.start();
+		}
 		if (oi.operator.newShiftToggle()) {
 			isHigh = !isHigh;
 			drive.shift(isHigh);
@@ -1278,6 +1276,7 @@ public class Robot extends TimedRobot {
 		// SmartDashboard.putNumber("pot side", switches.getPotSide());
 //		SmartDashboard.putNumber("left encoder", Robot.drive.motors[2].getSelectedSensorPosition(0));
 //		SmartDashboard.putNumber("Right encoder", Robot.drive.motors[0].getSelectedSensorPosition(0));
+		SmartDashboard.putNumber("match timer per part of match",(int)DriverStation.getInstance().getMatchTime());
 
 		if (intake.intakeSol.get().equals(DoubleSolenoid.Value.kForward)) {
 			SmartDashboard.putString("intake", "forw");
@@ -1310,12 +1309,6 @@ public class Robot extends TimedRobot {
 		prevStateFlipAndIntakeHigh = oi.operator.flipAndIntakeHigh();
 		prevStateFlipAndIntakeLow = oi.operator.flipAndIntakeLow();
 		prevStateFlipAndStore = oi.operator.flipAndStore();
-		if (oi.operatorJoystick.getRawButton(8)) {
-			hang.grabHook();
-		}
-		if (oi.operatorJoystick.getRawButton(7)) {
-			hang.resetHook();
-		}
 	}
 
 	// if (DriverStation.getInstance().getMatchTime() <= 30.0 &&
@@ -1355,9 +1348,6 @@ public class Robot extends TimedRobot {
 	private void updateSmartDashboardTesting() {
 		SmartDashboard.putNumber("Gyro Val", gyro.getGyroAngle());
 		SmartDashboard.putBoolean("PID Tuning?", isTuningPID);
-		SmartDashboard.putNumber("k_p", k_p);
-		SmartDashboard.putNumber("k_i", k_i);
-		SmartDashboard.putNumber("k_d", k_d);
 		SmartDashboard.putNumber("ARM ENCODER", arm.bottomMotor.getSelectedSensorPosition(0));
 		// SmartDashboard.putNumber("TalonRaw",
 		// drive.motors[0].getSensorCollection().getQuadraturePosition());
@@ -1407,7 +1397,6 @@ public class Robot extends TimedRobot {
 		SmartDashboard.putNumber("Lift Raw", lift.getRawLift());
 		SmartDashboard.putNumber("Lift Scaled Distance", lift.getLiftDistance());
 		SmartDashboard.putNumber("Arm Raw", arm.getArmRaw());
-		SmartDashboard.putNumber("Vel arm", arm.bottomMotor.getSelectedSensorVelocity(0));
 		// SmartDashboard.putNumber("Arm scaled", arm.getArmPosition());
 		if (lidarCount == 12) {
 			SmartDashboard.putNumber("Lidar", lidar.getSample());
