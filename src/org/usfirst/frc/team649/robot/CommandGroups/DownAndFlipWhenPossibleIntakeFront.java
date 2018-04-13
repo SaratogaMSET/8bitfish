@@ -1,11 +1,11 @@
 package org.usfirst.frc.team649.robot.CommandGroups;
 
 import org.usfirst.frc.team649.robot.Robot;
-import org.usfirst.frc.team649.robot.commands.ArmMotionProfile;
-import org.usfirst.frc.team649.robot.commands.ArmMotionProfileDelayed;
-import org.usfirst.frc.team649.robot.commands.ChangeRobotArmState;
-import org.usfirst.frc.team649.robot.commands.ChangeRobotLiftState;
-import org.usfirst.frc.team649.robot.commands.LiftMotionProfile;
+import org.usfirst.frc.team649.robot.commands.arm.ArmMotionProfile;
+import org.usfirst.frc.team649.robot.commands.arm.ArmMotionProfileDelayed;
+import org.usfirst.frc.team649.robot.commands.arm.ChangeRobotArmState;
+import org.usfirst.frc.team649.robot.commands.liftCommands.ChangeRobotLiftState;
+import org.usfirst.frc.team649.robot.commands.liftCommands.LiftMotionProfile;
 import org.usfirst.frc.team649.robot.subsystems.ArmSubsystem;
 import org.usfirst.frc.team649.robot.subsystems.LiftSubsystem;
 

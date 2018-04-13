@@ -1,20 +1,17 @@
 package org.usfirst.frc.team649.robot.CommandGroups;
 
 import org.usfirst.frc.team649.robot.Robot;
-import org.usfirst.frc.team649.robot.commands.ArmMotionProfile;
-import org.usfirst.frc.team649.robot.commands.ChangeRobotArmState;
-import org.usfirst.frc.team649.robot.commands.ChangeRobotLiftState;
-import org.usfirst.frc.team649.robot.commands.DriveBackForTime;
-import org.usfirst.frc.team649.robot.commands.DrivetrainMotionProfileIn;
-import org.usfirst.frc.team649.robot.commands.DrivetrainPIDCommand;
-import org.usfirst.frc.team649.robot.commands.GyroZeroDegree;
-import org.usfirst.frc.team649.robot.commands.LiftMotionProfile;
 import org.usfirst.frc.team649.robot.commands.MotionProfileDrive;
-import org.usfirst.frc.team649.robot.commands.RunIntakeForTime;
-import org.usfirst.frc.team649.robot.commands.RunIntakeWheels;
-import org.usfirst.frc.team649.robot.commands.SetIntakePistons;
-import org.usfirst.frc.team649.robot.commands.WaitForSEc;
 import org.usfirst.frc.team649.robot.commands.WaitTime;
+import org.usfirst.frc.team649.robot.commands.arm.ArmMotionProfile;
+import org.usfirst.frc.team649.robot.commands.arm.ChangeRobotArmState;
+import org.usfirst.frc.team649.robot.commands.drivetrain.DriveBackForTime;
+import org.usfirst.frc.team649.robot.commands.drivetrain.DrivetrainMotionProfileIn;
+import org.usfirst.frc.team649.robot.commands.intake.RunIntakeForTime;
+import org.usfirst.frc.team649.robot.commands.intake.RunIntakeWheels;
+import org.usfirst.frc.team649.robot.commands.intake.SetIntakePistons;
+import org.usfirst.frc.team649.robot.commands.liftCommands.ChangeRobotLiftState;
+import org.usfirst.frc.team649.robot.commands.liftCommands.LiftMotionProfile;
 import org.usfirst.frc.team649.robot.subsystems.ArmSubsystem;
 import org.usfirst.frc.team649.robot.subsystems.LiftSubsystem;
 

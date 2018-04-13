@@ -1,6 +1,6 @@
 package org.usfirst.frc.team649.autonomous;
 
-import org.usfirst.frc.team649.robot.commands.DrivetrainPIDCommand;
+import org.usfirst.frc.team649.robot.commands.drivetrain.DrivetrainMotionProfileIn;
 
 import edu.wpi.first.wpilibj.command.CommandGroup;
 
@@ -13,7 +13,7 @@ import edu.wpi.first.wpilibj.command.CommandGroup;
 public class ParallelScaleSwitchDrive extends CommandGroup {
 
     public ParallelScaleSwitchDrive() {
-        addSequential(new DrivetrainPIDCommand(-49)); // drive backwards
+        addSequential(new DrivetrainMotionProfileIn(-49)); // drive backwards
         // move arms backwards
         // pick up block
         // deploy

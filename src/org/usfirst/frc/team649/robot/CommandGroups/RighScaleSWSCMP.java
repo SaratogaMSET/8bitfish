@@ -1,19 +1,16 @@
 package org.usfirst.frc.team649.robot.CommandGroups;
 
 import org.usfirst.frc.team649.robot.Robot;
-import org.usfirst.frc.team649.robot.commands.ArmMotionProfile;
-import org.usfirst.frc.team649.robot.commands.ChangeRobotArmState;
-import org.usfirst.frc.team649.robot.commands.ChangeRobotLiftState;
-import org.usfirst.frc.team649.robot.commands.DriveBackForTime;
-import org.usfirst.frc.team649.robot.commands.DrivetrainMotionProfileIn;
-import org.usfirst.frc.team649.robot.commands.DrivetrainPIDCommand;
-import org.usfirst.frc.team649.robot.commands.LiftMotionProfile;
+import org.usfirst.frc.team649.robot.commands.Delay;
 import org.usfirst.frc.team649.robot.commands.MotionProfileDrive;
-import org.usfirst.frc.team649.robot.commands.RunIntakeForTime;
-import org.usfirst.frc.team649.robot.commands.RunIntakeWheels;
-import org.usfirst.frc.team649.robot.commands.SetIntakePistons;
-import org.usfirst.frc.team649.robot.commands.SwitchMPModes;
-import org.usfirst.frc.team649.robot.commands.WaitForSEc;
+import org.usfirst.frc.team649.robot.commands.arm.ArmMotionProfile;
+import org.usfirst.frc.team649.robot.commands.arm.ChangeRobotArmState;
+import org.usfirst.frc.team649.robot.commands.drivetrain.DriveBackForTime;
+import org.usfirst.frc.team649.robot.commands.intake.RunIntakeForTime;
+import org.usfirst.frc.team649.robot.commands.intake.RunIntakeWheels;
+import org.usfirst.frc.team649.robot.commands.intake.SetIntakePistons;
+import org.usfirst.frc.team649.robot.commands.liftCommands.ChangeRobotLiftState;
+import org.usfirst.frc.team649.robot.commands.liftCommands.LiftMotionProfile;
 import org.usfirst.frc.team649.robot.subsystems.ArmSubsystem;
 import org.usfirst.frc.team649.robot.subsystems.LiftSubsystem;
 
@@ -38,7 +35,7 @@ public class RighScaleSWSCMP extends CommandGroup {
     	addParallel(new RunIntakeWheels(0.5));
     	addSequential(new DriveBackForTime(-0.3,1));
     	addSequential(new SetIntakePistons(false,false));
-    	addSequential(new WaitForSEc(0.75));
+    	addSequential(new Delay(0.75));
     	addSequential(new ChangeRobotArmState(ArmSubsystem.ArmStateConstants.HEADING_STORE_REAR));
     	addParallel(new DriveBackForTime(0.3,0.5));
     	addSequential(new ArmMotionProfile(ArmSubsystem.ArmEncoderConstants.STORE_REAR,Robot.armState,true));

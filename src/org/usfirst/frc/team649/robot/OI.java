@@ -30,6 +30,7 @@ public class OI {
 	public boolean oldValue9;
 	public boolean intakeBBPrev;
 	public boolean shiftPrev;
+	public boolean flipPrev;
 	public Timer time;
 
 	public OI() {
@@ -44,6 +45,8 @@ public class OI {
 		operator = new Operator();
 		shiftPrev = false;
 		intakeBBPrev = false;
+		flipPrev = false;
+		
 		oldValue1 = false;
 		oldValue2 = false;
 		oldValue3 = false;
@@ -177,7 +180,13 @@ public class OI {
 			return buttonBoard2.getRawButton(7);
 		}
 		public boolean flipAndIntakeLow(){
-			return buttonBoard2.getRawButton(8);
+			boolean value = buttonBoard2.getRawButton(8);
+			if (value == true && flipPrev == false) {
+				flipPrev = value;
+				return true;
+			}
+			flipPrev = value;
+			return false;
 		}
 		public boolean isManual() {
 			return operatorJoystick.getRawButton(12);

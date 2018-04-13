@@ -44,21 +44,21 @@ public class LiftSubsystem extends PIDSubsystem {
     	public static int CARRIAGE_MID_SECOND_LOW = 8;
     }
     public static class LiftStateConstants{
-    	public static int INTAKE_EXCHANGE_STORE_STATE = 2;
-    	public static int HEADING_INTAKE_EXCHANGE_STORE_STATE = 1;
-    	public static int SWITCH_STATE = 4;
-    	public static int HEADING_SWITCH_STATE = 3;
-    	public static int LOW_SCALE_STATE = 6;
-    	public static int HEADING_LOW_SCALE_STATE = 5;
-    	public static int MID_SCALE_STATE = 8;
-    	public static int HEADING_MID_SCALE_STATE = 7;
-    	public static int HIGH_SCALE_STATE = 10;
-    	public static int HEADING_HIGH_SCALE_STATE = 9;
-    	public static int CUSTOM_STATE = 12;
-    	public static int HEADING_CUSTOM_STATE_UP = 13;
-    	public static int HEADING_CUSTOM_STATE_DOWN = 11;
-    	public static int HEADING_INTAKE_2 = 14;
-    	public static int INTAKE_2 = 15;
+    	public static final int INTAKE_EXCHANGE_STORE_STATE = 2;
+    	public static final int HEADING_INTAKE_EXCHANGE_STORE_STATE = 1;
+    	public static final int SWITCH_STATE = 4;
+    	public static final int HEADING_SWITCH_STATE = 3;
+    	public static final int LOW_SCALE_STATE = 6;
+    	public static final int HEADING_LOW_SCALE_STATE = 5;
+    	public static final int MID_SCALE_STATE = 8;
+    	public static final int HEADING_MID_SCALE_STATE = 7;
+    	public static final int HIGH_SCALE_STATE = 10;
+    	public static final int HEADING_HIGH_SCALE_STATE = 9;
+    	public static final int CUSTOM_STATE = 12;
+    	public static final int HEADING_CUSTOM_STATE_UP = 13;
+    	public static final int HEADING_CUSTOM_STATE_DOWN = 11;
+    	public static final int HEADING_INTAKE_2 = 14;
+    	public static final int INTAKE_2 = 15;
     	
     }
     public static class LiftEncoderConstants{

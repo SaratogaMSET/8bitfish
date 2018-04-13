@@ -264,6 +264,15 @@ public class DrivetrainSubsystem extends PIDSubsystem {
 			rawDriveVelPidRight(-right);
 		}
 	}
+	public void driveForwardRotateTeleop(double fwd, double rot) {
+		rot = -rot;
+		if (rot > 0) {
+			rot = Math.pow(rot, 1);
+		} else {
+			rot = -Math.pow(Math.abs(rot), 1);
+		}
+		driveFwdRotate(fwd, rot, true);
+	}
 	public void rawDrivePID(double left, double right){
 		motors[0].set(ControlMode.PercentOutput, left);
 		motors[1].set(ControlMode.Follower, RobotMap.Drivetrain.MOTOR_PORTS[0]);

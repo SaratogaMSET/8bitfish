@@ -1,9 +1,9 @@
 package org.usfirst.frc.team649.robot.CommandGroups;
 
 import org.usfirst.frc.team649.robot.Robot;
-import org.usfirst.frc.team649.robot.commands.ArmMotionProfile;
-import org.usfirst.frc.team649.robot.commands.ChangeRobotArmState;
 import org.usfirst.frc.team649.robot.commands.DownLiftUntilSafe;
+import org.usfirst.frc.team649.robot.commands.arm.ArmMotionProfile;
+import org.usfirst.frc.team649.robot.commands.arm.ChangeRobotArmState;
 import org.usfirst.frc.team649.robot.subsystems.ArmSubsystem;
 
 import edu.wpi.first.wpilibj.command.CommandGroup;
