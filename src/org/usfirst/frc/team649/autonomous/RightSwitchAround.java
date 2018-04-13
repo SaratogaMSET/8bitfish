@@ -1,8 +1,8 @@
 package org.usfirst.frc.team649.autonomous;
 
-import org.usfirst.frc.team649.robot.commands.DrivetrainMotionProfileIn;
-import org.usfirst.frc.team649.robot.commands.GyroPID;
-import org.usfirst.frc.team649.robot.commands.RunIntakeForTime;
+import org.usfirst.frc.team649.robot.commands.drivetrain.DrivetrainMotionProfileIn;
+import org.usfirst.frc.team649.robot.commands.drivetrain.GyroPID;
+import org.usfirst.frc.team649.robot.commands.intake.RunIntakeForTime;
 
 import edu.wpi.first.wpilibj.command.CommandGroup;
 

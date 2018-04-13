@@ -153,8 +153,8 @@ public class ArmSubsystem extends Subsystem {
 		return (bottomMotor.getSensorCollection().getQuadratureVelocity() - lastVal);
 	}
 	
-	public void resetEncoder() {
-		bottomMotor.getSensorCollection().setQuadraturePosition(0, 20);
+	public void setEncoder(int position) {
+		bottomMotor.setSelectedSensorPosition(position, 0, Robot.timeoutMs);
 	}
 	
 	public double getTime() {

@@ -46,7 +46,6 @@ public class GyroStraightPID extends Command {
     protected void initialize() {
     	SmartDashboard.putBoolean("finished gyro", false);
 //    	Robot.gyro.setDrivingStraight(true);
-    	Robot.drivePIDRunning = true;
     	GyroController.enable();
     	prevDistLeft = 0;
     	prevDistRight = 0;
@@ -154,7 +153,6 @@ public class GyroStraightPID extends Command {
 
     // Called once after isFinished returns true
     protected void end() {
-    	Robot.drivePIDRunning = false;
 //    	GyroController.disable();
 //    	DriveController.disable();
     	SmartDashboard.putNumber("end left", Robot.drive.motors[0].getSelectedSensorPosition(0));
