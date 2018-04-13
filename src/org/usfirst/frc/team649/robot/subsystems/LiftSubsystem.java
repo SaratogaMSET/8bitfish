@@ -68,7 +68,7 @@ public class LiftSubsystem extends PIDSubsystem {
     	public static int MID_SCALE_STATE = 43500;
     	public static int HIGH_SCALE_STATE = 48100;
     	public static int ADJ_DIST = 4000;
-    	public static int INTAKE_2_STATE = 5000;	
+    	public static int INTAKE_2_STATE = 7500;	
     }
     public static class LiftConstants{
     	public static double unitsPerCmSecond = 268;

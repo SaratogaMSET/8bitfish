@@ -47,8 +47,6 @@ import org.usfirst.frc.team649.robot.subsystems.LiftSubsystem.LiftStateConstants
 import org.usfirst.frc.team649.robot.util.Lidar;
 import org.usfirst.frc.team649.robot.util.RunnableLEDs;
 
-import org.usfirst.frc.team649.autonomous.MotionProfileTrajectoryManager;
-
 import com.ctre.phoenix.motorcontrol.ControlMode;
 import com.ctre.phoenix.motorcontrol.NeutralMode;
 
@@ -424,12 +422,6 @@ public class Robot extends TimedRobot {
 			modifierSideBack = new TankModifier(trajectorySideBack).modify(0.66);
 		}
 		
-		MotionProfileTrajectoryManager.saveTrajectory(trajectoryLeftScaleSingle, "LeftScaleSingle");
-		MotionProfileTrajectoryManager.saveTrajectory(trajectorySideBack, "SideBack");
-		MotionProfileTrajectoryManager.saveTrajectory(trajectoryMiddleRightSingle, "MiddleRightSingle");
-		MotionProfileTrajectoryManager.saveTrajectory(trajectoryMiddleLeftSingle, "MiddleLeftSingle");
-		MotionProfileTrajectoryManager.saveTrajectory(trajectoryRightScaleSingle, "RightScaleSingle");
-
 	}
 
 	@Override
