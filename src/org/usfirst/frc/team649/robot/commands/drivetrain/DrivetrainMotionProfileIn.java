@@ -29,14 +29,11 @@ public class DrivetrainMotionProfileIn extends Command {
     	isFinished = false;
     	Robot.drive.changeBrakeCoast(true);
     	Robot.isDrivePIDRunning = true;
-    	Robot.drive.resetEncoders();
     	converted = Robot.drive.convert(setpoint);
     	SmartDashboard.putNumber("Converted", converted);
     	SmartDashboard.putBoolean("Is Here in Execute", false);
-    	
-    	Robot.drive.motors[0].setSelectedSensorPosition(0, 0, Robot.timeoutMs);
-    	Robot.drive.motors[2].setSelectedSensorPosition(0, 0, Robot.timeoutMs);
 		
+    	Robot.drive.resetEncoders();
     	
 		SmartDashboard.putNumber("Setpoint", setpoint);
 		SmartDashboard.putString("Current Command", getName() + setpoint);

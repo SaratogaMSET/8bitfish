@@ -1,14 +1,17 @@
 
 package org.usfirst.frc.team649.robot;
 import java.util.concurrent.ScheduledExecutorService;
+
 import org.opencv.core.Mat;
 import org.usfirst.frc.team649.autonomous.AutoTest;
 import org.usfirst.frc.team649.autonomous.CenterSwitchRight;
 import org.usfirst.frc.team649.autonomous.DriveStraight;
 import org.usfirst.frc.team649.autonomous.LeftSwitch;
+
 import org.usfirst.frc.team649.autonomous.RightScale;
 import org.usfirst.frc.team649.autonomous.RightScaleNoTurn;
 import org.usfirst.frc.team649.autonomous.RightSwitch;
+
 import org.usfirst.frc.team649.robot.CommandGroups.DownAndFlipWhenPossible2ndIntakeFront;
 import org.usfirst.frc.team649.robot.CommandGroups.DownAndFlipWhenPossible2ndIntakeRear;
 import org.usfirst.frc.team649.robot.CommandGroups.DownAndFlipWhenPossibleIntakeFront;
@@ -19,21 +22,18 @@ import org.usfirst.frc.team649.robot.CommandGroups.LeftMPSwitch;
 import org.usfirst.frc.team649.robot.CommandGroups.LeftScaleDoubleScaleMP;
 import org.usfirst.frc.team649.robot.CommandGroups.RightMPSwitch;
 import org.usfirst.frc.team649.robot.CommandGroups.RightScaleDoubleScaleMP;
+
 import org.usfirst.frc.team649.robot.CommandGroups.RightScaleSingleMP;
 import org.usfirst.frc.team649.robot.commands.Diagnostic;
 import org.usfirst.frc.team649.robot.commands.MotionProfileDrive;
+
 import org.usfirst.frc.team649.robot.commands.arm.ArmMotionProfile;
-import org.usfirst.frc.team649.robot.commands.arm.FlipArmCommand;
 import org.usfirst.frc.team649.robot.commands.arm.MoveArmCommand;
 import org.usfirst.frc.team649.robot.commands.arm.ZeroArmRoutine;
-import org.usfirst.frc.team649.robot.commands.drivetrain.DriveBackForTime;
-import org.usfirst.frc.team649.robot.commands.drivetrain.DrivetrainMotionProfileIn;
-import org.usfirst.frc.team649.robot.commands.drivetrain.GyroPID;
 import org.usfirst.frc.team649.robot.commands.intake.RunIntakeWheels;
 import org.usfirst.frc.team649.robot.commands.intake.SetIntakePistons;
 import org.usfirst.frc.team649.robot.commands.liftCommands.LiftMotionProfile;
 import org.usfirst.frc.team649.robot.commands.liftCommands.MoveLiftCommand;
-
 import org.usfirst.frc.team649.robot.subsystems.ArmSubsystem;
 import org.usfirst.frc.team649.robot.subsystems.AutoSelector;
 import org.usfirst.frc.team649.robot.subsystems.DrivetrainSubsystem;
@@ -44,27 +44,20 @@ import org.usfirst.frc.team649.robot.subsystems.LiftSubsystem.LiftStateConstants
 import org.usfirst.frc.team649.robot.util.CameraServer;
 import org.usfirst.frc.team649.robot.util.Lidar;
 import org.usfirst.frc.team649.robot.util.RunnableLEDs;
-
 import org.usfirst.frc.team649.robot.util.VoltageLog;
+
 import com.ctre.phoenix.motorcontrol.NeutralMode;
+
 import edu.wpi.cscore.AxisCamera;
 import edu.wpi.cscore.CvSink;
 import edu.wpi.cscore.CvSource;
-
-
-import com.ctre.phoenix.motorcontrol.ControlMode;
-import com.ctre.phoenix.motorcontrol.NeutralMode;
-
-
 import edu.wpi.first.wpilibj.Compressor;
-import edu.wpi.first.wpilibj.DoubleSolenoid;
 import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.I2C;
 import edu.wpi.first.wpilibj.PowerDistributionPanel;
 import edu.wpi.first.wpilibj.SerialPort;
 import edu.wpi.first.wpilibj.TimedRobot;
 import edu.wpi.first.wpilibj.Timer;
-import edu.wpi.first.wpilibj.command.CommandGroup;
 import edu.wpi.first.wpilibj.command.Scheduler;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import jaci.pathfinder.Pathfinder;
@@ -205,20 +198,23 @@ public class Robot extends TimedRobot {
 	public static boolean isRunnigWithFlip;
 	public static int pos = 2; // left mid right forward
 
+	
+	
 	@Override
 
 	public void robotInit() {
+		oi = new OI();
+
 		compressor = new Compressor(4);
+
 //		pdp = new PowerDistributionPanel(RobotMap.POWER_DISTRIBUTION_PANEL);
 //		log = new VoltageLog(pdp,compressor);
+
 		lift = new LiftSubsystem();
 		drive = new DrivetrainSubsystem();
 		gyro = new GyroSubsystem();
 		arm = new ArmSubsystem();
 		intake = new IntakeSubsystem();
-
-		oi = new OI();
-
 
 		rLEDs = new RunnableLEDs();
 		compressor = new Compressor(4);
@@ -226,7 +222,8 @@ public class Robot extends TimedRobot {
 		lidarCount = 0;
 		shouldCanclArmMP = false;
 		isRunnigWithFlip = false;
-
+		
+		switches = new AutoSelector();
 		intakeTimer = new Timer();
 
 		isHigh = false;
@@ -467,9 +464,18 @@ public class Robot extends TimedRobot {
 		gyro.resetGyro();
 		drive.shift(true);
 		drive.changeBrakeCoast(true);
-		new ZeroArmRoutine().start();
-		new RightScaleSingleMP().start();
 
+		new ZeroArmRoutine().start();
+
+		
+//		left = new EncoderFollower(modifierMiddleRightSingle.getLeftTrajectory());
+//		right = new EncoderFollower(modifierMiddleRightSingle.getRightTrajectory());
+//		left.configureEncoder(0, 4096 * 2, 0.127);
+//		right.configureEncoder(0, 4096 * 2, 0.127);
+//		left.configurePIDVA(2, 0.0, 0, 1 / 4.5, 0);
+//		right.configurePIDVA(2, 0.0, 0, 1 / 4.5, 0);
+//		new ZeroArmRoutine().start();
+//		new RightScaleSingleMP().start();
 	}
 
 	@Override
@@ -640,7 +646,6 @@ public class Robot extends TimedRobot {
 		if (oi.operator.getIntakeState()) { // *********************************** Move Lift to bottom, arm to intake
 			new MoveLiftCommand(LiftStateConstants.INTAKE_EXCHANGE_STORE_STATE, false).start();
 			if(armIsFront) { 
-				SmartDashboard.putBoolean("Going Back to front Op 8 Left", true);
 				new MoveArmCommand(ArmSubsystem.ArmStateConstants.INTAKE_FRONT, false).start();
 			} else {
 				new MoveArmCommand(ArmSubsystem.ArmStateConstants.INTAKE_REAR, false).start();
@@ -880,7 +885,9 @@ public class Robot extends TimedRobot {
 			new SetIntakePistons(true, false).start();
 			new RunIntakeWheels(0).start();
 		} else if (oi.operator.runIntakeWithWheelsClosed()) { // ************************************ Close intakes and run wheels
-			new SetIntakePistons(false, false).start();
+			if (!arm.getInfraredSensor()) {
+				new SetIntakePistons(false, false).start();
+			}
 			new RunIntakeWheels(1).start();
 		} else if (isOpen == false && !oi.operator.runIntakeWithWheelsClosed()
 				&& !(oi.operator.openIntakeToggle() || oi.operator.openIntakeToggleBB())) { // ****** open intakes
@@ -977,11 +984,8 @@ public class Robot extends TimedRobot {
 		SmartDashboard.putBoolean("is Carriage at Top", lift.isCarriageAtTop());
 		SmartDashboard.putNumber("Lift Raw", lift.getRawLift());
 		SmartDashboard.putNumber("Arm Raw", arm.getArmRaw());
-		
-		System.out.println("Main Lift"+ lift.mainLiftMotor.getBusVoltage());
-		System.out.println("Follow Lift"+ lift.followerLiftMotor.getBusVoltage());
-		System.out.println("Encoder Lift Value  " + lift.mainLiftMotor.getSelectedSensorPosition(0));
-		
+
+
 		if (lidarCount == 12) {
 			SmartDashboard.putNumber("Lidar", lidar.getSample());
 			lidarCount = 0;

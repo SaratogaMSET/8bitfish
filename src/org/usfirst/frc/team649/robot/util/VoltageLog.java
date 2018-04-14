@@ -14,6 +14,7 @@ import edu.wpi.first.wpilibj.Timer;
 
 import edu.wpi.first.wpilibj.Compressor;
 import edu.wpi.first.wpilibj.DriverStation;
+import edu.wpi.first.wpilibj.Joystick;
 
 public class VoltageLog implements Runnable {
 
@@ -26,10 +27,22 @@ public class VoltageLog implements Runnable {
 	private static Compressor robotCompressor;
 	public static double startTime;
 	private static PowerDistributionPanel robotPDP;
+	
+	private static Joystick horizontal;
+	private static Joystick vertical;
+	private static Joystick operatorJoystick;
+	private static Joystick buttonboard;
+	private static Joystick buttonboard2;
 
-	public VoltageLog(PowerDistributionPanel pdp, Compressor compressor) {
+	public VoltageLog(PowerDistributionPanel pdp, Compressor compressor, Joystick hor, Joystick vert, Joystick op, Joystick bb1, Joystick bb2) {
 		robotCompressor = compressor;
 		robotPDP = pdp;
+		horizontal = hor;
+		vertical = vert;
+		operatorJoystick = op;
+		// In case Graham asks to read in buttonboard values(Not implemented yet)
+		buttonboard = bb1;
+		buttonboard2 = bb2;
 	}
 
 	public void startLoggingWithInterval(String fileName, long interval) {
@@ -154,7 +167,7 @@ public class VoltageLog implements Runnable {
 			e.printStackTrace();
 		}
 	}
-
+	// Added Joystick values to log entry
 	public static void createLogEntry() throws IOException {
 		int i;
 
@@ -189,6 +202,32 @@ public class VoltageLog implements Runnable {
 			buff.write(String.valueOf(robotPDP.getCurrent(i)));
 		}
 
+		// Writing joystick values
+		buff.write(COMMA_DELIMITER);
+		buff.write(String.valueOf(horizontal.getX()));
+		buff.write(COMMA_DELIMITER);
+		buff.write(String.valueOf(horizontal.getY()));
+		buff.write(COMMA_DELIMITER);
+		buff.write(String.valueOf(horizontal.getZ()));
+		buff.write(" ");
+		
+		buff.write(COMMA_DELIMITER);
+		buff.write(String.valueOf(vertical.getX()));
+		buff.write(COMMA_DELIMITER);
+		buff.write(String.valueOf(vertical.getY()));
+		buff.write(COMMA_DELIMITER);
+		buff.write(String.valueOf(vertical.getZ()));
+		buff.write(" ");
+		
+		// Gunner joystick
+		buff.write(COMMA_DELIMITER);
+		buff.write(String.valueOf(operatorJoystick.getX()));
+		buff.write(COMMA_DELIMITER);
+		buff.write(String.valueOf(operatorJoystick.getY()));
+		buff.write(COMMA_DELIMITER);
+		buff.write(String.valueOf(operatorJoystick.getZ()));
+		buff.write(" ");
+		
 		buff.write(NEW_LINE_DELIMITER);
 	}
 

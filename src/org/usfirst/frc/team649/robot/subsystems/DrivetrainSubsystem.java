@@ -351,8 +351,8 @@ public class DrivetrainSubsystem extends PIDSubsystem {
 	}
 	
 	public void resetEncoders() {
-		motors[0].getSensorCollection().setQuadraturePosition(0, 20);
-		motors[2].getSensorCollection().setQuadraturePosition(0, 20);
+		motors[0].setSelectedSensorPosition(0, 0, Robot.timeoutMs);
+		motors[2].setSelectedSensorPosition(0, 0, Robot.timeoutMs);
 //		leftEncoder.reset();
 	}
 	public double getTranslationDistance(double angle) {
