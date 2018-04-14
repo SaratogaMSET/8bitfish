@@ -9,9 +9,8 @@
 	<classpathentry exported="true" kind="var" path="USERLIBS_DIR/CTRE_Phoenix-sources.jar"/>
 	<classpathentry exported="true" kind="var" path="USERLIBS_DIR/CTRE_Phoenix.jar" sourcepath="/CTRE_Phoenix.sources"/>
 	<classpathentry kind="var" path="wpiutil" sourcepath="wpiutil.sources"/>
-	<classpathentry exported="true" kind="var" path="USERLIBS_DIR/CTRLib.jar"/>
 	<classpathentry exported="true" kind="lib" path="/PathGenerator/src/pathGenerator/pathfinder.jar"/>
 	<classpathentry exported="true" kind="lib" path="C:/Users/MSET/wpilib/java/current/lib/jssc.jar"/>
-	<classpathentry exported="true" kind="var" path="USERLIBS_DIR/Pathfinder-Java-1.8.jar"/>
+	<classpathentry kind="lib" path="/Users/macbookpro/wpilib/user/java/lib/Pathfinder-Java-1.8.jar"/>
 	<classpathentry kind="output" path="bin"/>
 </classpath>
