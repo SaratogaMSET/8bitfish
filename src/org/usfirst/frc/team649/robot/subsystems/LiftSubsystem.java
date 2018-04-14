@@ -93,7 +93,7 @@ public class LiftSubsystem extends PIDSubsystem {
     	mainLiftMotor.setInverted(false);
     	mainLiftMotor.setSensorPhase(false);
     	followerLiftMotor = new TalonSRX(RobotMap.Lift.LEFT_WINCH_MOTOR);
-    	followerLiftMotor.setInverted(false);
+    	followerLiftMotor.setInverted(true);
     	followerLiftMotor.set(ControlMode.Follower, RobotMap.Lift.RIGHT_WINCH_MOTOR);
     	
     	mainLiftMotor.configNominalOutputForward(0, Robot.timeoutMs);
@@ -169,7 +169,6 @@ public class LiftSubsystem extends PIDSubsystem {
     }
     public void setLift(double power){
     	mainLiftMotor.set(ControlMode.PercentOutput, power);
-    	System.out.println("Power to Lift"+ power);
     }
     public void setLiftMotion(int pos){
     	mainLiftMotor.set(ControlMode.MotionMagic, pos);
