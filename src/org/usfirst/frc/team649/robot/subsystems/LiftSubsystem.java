@@ -50,6 +50,10 @@ public class LiftSubsystem extends PIDSubsystem {
     	public static final int HEADING_SWITCH_STATE = 3;
     	public static final int LOW_SCALE_STATE = 6;
     	public static final int HEADING_LOW_SCALE_STATE = 5;
+    	
+    	public static final int HEADING_LOW_MID_SCALE = 16;
+    	public static final int LOW_MID_SCALE = 17;
+    	
     	public static final int MID_SCALE_STATE = 8;
     	public static final int HEADING_MID_SCALE_STATE = 7;
     	public static final int HIGH_SCALE_STATE = 10;
@@ -64,11 +68,12 @@ public class LiftSubsystem extends PIDSubsystem {
     public static class LiftEncoderConstants{
     	public static int LOW_STATE = 0;
     	public static int SWITCH_STATE = 20000;
-    	public static int LOW_SCALE_STATE = 38500;
-    	public static int MID_SCALE_STATE = 43500;
+    	public static int LOW_SCALE_STATE = 32500;
+    	public static int MID_SCALE_STATE = 46000;
     	public static int HIGH_SCALE_STATE = 48100;
     	public static int ADJ_DIST = 4000;
-    	public static int INTAKE_2_STATE = 7500;	
+    	public static int INTAKE_2_STATE = 7500;
+    	public static int LOW_MID_SCALE = 38000;
     }
     public static class LiftConstants{
     	public static double unitsPerCmSecond = 268;
@@ -164,9 +169,11 @@ public class LiftSubsystem extends PIDSubsystem {
     }
     public void setLift(double power){
     	mainLiftMotor.set(ControlMode.PercentOutput, power);
+    	System.out.println("Power to Lift"+ power);
     }
     public void setLiftMotion(int pos){
     	mainLiftMotor.set(ControlMode.MotionMagic, pos);
+    	SmartDashboard.putBoolean("Is Motion Profiling", true);
     }
     public void setLiftWithSafety(double power, boolean override) {
     	if (!override) {	
@@ -187,12 +194,7 @@ public class LiftSubsystem extends PIDSubsystem {
     public void resetLiftEncoder(){
     	mainLiftMotor.setSelectedSensorPosition(0, 0, 30);
     }
-    public void setEncoderMaxLift(){
-    	
-    }
-//    public double getWinchRPM(){
-//    	
-//    }
+
     public int getLiftState(){
     	if(isSecondStageAtBottom()){
     		if(isCarriageAtBottom()){

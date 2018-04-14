@@ -74,7 +74,14 @@ public class MoveLiftCommand extends Command {
 			}
 			isFinished = true;
 			break;
-
+		case LiftSubsystem.LiftStateConstants.LOW_MID_SCALE:
+			if (Robot.liftState != LiftSubsystem.LiftStateConstants.HEADING_LOW_MID_SCALE
+					&& Robot.liftState != LiftSubsystem.LiftStateConstants.LOW_MID_SCALE) {
+				Robot.liftState = LiftSubsystem.LiftStateConstants.HEADING_LOW_MID_SCALE;
+				new LiftMotionProfile(LiftSubsystem.LiftEncoderConstants.LOW_MID_SCALE, Robot.liftState, 0).start();
+			}
+			isFinished = true;
+			break;
 		case LiftSubsystem.LiftStateConstants.MID_SCALE_STATE:
 			if (Robot.liftState != LiftSubsystem.LiftStateConstants.HEADING_MID_SCALE_STATE
 					&& Robot.liftState != LiftSubsystem.LiftStateConstants.MID_SCALE_STATE) {

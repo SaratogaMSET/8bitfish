@@ -59,15 +59,6 @@ public class OI {
 	}
 
 	public class Operator {
-		public boolean PIDTunePhase() {
-			boolean value = buttonBoard.getRawButton(1);
-			if (value == true && oldValue1 == false) {
-				oldValue1 = value;
-				return true;
-			}
-			oldValue1 = value;
-			return false;
-		}
 		public boolean newBBIntake(){
 			boolean val = buttonBoard2.getRawButton(4);
 			if(val == true && intakeBBPrev == false){
@@ -137,13 +128,15 @@ public class OI {
 		public boolean getScaleLowState() {
 			return buttonBoard.getRawButton(4);
 		}
-
-		public boolean getScaleMidState() {
+		public boolean getScaleLowMidState() {
 			return buttonBoard.getRawButton(3);
+		}
+		public boolean getScaleMidState() {
+			return buttonBoard.getRawButton(2);
 		}
 
 		public boolean getScaleHighState() {
-			return buttonBoard.getRawButton(2);
+			return buttonBoard.getRawButton(1);
 		}
 
 		public boolean deployWithWheelsAndOpen() {
