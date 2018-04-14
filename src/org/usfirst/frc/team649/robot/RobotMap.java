@@ -7,6 +7,7 @@ public class RobotMap {
 	public static final int OPERATOR_JOYSTICK = 2;
 	public static final int DRIVE_JOYSTICK_HORIZONTAL = 1;
 	public static final int DRIVE_JOYSTICK_VERTICAL = 0;
+	public static final int POWER_DISTRIBUTION_PANEL = 0;
 
 	
 	public static class Drivetrain {
@@ -60,9 +61,9 @@ public class RobotMap {
         public static final boolean practiceBot = false;
         public static final String axisPort = "10.6.49.7";
         public static final String axisName = "tanAxisCamera";
-        public static final int axisResWidth = 320;
-        public static final int axisResHeight = 240;
-        public static final int axisFPS = 30;
+        public static final int axisResWidth = 160;
+        public static final int axisResHeight = 120;
+        public static final int axisFPS = 20;
 //        public static final String axis2Port = "10.6.49.17";
 //        public static final String axis2Name = "blackAxisCamera";
 //        public static final int axis2ResWidth = 320;
@@ -89,8 +90,4 @@ public class RobotMap {
 //        public static final int axis6ResHeight = 480;
 //        public static final int axis6FPS = 30;
     }
-	public class Hang
-	{
-		public static final int hangport = 0;
-	}
 }

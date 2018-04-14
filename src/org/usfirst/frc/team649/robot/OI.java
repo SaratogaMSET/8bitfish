@@ -195,7 +195,15 @@ public class OI {
 		public double getManualArm() {
 			return operatorJoystick.getRawAxis(0);
 		}
-
+		
+		public boolean turnOffCompressorManually()
+		{
+			return operatorJoystick.getRawButton(9);
+		}
+		public boolean turnOnCompressorManually()
+		{
+			return operatorJoystick.getRawButton(8);
+		}
 		public double getManualLift() {
 			return operatorJoystick.getRawAxis(1);
 		}
