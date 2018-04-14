@@ -24,6 +24,7 @@ import org.usfirst.frc.team649.robot.CommandGroups.LeftScaleSWSCMP;
 import org.usfirst.frc.team649.robot.CommandGroups.RighScaleSWSCMP;
 import org.usfirst.frc.team649.robot.CommandGroups.RightMPSwitch;
 import org.usfirst.frc.team649.robot.CommandGroups.RightScaleDoubleScaleMP;
+import org.usfirst.frc.team649.robot.CommandGroups.RightScaleSingleMP;
 import org.usfirst.frc.team649.robot.commands.Diagnostic;
 import org.usfirst.frc.team649.robot.commands.MotionProfileDrive;
 import org.usfirst.frc.team649.robot.commands.arm.ArmMotionProfile;
@@ -209,7 +210,8 @@ public class Robot extends TimedRobot {
 		lidarCount = 0;
 		shouldCanclArmMP = false;
 		isRunnigWithFlip = false;
-
+		
+		switches = new AutoSelector();
 		intakeTimer = new Timer();
 
 		isHigh = false;
@@ -453,8 +455,16 @@ public class Robot extends TimedRobot {
 		gyro.resetGyro();
 		drive.shift(true);
 		drive.changeBrakeCoast(true);
-		new ZeroArmRoutine().start();
-
+		
+//		left = new EncoderFollower(modifierMiddleRightSingle.getLeftTrajectory());
+//		right = new EncoderFollower(modifierMiddleRightSingle.getRightTrajectory());
+//		left.configureEncoder(0, 4096 * 2, 0.127);
+//		right.configureEncoder(0, 4096 * 2, 0.127);
+//		left.configurePIDVA(2, 0.0, 0, 1 / 4.5, 0);
+//		right.configurePIDVA(2, 0.0, 0, 1 / 4.5, 0);
+//		new ZeroArmRoutine().start();
+//		new RightScaleSingleMP().start();
+		new RightFarScale().start();
 	}
 
 	@Override
@@ -701,6 +711,7 @@ public class Robot extends TimedRobot {
 		Scheduler.getInstance().run();
 //		teleopRun();
 		cleanTeleopRun();
+		updateSmartDashboardTesting();
 	}
 	
 	public void cleanTeleopRun() {
@@ -714,7 +725,6 @@ public class Robot extends TimedRobot {
 		if (oi.operator.getIntakeState()) { // ************************************************** Move Lift to bottom, arm to intake
 			new MoveLiftCommand(LiftStateConstants.INTAKE_EXCHANGE_STORE_STATE, false).start();
 			if(armIsFront) { 
-				SmartDashboard.putBoolean("Going Back to front Op 8 Left", true);
 				new MoveArmCommand(ArmSubsystem.ArmStateConstants.INTAKE_FRONT, false).start();
 			} else {
 				new MoveArmCommand(ArmSubsystem.ArmStateConstants.INTAKE_REAR, false).start();
@@ -939,7 +949,9 @@ public class Robot extends TimedRobot {
 			new SetIntakePistons(true, false).start();
 			new RunIntakeWheels(0).start();
 		} else if (oi.operator.runIntakeWithWheelsClosed()) { // ************************************ Close intakes and run wheels
-			new SetIntakePistons(false, false).start();
+			if (!arm.getInfraredSensor()) {
+				new SetIntakePistons(false, false).start();
+			}
 			new RunIntakeWheels(1).start();
 		} else if (isOpen == false && !oi.operator.runIntakeWithWheelsClosed()
 				&& !(oi.operator.openIntakeToggle() || oi.operator.openIntakeToggleBB())) { // ****** open intakes
@@ -1003,6 +1015,12 @@ public class Robot extends TimedRobot {
 		SmartDashboard.putBoolean("is Carriage at Top", lift.isCarriageAtTop());
 		SmartDashboard.putNumber("Lift Raw", lift.getRawLift());
 		SmartDashboard.putNumber("Arm Raw", arm.getArmRaw());
+		SmartDashboard.putNumber("Switch LL", switches.getVoltageLL());
+		SmartDashboard.putNumber("Switch LR", switches.getVoltageLR());
+		SmartDashboard.putNumber("Switch RL", switches.getVoltageRL());
+		SmartDashboard.putNumber("Switch RR", switches.getVoltageRR());
+		SmartDashboard.putNumber("Switch Robot Position", switches.getVoltageRobotPos());
+		SmartDashboard.putNumber("LL Pin", switches.getPinLL(switches.getVoltageLL()));
 
 		if (lidarCount == 12) {
 			SmartDashboard.putNumber("Lidar", lidar.getSample());
