@@ -363,7 +363,7 @@ public class Robot extends TimedRobot {
 		modifierSideBack = new TankModifier(trajectorySideBack).modify(0.66);
 	}
 	
-	public void middleRightDoubleSwitch(){
+	public void middleRightDoubleSwitch() {
 		//kedars double switch in the process of making it work :P
 		Waypoint[] pointsMiddleRightDouble = new Waypoint[] { new Waypoint(0.0, 0, 0),
 				new Waypoint(4.75, -3, Pathfinder.d2r(-30)), new Waypoint(2,1,0)
