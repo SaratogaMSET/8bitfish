@@ -127,7 +127,7 @@ public class Robot extends TimedRobot {
 
 	public static int timeoutMs = 20;
 
-	public static double robotLength = 32; // idk
+	public static double robotLength = 32; 
 	public double lidarOffset;
 
 	public static int liftState;
@@ -364,7 +364,6 @@ public class Robot extends TimedRobot {
 	}
 	
 	public void middleRightDoubleSwitch() {
-		//kedars double switch in the process of making it work :P
 		Waypoint[] pointsMiddleRightDouble = new Waypoint[] { new Waypoint(0.0, 0, 0),
 				new Waypoint(4.75, -3, Pathfinder.d2r(-30)), new Waypoint(2,1,0)
 				//, new Waypoint(2,5,0), new Waypoint(5.2,7.8, 0), new Waypoint(7.4,5,10)
@@ -414,9 +413,9 @@ public class Robot extends TimedRobot {
 	@Override
 	public void autonomousPeriodic() {
 		Scheduler.getInstance().run();
-		// Robot.drive.motors[0].set(ControlMode.MotionMagic, -200000);
-		// Robot.drive.motors[1].set(ControlMode.MotionMagic, 10000);
+		
 		String gameData = DriverStation.getInstance().getGameSpecificMessage();
+		
 		if (gameData.length() > 0 && !hasFMS) {
 			hasFMS = true;
 			if (pos == 0) { // left
@@ -577,97 +576,69 @@ public class Robot extends TimedRobot {
 	// }
 
 	public void cleanTeleopRun() {
-		// **************************************************************************************
-		// driving and shifting
+		// *********************************************************************************** driving and shifting
 		if (oi.operator.newShiftToggle()) {
 			isHigh = !isHigh;
 			drive.shift(isHigh);
 		}
 		drive.driveForwardRotateTeleop(oi.driver.getForward(), oi.driver.getRotation());
 
-		if (oi.operator.getIntakeState()) { // ***********************************
-											// Move Lift to bottom, arm to
-											// intake
+		if (oi.operator.getIntakeState()) { // *********************************** Move Lift to bottom, arm to intake
 			new MoveLiftCommand(LiftStateConstants.INTAKE_EXCHANGE_STORE_STATE, false).start();
 			if (armIsFront) {
 				new MoveArmCommand(ArmSubsystem.ArmStateConstants.INTAKE_FRONT, false).start();
 			} else {
 				new MoveArmCommand(ArmSubsystem.ArmStateConstants.INTAKE_REAR, false).start();
 			}
-		} else if (oi.operator.getStoreState()) { // ****************************
-													// Move Lift to bottom, arm
-													// to store
+		} else if (oi.operator.getStoreState()) { // **************************** Move Lift to bottom, arm to store
 			new MoveLiftCommand(LiftSubsystem.LiftStateConstants.INTAKE_EXCHANGE_STORE_STATE, false).start();
 			if (armIsFront) {
 				new MoveArmCommand(ArmSubsystem.ArmStateConstants.STORE_FRONT, false).start();
 			} else {
 				new MoveArmCommand(ArmSubsystem.ArmStateConstants.STORE_REAR, false).start();
 			}
-		} else if (oi.operator.getScaleLowState()) { // *************************
-														// Move Lift to low
-														// Scale, arm to mid
-														// drop
+		} else if (oi.operator.getScaleLowState()) { // ************************* Move Lift to low Scale, arm to mid drop
 			new MoveLiftCommand(LiftSubsystem.LiftStateConstants.LOW_SCALE_STATE, false).start();
 			if (armIsFront) {
 				new MoveArmCommand(ArmSubsystem.ArmStateConstants.MID_DROP_FRONT, false).start();
 			} else {
 				new MoveArmCommand(ArmSubsystem.ArmStateConstants.MID_DROP_REAR, false).start();
 			}
-		} else if (oi.operator.getScaleLowMidState()) { // *************************
-														// Move Lift to low
-														// Scale, arm to mid
-														// drop
+		} else if (oi.operator.getScaleLowMidState()) { // ************************* Move Lift to low Scale, arm to mid drop
 			new MoveLiftCommand(LiftSubsystem.LiftStateConstants.LOW_MID_SCALE, false).start();
 			if (armIsFront) {
 				new MoveArmCommand(ArmSubsystem.ArmStateConstants.MID_DROP_FRONT, false).start();
 			} else {
 				new MoveArmCommand(ArmSubsystem.ArmStateConstants.MID_DROP_REAR, false).start();
 			}
-		} else if (oi.operator.getScaleMidState()) { // *************************
-														// Move Lift to mid
-														// scale, arm to mid
-														// drop
+		} else if (oi.operator.getScaleMidState()) { // ************************* Move Lift to mid scale, arm to mid drop
 			new MoveLiftCommand(LiftSubsystem.LiftStateConstants.MID_SCALE_STATE, false).start();
 			if (armIsFront) {
 				new MoveArmCommand(ArmSubsystem.ArmStateConstants.MID_DROP_FRONT, false).start();
 			} else {
 				new MoveArmCommand(ArmSubsystem.ArmStateConstants.MID_DROP_REAR, false).start();
 			}
-		} else if (oi.operator.getScaleHighState()) { // ************************
-														// Move Lift to high
-														// scale, arm to high
-														// drop
+		} else if (oi.operator.getScaleHighState()) { // ************************ Move Lift to high scale, arm to high drop
 			new MoveLiftCommand(LiftSubsystem.LiftStateConstants.HIGH_SCALE_STATE, false).start();
 			if (armIsFront) {
 				new MoveArmCommand(ArmSubsystem.ArmStateConstants.HIGH_DROP_FRONT, false).start();
 			} else {
 				new MoveArmCommand(ArmSubsystem.ArmStateConstants.HIGH_DROP_REAR, false).start();
 			}
-		} else if (oi.operator.getExchangeState()) { // *************************
-														// Move Lift to high
-														// intake, arm to
-														// exchange
+		} else if (oi.operator.getExchangeState()) { // ************************* Move Lift to high intake, arm to exchange
 			new MoveLiftCommand(LiftSubsystem.LiftStateConstants.INTAKE_2, false).start();
 			if (armIsFront) {
 				new MoveArmCommand(ArmSubsystem.ArmStateConstants.EXCHANGE_FRONT, false).start();
 			} else {
 				new MoveArmCommand(ArmSubsystem.ArmStateConstants.EXCHANGE_REAR, false).start();
 			}
-		} else if (oi.operator.getArmUpSmall()) { // ******************************
-													// Move arm by small degree
-													// towards back
+		} else if (oi.operator.getArmUpSmall()) { // ****************************** Move arm by small degree towards back
 			new MoveArmCommand(ArmSubsystem.ArmStateConstants.CUSTOM, true).start();
-		} else if (oi.operator.getArmDownSmall()) { // ****************************
-													// Move arm by small degree
-													// towards front
+		} else if (oi.operator.getArmDownSmall()) { // **************************** Move arm by small degree towards front
 			new MoveArmCommand(ArmSubsystem.ArmStateConstants.CUSTOM, false).start();
-		} else if (oi.operator.getLiftUpSmall()) { // *****************************
-													// Move lift by small degree
-													// upwards
+		} else if (oi.operator.getLiftUpSmall()) { // ***************************** Move lift by small degree upwards
 			new MoveLiftCommand(LiftSubsystem.LiftStateConstants.CUSTOM_STATE, true).start();
-		} else if (oi.operator.getLiftDownSmall()) { // ***************************
-														// Move lift by small
-														// degree downwards
+		} else if (oi.operator.getLiftDownSmall()) { // *************************** Move lift by small degree downwards
 			new MoveLiftCommand(LiftSubsystem.LiftStateConstants.CUSTOM_STATE, false).start();
 		} else if (oi.operator.flipAndIntakeLow()) {
 			if (isOpen) {
@@ -771,26 +742,17 @@ public class Robot extends TimedRobot {
 					}
 				}
 			}
-		} else if (oi.operator.isManual()) { // ************************************************
-												// Manual Mode
+		} else if (oi.operator.isManual()) { // ************************************************ Manual Mode
 			SmartDashboard.putBoolean("Is stalling", false);
 			if (enteredManualMode == false) {
 				enteredManualMode = true;
 			}
 			SmartDashboard.putBoolean("Manual", enteredManualMode);
-			// *********************************************************************************
-			// Manual setup
+			// ********************************************************************************* Manual setup
 			liftState = LiftSubsystem.LiftStateConstants.CUSTOM_STATE;
 			armState = ArmSubsystem.ArmStateConstants.CUSTOM;
 
-			if (lift.isSecondStageAtBottom() && lift.isCarriageAtBottom()) { // ****************
-																				// if
-																				// lift
-																				// at
-																				// bottom
-																				// only
-																				// run
-																				// up
+			if (lift.isSecondStageAtBottom() && lift.isCarriageAtBottom()) { // **************** if lift at bottom only run up
 				if (oi.operator.getOperatorY() < 0) {
 					lift.setLift(0);
 				} else {
@@ -799,13 +761,11 @@ public class Robot extends TimedRobot {
 			} else {
 				lift.setLift(oi.operator.getOperatorY());
 			}
-			// ********************************************************************************
-			// Update Lift Positions
+			// ******************************************************************************** Update Lift Positions
 			customLiftPos = (int) lift.getRawLift();
 			customArmPos = (int) arm.getArmRaw();
 
-			double armJoy = oi.operator.getManualArm(); // ************************************
-														// Manual Arm Code
+			double armJoy = oi.operator.getManualArm(); // ************************************ Manual Arm Code
 			if (armJoy == 0) {
 				arm.setArm(armJoy);
 				if (time.get() > 0.3) {
@@ -816,8 +776,7 @@ public class Robot extends TimedRobot {
 				arm.setArmBrake(false);
 				time.reset();
 			}
-		} else { // ******************************************************************************
-					// Stall motors for lift
+		} else { // ****************************************************************************** Stall motors for lift
 			SmartDashboard.putBoolean("Is stalling", true);
 			SmartDashboard.putBoolean("Manual", false);
 			if (liftState == LiftSubsystem.LiftStateConstants.INTAKE_EXCHANGE_STORE_STATE) {
@@ -841,19 +800,12 @@ public class Robot extends TimedRobot {
 			} else if (liftState == LiftSubsystem.LiftStateConstants.INTAKE_2) {
 				lift.setLiftMotion(LiftSubsystem.LiftEncoderConstants.INTAKE_2_STATE);
 			}
-			if (!isArmPidRunning) { // *************************************************************
-									// Turn on arm brake
+			if (!isArmPidRunning) { // ************************************************************* Turn on arm brake
 				arm.setArmBrake(true);
 			}
-			if (armState == ArmSubsystem.ArmStateConstants.INTAKE_FRONT) { // **********************
-																			// Zero
-																			// Arm
-																			// front
+			if (armState == ArmSubsystem.ArmStateConstants.INTAKE_FRONT) { // ********************** Zero Arm front
 				arm.setArm(0);
-			} else if (armState == ArmSubsystem.ArmStateConstants.INTAKE_REAR) { // *****************
-																					// Zero
-																					// Arm
-																					// Back
+			} else if (armState == ArmSubsystem.ArmStateConstants.INTAKE_REAR) { // ***************** Zero Arm Back
 				arm.setArm(0);
 			}
 
@@ -864,37 +816,24 @@ public class Robot extends TimedRobot {
 		{ // **************************************************** Deploy intake
 			// wheels
 			new RunIntakeWheels(-1).start();
-		} else if (oi.operator.lowSpeedDeploy()) { // ***********************************************
-													// slow intake deploy
+		} else if (oi.operator.lowSpeedDeploy()) { // *********************************************** slow intake deploy
 			new RunIntakeWheels(-0.35).start();
-		} else if (oi.operator.openIntakeToggle() && oi.operator.runIntakeWithWheelsClosed()) { // **
-																								// Open
-																								// intakes
-																								// and
-																								// run
-																								// wheels
+		} else if (oi.operator.openIntakeToggle() && oi.operator.runIntakeWithWheelsClosed()) { // ** Open intakes and run wheels
 			new SetIntakePistons(true, false).start();
 			new RunIntakeWheels(1).start();
-		} else if (oi.operator.openIntakeToggle()) { // *********************************************
-														// Open Intakes
+		} else if (oi.operator.openIntakeToggle()) { // ********************************************* Open Intakes
 			new SetIntakePistons(true, false).start();
 			new RunIntakeWheels(0).start();
-		} else if (oi.operator.runIntakeWithWheelsClosed()) { // ************************************
-																// Close intakes
-																// and run
-																// wheels
+		} else if (oi.operator.runIntakeWithWheelsClosed()) { // ************************************ Close intakes and run wheels
 			if (!arm.getInfraredSensor()) {
 				new SetIntakePistons(false, false).start();
 			}
 			new RunIntakeWheels(1).start();
 		} else if (isOpen == false && !oi.operator.runIntakeWithWheelsClosed()
-				&& !(oi.operator.openIntakeToggle() || oi.operator.openIntakeToggleBB())) { // ******
-																							// open
-																							// intakes
+				&& !(oi.operator.openIntakeToggle() || oi.operator.openIntakeToggleBB())) { // ****** open intakes
 			new SetIntakePistons(false, true).start();
 			Robot.intake.setIntakeMotors(0, 0);
-		} else { // *********************************************************************************
-					// close and clamp
+		} else { // ********************************************************************************* close and clamp
 			new SetIntakePistons(false, true).start();
 			Robot.intake.setIntakeMotors(0, 0);
 		}
@@ -906,33 +845,24 @@ public class Robot extends TimedRobot {
 			armIsFront = false;
 
 		}
-		if (lift.getLiftState() == LiftSubsystem.LiftHalConstants.LOWEST_STATE) { // ********
-																					// Zero
-																					// Lift
+		if (lift.getLiftState() == LiftSubsystem.LiftHalConstants.LOWEST_STATE) { // ******** Zero Lift
 			lift.resetLiftEncoder();
 		}
 		SmartDashboard.putNumber("match timer per part of match", (int) DriverStation.getInstance().getMatchTime());
-		// if (arm.getArmHalZeroFront()) {
-		// arm.bottomMotor.setSelectedSensorPosition(ArmSubsystem.ArmEncoderConstants.INTAKE_FRONT,
-		// 0, 20);
-		// } else if (arm.getArmHalZeroBack()) {
-		// arm.bottomMotor.setSelectedSensorPosition(ArmSubsystem.ArmEncoderConstants.INTAKE_REAR,
-		// 0, 20);
-		// }
-		if (arm.getArmHalZeroFront() || oi.operatorJoystick.getRawButton(7)) { // *************************************************
-																				// Zero
-																				// Arm
-																				// Front
+		 if (arm.getArmHalZeroFront()) {
+			 arm.bottomMotor.setSelectedSensorPosition(ArmSubsystem.ArmEncoderConstants.INTAKE_FRONT, 0, 20);
+		 } else if (arm.getArmHalZeroBack()) {
+			 arm.bottomMotor.setSelectedSensorPosition(ArmSubsystem.ArmEncoderConstants.INTAKE_REAR, 0, 20);
+		 }
+		if (arm.getArmHalZeroFront() || oi.operatorJoystick.getRawButton(7)) { // ********************* Zero Arm Front
 			arm.setEncoder(ArmSubsystem.ArmEncoderConstants.INTAKE_FRONT);
 		} else if (arm.getArmHalZeroBack()) {
 			arm.setEncoder(ArmSubsystem.ArmEncoderConstants.INTAKE_REAR);
 		}
-		if (lift.isSecondStageAtBottom()) { // *********************************************
-											// Take lidar values
+		if (lift.isSecondStageAtBottom()) { // ******************************************* Take lidar values
 			lidarOffset = lidar.getSample();
 		}
-		if (lidarCount == 10) { // *********************************************************
-								// lidar sample rate
+		if (lidarCount == 10) { // ********************************************************* lidar sample rate
 			lidarValue = lidar.getSample() - lidarOffset;
 			lidarCount = 0;
 		}
@@ -942,8 +872,7 @@ public class Robot extends TimedRobot {
 		SmartDashboard.putBoolean("ir", arm.getInfraredSensor());
 		SmartDashboard.putNumber("Arm Raw", arm.getArmRaw());
 
-		// *****************************************************************
-		// Prev States
+		// ***************************************************************** Prev States
 		prevStateIntakeToggle = oi.operator.openIntakeToggleBB();
 		prevStateIntakeToggle2 = oi.operator.openIntakeToggle();
 		prevStateFlipAndIntakeHigh = oi.operator.flipAndIntakeHigh();
