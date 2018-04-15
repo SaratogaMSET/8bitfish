@@ -258,21 +258,7 @@ public class Robot extends TimedRobot {
 		}).start();
 		isAutoInTeleopPrev = false;
 		if (pos == 0) {
-			Waypoint[] pointsLeftScaleSingle = new Waypoint[] { new Waypoint(-12.9, 3.1, 0), new Waypoint(-7, 3.1, 0),
-					new Waypoint(-4, 3.1, Pathfinder.d2r(-45)), new Waypoint(-2.05, 0, 0), new Waypoint(0, 0, 0) };
-
-			configLeftScaleSingle = new Trajectory.Config(Trajectory.FitMethod.HERMITE_CUBIC,
-					Trajectory.Config.SAMPLES_HIGH, 0.02, 4, 2.9, 12);
-			trajectoryLeftScaleSingle = Pathfinder.generate(pointsLeftScaleSingle, configLeftScaleSingle);
-			modifierLeftScaleSingle = new TankModifier(trajectoryLeftScaleSingle).modify(0.66);
-
-			Waypoint[] sideBack = new Waypoint[] { new Waypoint(-2, 0, 0), new Waypoint(0, 0, 0) };
-			configSideBack = new Trajectory.Config(Trajectory.FitMethod.HERMITE_CUBIC, Trajectory.Config.SAMPLES_HIGH,
-					0.02, 4, 2.9, 12);
-			trajectorySideBack = Pathfinder.generate(sideBack, configSideBack);
-			modifierSideBack = new TankModifier(trajectorySideBack).modify(0.66);
-			//leftScaleMP();
-
+			generateLeftScaleMP();
 		} else if (pos == 1) {
 			Waypoint[] pointsMiddleRightSingle = new Waypoint[] { new Waypoint(-5.8, 0, 0), new Waypoint(0, 0, 0) };
 
@@ -288,25 +274,30 @@ public class Robot extends TimedRobot {
 			modifierMiddleLeftSingle = new TankModifier(trajectoryMiddleLeftSingle).modify(0.66);
 
 		} else if (pos == 2) {
-			Waypoint[] pointsRightScaleSingle = new Waypoint[] { new Waypoint(-12.9, -3.1, 0),
-					new Waypoint(-7, -3.1, 0), new Waypoint(-4, -3.1, Pathfinder.d2r(45)), new Waypoint(-2.5, 0, 0),
-					new Waypoint(0, 0, 0) };
-
-			configRightScaleSingle = new Trajectory.Config(Trajectory.FitMethod.HERMITE_CUBIC,
-					Trajectory.Config.SAMPLES_HIGH, 0.02, 4, 2.9, 12);
-			trajectoryRightScaleSingle = Pathfinder.generate(pointsRightScaleSingle, configRightScaleSingle);
-			modifierRightScaleSingle = new TankModifier(trajectoryRightScaleSingle).modify(0.66);
-			Waypoint[] sideBack = new Waypoint[] { new Waypoint(-2, 0, 0), new Waypoint(0, 0, 0) };
-			configSideBack = new Trajectory.Config(Trajectory.FitMethod.HERMITE_CUBIC, Trajectory.Config.SAMPLES_HIGH,
-					0.02, 4, 2.9, 12);
-			trajectorySideBack = Pathfinder.generate(sideBack, configSideBack);
-			modifierSideBack = new TankModifier(trajectorySideBack).modify(0.66);
+			generateRightScaleMP();
 			
 		}
 
 	}
 	
-	public void leftScaleMP() {
+	public void generateRightScaleMP() {
+		Waypoint[] pointsRightScaleSingle = new Waypoint[] { new Waypoint(-12.9, -3.1, 0),
+				new Waypoint(-7, -3.1, 0), new Waypoint(-4, -3.1, Pathfinder.d2r(45)), new Waypoint(-2.5, 0, 0),
+				new Waypoint(0, 0, 0) };
+
+		configRightScaleSingle = new Trajectory.Config(Trajectory.FitMethod.HERMITE_CUBIC,
+				Trajectory.Config.SAMPLES_HIGH, 0.02, 4, 2.9, 12);
+		trajectoryRightScaleSingle = Pathfinder.generate(pointsRightScaleSingle, configRightScaleSingle);
+		modifierRightScaleSingle = new TankModifier(trajectoryRightScaleSingle).modify(0.66);
+		
+		Waypoint[] sideBack = new Waypoint[] { new Waypoint(0, 0, Pathfinder.d2r(60)), new Waypoint(2.3, 2.3, Pathfinder.d2r(0)), new Waypoint(4.6, 0, Pathfinder.d2r(-60)) };
+		configSideBack = new Trajectory.Config(Trajectory.FitMethod.HERMITE_CUBIC, Trajectory.Config.SAMPLES_HIGH,
+				0.02, 4, 2.9, 12);
+		trajectorySideBack = Pathfinder.generate(sideBack, configSideBack);
+		modifierSideBack = new TankModifier(trajectorySideBack).modify(0.66);
+	}
+	
+	public void generateLeftScaleMP() {
 		Waypoint[] pointsLeftScaleSingle = new Waypoint[] { new Waypoint(-12.9, 3.1, 0),
 				new Waypoint(-6, 3.0, Pathfinder.d2r(-15)),
 				new Waypoint(0.8, 1, Pathfinder.d2r(-60)) };

@@ -33,7 +33,7 @@ public class RightScaleNoTurn extends CommandGroup {
        	//addParallel(new ChangeRobotLiftState(1));
     	//addSequential(new RunIntakeForTime(0.5,false));
     	addSequential(new SwitchMPModes(Robot.modifierSideBack));
-    	addSequential(new MotionProfileDrive(false));
+    	addSequential(new MotionProfileDrive(true));
     	//addParallel(new DownAndFlipWhenPossibleIntakeRear());
 
 
