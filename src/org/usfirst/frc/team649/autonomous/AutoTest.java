@@ -88,13 +88,13 @@ public class AutoTest {
 	}
 	
 	public static class RightScaleNoTurnVal { //TODO TUNE
-		public static double DRIVE_TO_SCALE = 130.8 - Robot.robotLength/2;
+		public static double DRIVE_TO_SCALE = 230.8 - Robot.robotLength/2;
 		public static double TURN_ANGLE_WHILE_DRIVING = -15;
 		public static double DRIVE_BACKWARDS = -45;
 	}
 	
 	public static class RightScaleFarVal {
-		public static double FIRST_DRIVE = 230.8-Robot.robotLength/2 - 10;
+		public static double FIRST_DRIVE = 275.8-Robot.robotLength/2 - 10;
 		public static double FIRST_ANGLE_TURN = -83; // need to tune
 		public static double SECOND_DRIVE = 155-Robot.robotLength/2 -10;
 		public static double SECOND_ANGLE_TURN = 90;

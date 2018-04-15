@@ -7,12 +7,13 @@ import org.opencv.core.Mat;
 import org.usfirst.frc.team649.autonomous.AutoTest;
 import org.usfirst.frc.team649.autonomous.CenterSwitchRight;
 import org.usfirst.frc.team649.autonomous.DriveStraight;
+import org.usfirst.frc.team649.autonomous.LeftScaleMP;
 import org.usfirst.frc.team649.autonomous.LeftSwitch;
-
+import org.usfirst.frc.team649.autonomous.MiddleRightDouble;
 import org.usfirst.frc.team649.autonomous.RightScale;
 import org.usfirst.frc.team649.autonomous.RightScaleNoTurn;
 import org.usfirst.frc.team649.autonomous.RightSwitch;
-
+import org.usfirst.frc.team649.robot.CommandGroups.CenterSwitchRightDoubleMP;
 import org.usfirst.frc.team649.robot.CommandGroups.DownAndFlipWhenPossible2ndIntakeFront;
 import org.usfirst.frc.team649.robot.CommandGroups.DownAndFlipWhenPossible2ndIntakeRear;
 import org.usfirst.frc.team649.robot.CommandGroups.DownAndFlipWhenPossibleIntakeFront;
@@ -164,6 +165,14 @@ public class Robot extends TimedRobot {
 	public static Trajectory.Config configSideBack;
 	public static Trajectory trajectorySideBack;
 	public static TankModifier modifierSideBack;
+	
+//	public static Trajectory.Config configMiddleRightSwitchDouble;
+//	public static Trajectory trajectoryMiddleRightSwitchDouble;
+//	public static TankModifier modifierMiddleRightSwitchDouble;
+	
+	public static Trajectory.Config configMiddleRightDouble;
+	public static Trajectory trajectoryMiddleRightDouble;
+	public static TankModifier modifierMiddleRightDouble;
 
 	public static boolean autoShiftButtonPrevState;
 	public static boolean VPidButtonPrevState;
@@ -186,7 +195,7 @@ public class Robot extends TimedRobot {
 	public static boolean isIntakeOpen;
 	public static boolean shouldCanclArmMP;
 	public static boolean isRunnigWithFlip;
-	public static int pos = 2; // left mid right forward
+	public static int pos = 1; // left mid right forward
 
 	@Override
 
@@ -261,7 +270,7 @@ public class Robot extends TimedRobot {
 		}).start();
 		isAutoInTeleopPrev = false;
 		if (pos == 0) {
-			Waypoint[] pointsLeftScaleSingle = new Waypoint[] { new Waypoint(-12.9, 3.1, 0), new Waypoint(-7, 3.1, 0),
+			/*Waypoint[] pointsLeftScaleSingle = new Waypoint[] { new Waypoint(-12.9, 3.1, 0), new Waypoint(-7, 3.1, 0),
 					new Waypoint(-4, 3.1, Pathfinder.d2r(-45)), new Waypoint(-2.05, 0, 0), new Waypoint(0, 0, 0) };
 
 			configLeftScaleSingle = new Trajectory.Config(Trajectory.FitMethod.HERMITE_CUBIC,
@@ -273,23 +282,41 @@ public class Robot extends TimedRobot {
 			configSideBack = new Trajectory.Config(Trajectory.FitMethod.HERMITE_CUBIC, Trajectory.Config.SAMPLES_HIGH,
 					0.02, 4, 2.9, 12);
 			trajectorySideBack = Pathfinder.generate(sideBack, configSideBack);
-			modifierSideBack = new TankModifier(trajectorySideBack).modify(0.66);
+			modifierSideBack = new TankModifier(trajectorySideBack).modify(0.66);*/
+			leftScaleMP();
 
 		} else if (pos == 1) {
-			Waypoint[] pointsMiddleRightSingle = new Waypoint[] { new Waypoint(-5.8, 0, 0), new Waypoint(0, 0, 0) };
+//			Waypoint[] pointsMiddleRightSingle = new Waypoint[] { new Waypoint(-5.8, 0, 0), new Waypoint(0, 0, 0) };
+//
+//			configMiddleRightSingle = new Trajectory.Config(Trajectory.FitMethod.HERMITE_CUBIC,
+//					Trajectory.Config.SAMPLES_HIGH, 0.02, 4.5, 3.3, 12);
+//			trajectoryMiddleRightSingle = Pathfinder.generate(pointsMiddleRightSingle, configMiddleRightSingle);
+//			modifierMiddleRightSingle = new TankModifier(trajectoryMiddleRightSingle).modify(0.66);
+//			Waypoint[] pointsMiddleLeftSingle = new Waypoint[] { new Waypoint(-1.2, -4, 0),
+//					new Waypoint(-.7, -4, Pathfinder.d2r(30)), new Waypoint(0, 0, 0), };
+//			configMiddleLeftSingle = new Trajectory.Config(Trajectory.FitMethod.HERMITE_CUBIC,
+//					Trajectory.Config.SAMPLES_HIGH, 0.02, 3, 2.3, 12);
+//			trajectoryMiddleLeftSingle = Pathfinder.generate(pointsMiddleLeftSingle, configMiddleLeftSingle);
+//			modifierMiddleLeftSingle = new TankModifier(trajectoryMiddleLeftSingle).modify(0.66);
 
-			configMiddleRightSingle = new Trajectory.Config(Trajectory.FitMethod.HERMITE_CUBIC,
-					Trajectory.Config.SAMPLES_HIGH, 0.02, 4.5, 3.3, 12);
-			trajectoryMiddleRightSingle = Pathfinder.generate(pointsMiddleRightSingle, configMiddleRightSingle);
-			modifierMiddleRightSingle = new TankModifier(trajectoryMiddleRightSingle).modify(0.66);
-			Waypoint[] pointsMiddleLeftSingle = new Waypoint[] { new Waypoint(-1.2, -4, 0),
-					new Waypoint(-.7, -4, Pathfinder.d2r(30)), new Waypoint(0, 0, 0), };
-			configMiddleLeftSingle = new Trajectory.Config(Trajectory.FitMethod.HERMITE_CUBIC,
-					Trajectory.Config.SAMPLES_HIGH, 0.02, 3, 2.3, 12);
-			trajectoryMiddleLeftSingle = Pathfinder.generate(pointsMiddleLeftSingle, configMiddleLeftSingle);
-			modifierMiddleLeftSingle = new TankModifier(trajectoryMiddleLeftSingle).modify(0.66);
+			//dhruvs code dudnt work
+//			Waypoint[] pointsMiddleRightSwitchDouble = new Waypoint[] {
+//					new Waypoint(-4.42, 0, 0),
+//					new Waypoint(0.36, 0, 0),
+////					new Waypoint(-1.02, 0, Pathfinder.d2r(-45)),
+////					new Waypoint(0.31, 1.35, Pathfinder.d2r(-45)),
+////					new Waypoint(-0.66, 0.381, Pathfinder.d2r(-45)),
+//					new Waypoint(0, 0, 0)
+//			};
+//	
+//			configMiddleRightSwitchDouble = new Trajectory.Config(Trajectory.FitMethod.HERMITE_CUBIC,
+//					Trajectory.Config.SAMPLES_LOW, 0.02, 4, 2.9, 12);
+//			trajectoryMiddleRightSwitchDouble = Pathfinder.generate(pointsMiddleRightSwitchDouble, configMiddleRightSwitchDouble);
+//			modifierMiddleRightSwitchDouble = new TankModifier(trajectoryMiddleRightSwitchDouble).modify(0.66);
+//			
+			middleRightDoubleSwitch();
 		} else if (pos == 2) {
-			Waypoint[] pointsRightScaleSingle = new Waypoint[] { new Waypoint(-12.9, -3.1, 0),
+			/*Waypoint[] pointsRightScaleSingle = new Waypoint[] { new Waypoint(-12.9, -3.1, 0),
 					new Waypoint(-7, -3.1, 0), new Waypoint(-4, -3.1, Pathfinder.d2r(45)), new Waypoint(-2.5, 0, 0),
 					new Waypoint(0, 0, 0) };
 
@@ -301,9 +328,51 @@ public class Robot extends TimedRobot {
 			configSideBack = new Trajectory.Config(Trajectory.FitMethod.HERMITE_CUBIC, Trajectory.Config.SAMPLES_HIGH,
 					0.02, 4, 2.9, 12);
 			trajectorySideBack = Pathfinder.generate(sideBack, configSideBack);
+			modifierSideBack = new TankModifier(trajectorySideBack).modify(0.66);*/
+			Waypoint[] pointsRightScaleSingle = new Waypoint[] { new Waypoint(-12.9, -3.1, 0),
+					new Waypoint(-6, -3.0, Pathfinder.d2r(15)),
+					new Waypoint(0.8, 0.0, Pathfinder.d2r(60)) };
+
+			configRightScaleSingle = new Trajectory.Config(Trajectory.FitMethod.HERMITE_CUBIC,
+					Trajectory.Config.SAMPLES_HIGH, 0.02, 7.5, 3.1, 12);
+			trajectoryRightScaleSingle = Pathfinder.generate(pointsRightScaleSingle, configRightScaleSingle);
+			modifierRightScaleSingle = new TankModifier(trajectoryRightScaleSingle).modify(0.66);
+			
+			Waypoint[] sideBack = new Waypoint[] { new Waypoint(0, 0, Pathfinder.d2r(0)), new Waypoint(-4.6, 0, Pathfinder.d2r(180)) };
+			configSideBack = new Trajectory.Config(Trajectory.FitMethod.HERMITE_CUBIC, Trajectory.Config.SAMPLES_HIGH,
+					0.02, 2, 2.5, 6);
+			trajectorySideBack = Pathfinder.generate(sideBack, configSideBack);
 			modifierSideBack = new TankModifier(trajectorySideBack).modify(0.66);
 		}
 
+	}
+	
+	public void leftScaleMP() {
+		Waypoint[] pointsLeftScaleSingle = new Waypoint[] { new Waypoint(-12.9, 3.1, 0),
+				new Waypoint(-6, 3.0, Pathfinder.d2r(-15)),
+				new Waypoint(0.8, 1, Pathfinder.d2r(-60)) };
+
+		configLeftScaleSingle = new Trajectory.Config(Trajectory.FitMethod.HERMITE_CUBIC,
+				Trajectory.Config.SAMPLES_HIGH, 0.02, 7.5, 3.1, 12);
+		trajectoryLeftScaleSingle = Pathfinder.generate(pointsLeftScaleSingle, configLeftScaleSingle);
+		modifierLeftScaleSingle = new TankModifier(trajectoryLeftScaleSingle).modify(0.66);
+		Waypoint[] sideBack = new Waypoint[] { new Waypoint(0, 0, Pathfinder.d2r(0)), new Waypoint(0.1, 0, Pathfinder.d2r(0)) };
+		configSideBack = new Trajectory.Config(Trajectory.FitMethod.HERMITE_CUBIC, Trajectory.Config.SAMPLES_HIGH,
+				0.02, 1, 1.5, 3);
+		trajectorySideBack = Pathfinder.generate(sideBack, configSideBack);
+		modifierSideBack = new TankModifier(trajectorySideBack).modify(0.66);
+	}
+	
+	public void middleRightDoubleSwitch(){
+		//kedars double switch in the process of making it work :P
+		Waypoint[] pointsMiddleRightDouble = new Waypoint[] { new Waypoint(0.0, 0, 0),
+				new Waypoint(4.75, -3, Pathfinder.d2r(-30)), new Waypoint(2,1,0)
+				//, new Waypoint(2,5,0), new Waypoint(5.2,7.8, 0), new Waypoint(7.4,5,10)
+				};
+		configMiddleRightDouble = new Trajectory.Config(Trajectory.FitMethod.HERMITE_CUBIC,
+				Trajectory.Config.SAMPLES_HIGH, 0.02, 4, 2.9, 12);
+		trajectoryMiddleRightDouble = Pathfinder.generate(pointsMiddleRightDouble, configMiddleRightDouble);
+		modifierMiddleRightDouble = new TankModifier(trajectoryMiddleRightDouble).modify(0.66);
 	}
 
 	@Override
@@ -347,91 +416,91 @@ public class Robot extends TimedRobot {
 		Scheduler.getInstance().run();
 		// Robot.drive.motors[0].set(ControlMode.MotionMagic, -200000);
 		// Robot.drive.motors[1].set(ControlMode.MotionMagic, 10000);
-		// String gameData =
-		// DriverStation.getInstance().getGameSpecificMessage();
-		// if (gameData.length() > 0 && !hasFMS) {
-		// hasFMS = true;
-		// if (pos == 0) { // left
-		// if (gameData.charAt(0) == 'L' && gameData.charAt(1) == 'R') {
-		//// new LeftFarScale().start();
-		// new LeftSwitch().start();
-		// } else if (gameData.charAt(0) == 'R' && gameData.charAt(1) == 'L') {
-		// left = new
-		// EncoderFollower(modifierLeftScaleSingle.getLeftTrajectory());
-		// right = new
-		// EncoderFollower(modifierLeftScaleSingle.getRightTrajectory());
-		// left.configureEncoder(0, 4096 * 2, 0.127);
-		// right.configureEncoder(0, 4096 * 2, 0.127);
-		// left.configurePIDVA(2, 0.0, 0, 1 / 4.5, 0);
-		// right.configurePIDVA(2, 0.0, 0, 1 / 4.5, 0);
-		// new LeftScaleDoubleScaleMP().start();
-		// // new LeftScaleSingleMP().start();
-		// // new LeftSwitchAround().start();
-		// // new LeftScale().start();
-		// } else if (gameData.charAt(0) == 'L' && gameData.charAt(1) == 'L') {
-		// left = new
-		// EncoderFollower(modifierLeftScaleSingle.getLeftTrajectory());
-		// right = new
-		// EncoderFollower(modifierLeftScaleSingle.getRightTrajectory());
-		// left.configureEncoder(0, 4096 * 2, 0.127);
-		// right.configureEncoder(0, 4096 * 2, 0.127);
-		// left.configurePIDVA(2, 0.0, 0, 1 / 4.5, 0);
-		// right.configurePIDVA(2, 0.0, 0, 1 / 4.5, 0);
-		// new LeftScaleDoubleScaleMP().start();
-		//
-		// // new LeftScaleSingleMP().start();
-		//// new LeftScaleSWSCMP().start();
-		// // new LeftSwitch().start();
-		// // new LeftScale().start();
-		//
-		// } else if (gameData.charAt(0) == 'R' && gameData.charAt(1) == 'R') {
-		//// new LeftFarScale().start();
-		// // new LeftSwitchAround().start();
-		// new DriveStraight().start();
-		// }
-		// } else if (pos == 1) { // mid
-		// if (gameData.charAt(0) == 'L') {
-		// shouldSwitchTurnRatio = true;
-		// left = new
-		// EncoderFollower(modifierMiddleLeftSingle.getLeftTrajectory());
-		// right = new
-		// EncoderFollower(modifierMiddleLeftSingle.getRightTrajectory());
-		// left.configureEncoder(0, 4096 * 2, 0.127);
-		// right.configureEncoder(0, 4096 * 2, 0.127);
-		// left.configurePIDVA(2, 0.0, 0, 1 / 3, 0);
-		// right.configurePIDVA(2, 0.0, 0, 1 / 3, 0);
-		// new LeftMPSwitch().start();
-		// // new CenterSwitchLeft().start();
-		// } else if (gameData.charAt(0) == 'R') {
-		// left = new
-		// EncoderFollower(modifierMiddleRightSingle.getLeftTrajectory());
-		// right = new
-		// EncoderFollower(modifierMiddleRightSingle.getRightTrajectory());
-		// left.configureEncoder(0, 4096 * 2, 0.127);
-		// right.configureEncoder(0, 4096 * 2, 0.127);
-		// left.configurePIDVA(2, 0.0, 0, 1 / 4.5, 0);
-		// right.configurePIDVA(2, 0.0, 0, 1 / 4.5, 0);
-		// //new RightMPSwitch().start();
-		// new CenterSwitchRight().start();
-		// }
-		//
-		// } else if (pos == 2) { // right
-		// if (gameData.charAt(0) == 'L' && gameData.charAt(1) == 'R') {
-		// left = new
-		// EncoderFollower(modifierRightScaleSingle.getLeftTrajectory());
-		// right = new
-		// EncoderFollower(modifierRightScaleSingle.getRightTrajectory());
-		// left.configureEncoder(0, 4096 * 2, 0.127);
-		// right.configureEncoder(0, 4096 * 2, 0.127);
-		// left.configurePIDVA(2, 0.0, 0, 1 / 4.5, 0);
-		// right.configurePIDVA(2, 0.0, 0, 1 / 4.5, 0);
-		// //new RightScaleDoubleScaleMP().start();
-		// // new RightScaleSingleMP().start();
-		// //new RightScale().start();
-		// new RightScaleNoTurn().start();
-		// }
-		// }
-		// }
+		String gameData = DriverStation.getInstance().getGameSpecificMessage();
+		if (gameData.length() > 0 && !hasFMS) {
+			hasFMS = true;
+			if (pos == 0) { // left
+				if (gameData.charAt(0) == 'L' && gameData.charAt(1) == 'R') {
+					// new LeftFarScale().start();
+					new LeftSwitch().start();
+				} else if (gameData.charAt(0) == 'R' && gameData.charAt(1) == 'L') {
+					left = new EncoderFollower(modifierLeftScaleSingle.getLeftTrajectory());
+					right = new EncoderFollower(modifierLeftScaleSingle.getRightTrajectory());
+					left.configureEncoder(0, 4096 * 2, 0.127);
+					right.configureEncoder(0, 4096 * 2, 0.127);
+					left.configurePIDVA(2, 0.0, 0, 1 / 4.5, 0);
+					right.configurePIDVA(2, 0.0, 0, 1 / 4.5, 0);
+					//new LeftScaleDoubleScaleMP().start();
+					// new LeftScaleMP().start();
+					// new LeftScaleSingleMP().start();
+					// new LeftSwitchAround().start();
+					// new LeftScale().start();
+				} else if (gameData.charAt(0) == 'L' && gameData.charAt(1) == 'L') {
+					left = new EncoderFollower(modifierLeftScaleSingle.getLeftTrajectory());
+					right = new EncoderFollower(modifierLeftScaleSingle.getRightTrajectory());
+					left.configureEncoder(0, 4096 * 2, 0.127);
+					right.configureEncoder(0, 4096 * 2, 0.127);
+					left.configurePIDVA(2, 0.0, 0, 1 / 4.5, 0);
+					right.configurePIDVA(2, 0.0, 0, 1 / 4.5, 0);
+					// new LeftScaleDoubleScaleMP().start();
+					new LeftScaleMP().start();	
+					// new LeftScaleSingleMP().start();
+					// new LeftScaleSWSCMP().start();
+					// new LeftSwitch().start();
+					// new LeftScale().start();
+
+				} else if (gameData.charAt(0) == 'R' && gameData.charAt(1) == 'R') {
+					// new LeftFarScale().start();
+					// new LeftSwitchAround().start();
+					new DriveStraight().start();
+				}
+			} else if (pos == 1) { // mid
+				if (gameData.charAt(0) == 'L') {
+					shouldSwitchTurnRatio = true;
+					left = new EncoderFollower(modifierMiddleLeftSingle.getLeftTrajectory());
+					right = new EncoderFollower(modifierMiddleLeftSingle.getRightTrajectory());
+					left.configureEncoder(0, 4096 * 2, 0.127);
+					right.configureEncoder(0, 4096 * 2, 0.127);
+					left.configurePIDVA(2, 0.0, 0, 1 / 3, 0);
+					right.configurePIDVA(2, 0.0, 0, 1 / 3, 0);
+					new LeftMPSwitch().start();
+					// new CenterSwitchLeft().start();
+				} else if (gameData.charAt(0) == 'R') {
+//					left = new EncoderFollower(modifierMiddleRightSingle.getLeftTrajectory());
+//					right = new EncoderFollower(modifierMiddleRightSingle.getRightTrajectory());
+//					left.configureEncoder(0, 4096 * 2, 0.127);
+//					right.configureEncoder(0, 4096 * 2, 0.127);
+//					left.configurePIDVA(2, 0.0, 0, 1 / 4.5, 0);
+//					right.configurePIDVA(2, 0.0, 0, 1 / 4.5, 0);
+//					// new RightMPSwitch().start();
+//					new CenterSwitchRight().start();
+					
+					left = new EncoderFollower(modifierMiddleRightDouble.getLeftTrajectory());
+					right = new EncoderFollower(modifierMiddleRightDouble.getRightTrajectory());
+					left.configureEncoder(0, 4096 * 2, 0.127);
+					right.configureEncoder(0, 4096 * 2, 0.127);
+					left.configurePIDVA(2, 0.0, 0, 1 / 4.5, 0);
+					right.configurePIDVA(2, 0.0, 0, 1 / 4.5, 0);
+					//new CenterSwitchRightDoubleMP().start();
+					new MiddleRightDouble().start();
+					
+				}
+
+			} else if (pos == 2) { // right
+				if (gameData.charAt(0) == 'L' && gameData.charAt(1) == 'R') {
+					left = new EncoderFollower(modifierRightScaleSingle.getLeftTrajectory());
+					right = new EncoderFollower(modifierRightScaleSingle.getRightTrajectory());
+					left.configureEncoder(0, 4096 * 2, 0.127);
+					right.configureEncoder(0, 4096 * 2, 0.127);
+					left.configurePIDVA(2, 0.0, 0, 1 / 4.5, 0);
+					right.configurePIDVA(2, 0.0, 0, 1 / 4.5, 0);
+					// new RightScaleDoubleScaleMP().start();
+					//new RightScaleSingleMP().start();
+					//new RightScale().start();
+					new RightScaleNoTurn().start();
+				}
+			}
+		}
 
 	}
 
@@ -486,6 +555,7 @@ public class Robot extends TimedRobot {
 	public void teleopPeriodic() {
 		Scheduler.getInstance().run();
 		// teleopRun();
+		DriverStation.getInstance().reportWarning(String.valueOf(arm.getInfraredSensor()), false);
 		cleanTeleopRun();
 		updateSmartDashboardTesting();
 	}
@@ -842,16 +912,20 @@ public class Robot extends TimedRobot {
 			lift.resetLiftEncoder();
 		}
 		SmartDashboard.putNumber("match timer per part of match", (int) DriverStation.getInstance().getMatchTime());
-//		if (arm.getArmHalZeroFront()) {
-//			arm.bottomMotor.setSelectedSensorPosition(ArmSubsystem.ArmEncoderConstants.INTAKE_FRONT, 0, 20);
-//		} else if (arm.getArmHalZeroBack()) {
-//			arm.bottomMotor.setSelectedSensorPosition(ArmSubsystem.ArmEncoderConstants.INTAKE_REAR, 0, 20);
-//		}
+		// if (arm.getArmHalZeroFront()) {
+		// arm.bottomMotor.setSelectedSensorPosition(ArmSubsystem.ArmEncoderConstants.INTAKE_FRONT,
+		// 0, 20);
+		// } else if (arm.getArmHalZeroBack()) {
+		// arm.bottomMotor.setSelectedSensorPosition(ArmSubsystem.ArmEncoderConstants.INTAKE_REAR,
+		// 0, 20);
+		// }
 		if (arm.getArmHalZeroFront() || oi.operatorJoystick.getRawButton(7)) { // *************************************************
 																				// Zero
 																				// Arm
 																				// Front
 			arm.setEncoder(ArmSubsystem.ArmEncoderConstants.INTAKE_FRONT);
+		} else if (arm.getArmHalZeroBack()) {
+			arm.setEncoder(ArmSubsystem.ArmEncoderConstants.INTAKE_REAR);
 		}
 		if (lift.isSecondStageAtBottom()) { // *********************************************
 											// Take lidar values
