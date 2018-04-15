@@ -18,7 +18,7 @@ public class RightMPSwitch extends CommandGroup {
     	addSequential(new ChangeRobotArmState(ArmSubsystem.ArmStateConstants.HEADING_SWITCH_FRONT));
     	addParallel(new ArmMotionProfile(ArmSubsystem.ArmEncoderConstants.SWITCH_FRONT,Robot.armState,false));
         addSequential(new MotionProfileDrive(false));
-        addSequential(new RunIntakeForTime(1,false));
+        addSequential(new RunIntakeForTime(1,false,1));
 //        addSequential(new DrivetrainPIDCommand(-25));
     }
 }

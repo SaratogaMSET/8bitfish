@@ -26,18 +26,19 @@ import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 public class RightFarScale extends CommandGroup {
 
     public RightFarScale() {
-//    	addSequential(new ZeroArmRoutine());
-//    	addSequential(new ChangeRobotArmState(ArmSubsystem.ArmStateConstants.HEADING_STORE_FRONT));
-//    	addParallel(new ArmMotionProfile(ArmSubsystem.ArmEncoderConstants.STORE_FRONT,Robot.armState,false));
+    	addSequential(new ZeroArmRoutine());
+    	addSequential(new ChangeRobotArmState(ArmSubsystem.ArmStateConstants.HEADING_STORE_FRONT));
+    	addParallel(new ArmMotionProfile(ArmSubsystem.ArmEncoderConstants.STORE_FRONT,Robot.armState,false));
     	addSequential(new DrivetrainMotionProfileIn(AutoTest.RightScaleFarVal.FIRST_DRIVE)); // drive straight
     	addSequential(new GyroPID(AutoTest.RightScaleFarVal.FIRST_ANGLE_TURN)); // turn ~45 degrees
-//    	addSequential(new ChangeRobotLiftState(LiftSubsystem.LiftStateConstants.HIGH_SCALE_STATE));
-//    	addSequential(new ChangeRobotArmState(ArmSubsystem.ArmStateConstants.HEADING_HIGH_DROP_FRONT));
-//    	addParallel(new ArmMotionProfile(ArmSubsystem.ArmEncoderConstants.HIGH_DROP_FRONT,Robot.armState,false));
-//        addParallel(new LiftMotionProfile(LiftSubsystem.LiftEncoderConstants.HIGH_SCALE_STATE,Robot.liftState,1.25));
+    	addSequential(new ChangeRobotLiftState(LiftSubsystem.LiftStateConstants.HIGH_SCALE_STATE));
+    	addSequential(new ChangeRobotArmState(ArmSubsystem.ArmStateConstants.HEADING_HIGH_DROP_FRONT));
+    	addParallel(new ArmMotionProfile(ArmSubsystem.ArmEncoderConstants.HIGH_DROP_FRONT,Robot.armState,false));
+        addParallel(new LiftMotionProfile(LiftSubsystem.LiftEncoderConstants.HIGH_SCALE_STATE,Robot.liftState,1.25));
     	addSequential(new DrivetrainMotionProfileIn(AutoTest.RightScaleFarVal.SECOND_DRIVE));// drive straight
         addSequential(new GyroPID(AutoTest.RightScaleFarVal.SECOND_ANGLE_TURN));
-//    	addSequential(new RunIntakeForTime(1, false));
-    	addSequential(new DrivetrainMotionProfileIn(-10));// deploy
+    	addSequential(new DrivetrainMotionProfileIn(AutoTest.RightScaleFarVal.THIRD_DRIVE));// deploy
+    	addSequential(new RunIntakeForTime(1, false, 0.5));
+    	addSequential(new DrivetrainMotionProfileIn(-20));// deploy
     }
 }

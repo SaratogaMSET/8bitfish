@@ -34,7 +34,7 @@ public class CenterSwitchRight extends CommandGroup {
     	addParallel(new ArmMotionProfile(ArmSubsystem.ArmEncoderConstants.INTAKE_FRONT, Robot.armState,false));
     	addSequential(new DrivetrainMotionProfileIn(AutoTest.CenterRightSwitch.SECOND_DRIVE)); // drive straight diagonally
        	addSequential(new GyroPID(AutoTest.CenterRightSwitch.SECOND_ANGLE_TURN));// turn back to straight
-    	addSequential(new RunIntakeForTime(1, false));
+    	addSequential(new RunIntakeForTime(1, false, 1));
     	addSequential(new DrivetrainMotionProfileIn(-10));
 
     }

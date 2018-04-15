@@ -31,7 +31,7 @@ public class RightSwitch extends CommandGroup {
     	addSequential(new DrivetrainMotionProfileIn(AutoTest.RightSwitchVal.FIRST_DRIVE));// drive forward
       	addSequential(new GyroPID(AutoTest.RightSwitchVal.FIRST_ANGLE_TURN));// turn 90 degrees
 //      addSequential(new DrivetrainMotionProfileIn(AutoTest.RightSwitchVal.SECOND_DRIVE)); // drive forward
-    	addSequential(new RunIntakeForTime(1, false));
+    	addSequential(new RunIntakeForTime(1, false, 1));
     	addSequential(new DrivetrainMotionProfileIn(-10));
       	//      	addSequential(new GyroPID(AutoTest.RightSwitchVal.SECOND_ANGLE_TURN));
 //      	addSequential(new DrivetrainMotionProfileIn(AutoTest.RightSwitchVal.THIRD_DRIVE));

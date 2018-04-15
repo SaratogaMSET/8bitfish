@@ -13,13 +13,15 @@ public class RunIntakeForTime extends Command {
 	double time;
 	boolean isIntake;
 	Timer timeOf;
+	double power;
 	
-    public RunIntakeForTime(double time,boolean isIntake) {
+    public RunIntakeForTime(double time,boolean isIntake, double power) {
         // Use requires() here to declare subsystem dependencies
         // eg. requires(chassis);
     	this.time = time;
     	this.isIntake = isIntake;
     	timeOf = new Timer();
+    	this.power = power;
     }
 
     // Called just before this Command runs the first time
@@ -32,9 +34,9 @@ public class RunIntakeForTime extends Command {
     	if(!Robot.isMPRunning){
     		if(timeOf.get() == 0){
     			if(isIntake){
-            		Robot.intake.setIntakeMotors(-1, -1);
+            		Robot.intake.setIntakeMotors(-power, -power);
             	}else{
-            		Robot.intake.setIntakeMotors(1, 1);
+            		Robot.intake.setIntakeMotors(power, power);
             	}
             	timeOf.start();
     		}

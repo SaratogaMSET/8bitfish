@@ -23,7 +23,7 @@ public class LeftScaleSWSCMP extends CommandGroup {
 
     public LeftScaleSWSCMP() {
     	addSequential(new MotionProfileDrive(false)); 
-    	addParallel(new RunIntakeForTime(0.5,false));
+    	addParallel(new RunIntakeForTime(0.5,false,1));
     	addParallel(new DriveBackForTime(-0.3,0.9));
 //    	addSequential(new SwitchMPModes(Robot.modifierSideBack));
     	addSequential(new DownAndFlipWhenPossibleIntakeRear());
@@ -36,6 +36,6 @@ public class LeftScaleSWSCMP extends CommandGroup {
     	addParallel(new DriveBackForTime(0.3,0.5));
     	addSequential(new ArmMotionProfile(ArmSubsystem.ArmEncoderConstants.STORE_REAR,Robot.armState,true));
     	addSequential(new DriveBackForTime(-0.3,0.5));
-    	addSequential(new RunIntakeForTime(1,false));
+    	addSequential(new RunIntakeForTime(1,false, 1));
     }
 }

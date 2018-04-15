@@ -25,7 +25,7 @@ public class RightScaleSingleMP extends CommandGroup {
     	addSequential(new MotionProfileDrive(false));    	
     	//addParallel(new DrivetrainPIDCommand(-15));
     	//addParallel(new ChangeRobotLiftState(1));
-    	addSequential(new RunIntakeForTime(0.5,false));
+    	addSequential(new RunIntakeForTime(0.5,false, 1));
     	//addSequential(new LiftMotionProfile(LiftSubsystem.LiftEncoderConstants.LOW_STATE,Robot.liftState,0.1));
     	//addSequential(new ChangeRobotArmState(ArmSubsystem.ArmStateConstants.HEADING_INTAKE_REAR));
     	//addSequential(new ArmMotionProfile(ArmSubsystem.ArmEncoderConstants.INTAKE_REAR,Robot.armState,false));

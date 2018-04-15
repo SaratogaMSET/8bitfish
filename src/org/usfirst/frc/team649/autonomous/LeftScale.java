@@ -37,7 +37,7 @@ public class LeftScale extends CommandGroup {
         addSequential(new GyroPID(AutoTest.LeftScaleVal.SECOND_ANGLE_TURN));
         addSequential(new DrivetrainMotionProfileIn(AutoTest.LeftScaleVal.THIRD_DRIVE));
         addSequential(new Delay(0.5));// drive straight
-    	addSequential(new RunIntakeForTime(1, false));
+    	addSequential(new RunIntakeForTime(1, false, 1));
     	addSequential(new DrivetrainMotionProfileIn(-10));// deploy
     }
 }

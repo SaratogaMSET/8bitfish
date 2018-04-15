@@ -7,9 +7,11 @@ import org.opencv.core.Mat;
 import org.usfirst.frc.team649.autonomous.AutoTest;
 import org.usfirst.frc.team649.autonomous.CenterSwitchRight;
 import org.usfirst.frc.team649.autonomous.DriveStraight;
+import org.usfirst.frc.team649.autonomous.LeftFarScale;
 import org.usfirst.frc.team649.autonomous.LeftScaleMP;
 import org.usfirst.frc.team649.autonomous.LeftSwitch;
 import org.usfirst.frc.team649.autonomous.MiddleRightDouble;
+import org.usfirst.frc.team649.autonomous.RightFarScale;
 import org.usfirst.frc.team649.autonomous.RightScale;
 import org.usfirst.frc.team649.autonomous.RightScaleNoTurn;
 import org.usfirst.frc.team649.autonomous.RightSwitch;
@@ -195,7 +197,7 @@ public class Robot extends TimedRobot {
 	public static boolean isIntakeOpen;
 	public static boolean shouldCanclArmMP;
 	public static boolean isRunnigWithFlip;
-	public static int pos = 1; // left mid right forward
+	public static int pos = 4; // left mid right forward
 
 	@Override
 
@@ -402,99 +404,103 @@ public class Robot extends TimedRobot {
 		drive.changeBrakeCoast(true);
 
 		new ZeroArmRoutine().start();
+//		new RightSwitch().start();
+//		new RightFarScale().start();
+		new LeftFarScale().start();
+//		new LeftSwitch().start();
 	}
 
 	@Override
 	public void autonomousPeriodic() {
 		Scheduler.getInstance().run();
 		
-		String gameData = DriverStation.getInstance().getGameSpecificMessage();
-		
-		if (gameData.length() > 0 && !hasFMS) {
-			hasFMS = true;
-			if (pos == 0) { // left
-				if (gameData.charAt(0) == 'L' && gameData.charAt(1) == 'R') {
-					// new LeftFarScale().start();
-					new LeftSwitch().start();
-				} else if (gameData.charAt(0) == 'R' && gameData.charAt(1) == 'L') {
-					left = new EncoderFollower(modifierLeftScaleSingle.getLeftTrajectory());
-					right = new EncoderFollower(modifierLeftScaleSingle.getRightTrajectory());
-					left.configureEncoder(0, 4096 * 2, 0.127);
-					right.configureEncoder(0, 4096 * 2, 0.127);
-					left.configurePIDVA(2, 0.0, 0, 1 / 4.5, 0);
-					right.configurePIDVA(2, 0.0, 0, 1 / 4.5, 0);
-					//new LeftScaleDoubleScaleMP().start();
-					// new LeftScaleMP().start();
-					// new LeftScaleSingleMP().start();
-					// new LeftSwitchAround().start();
-					// new LeftScale().start();
-				} else if (gameData.charAt(0) == 'L' && gameData.charAt(1) == 'L') {
-					left = new EncoderFollower(modifierLeftScaleSingle.getLeftTrajectory());
-					right = new EncoderFollower(modifierLeftScaleSingle.getRightTrajectory());
-					left.configureEncoder(0, 4096 * 2, 0.127);
-					right.configureEncoder(0, 4096 * 2, 0.127);
-					left.configurePIDVA(2, 0.0, 0, 1 / 4.5, 0);
-					right.configurePIDVA(2, 0.0, 0, 1 / 4.5, 0);
-					// new LeftScaleDoubleScaleMP().start();
-					new LeftScaleMP().start();	
-					// new LeftScaleSingleMP().start();
-					// new LeftScaleSWSCMP().start();
-					// new LeftSwitch().start();
-					// new LeftScale().start();
-
-				} else if (gameData.charAt(0) == 'R' && gameData.charAt(1) == 'R') {
-					// new LeftFarScale().start();
-					// new LeftSwitchAround().start();
-					new DriveStraight().start();
-				}
-			} else if (pos == 1) { // mid
-				if (gameData.charAt(0) == 'L') {
-					shouldSwitchTurnRatio = true;
-					left = new EncoderFollower(modifierMiddleLeftSingle.getLeftTrajectory());
-					right = new EncoderFollower(modifierMiddleLeftSingle.getRightTrajectory());
-					left.configureEncoder(0, 4096 * 2, 0.127);
-					right.configureEncoder(0, 4096 * 2, 0.127);
-					left.configurePIDVA(2, 0.0, 0, 1 / 3, 0);
-					right.configurePIDVA(2, 0.0, 0, 1 / 3, 0);
-					new LeftMPSwitch().start();
-					// new CenterSwitchLeft().start();
-				} else if (gameData.charAt(0) == 'R') {
-//					left = new EncoderFollower(modifierMiddleRightSingle.getLeftTrajectory());
-//					right = new EncoderFollower(modifierMiddleRightSingle.getRightTrajectory());
+//		String gameData = DriverStation.getInstance().getGameSpecificMessage();
+//		
+//		if (gameData.length() > 0 && !hasFMS) {
+//			hasFMS = true;
+//			if (pos == 0) { // left
+//				if (gameData.charAt(0) == 'L' && gameData.charAt(1) == 'R') {
+//					// new LeftFarScale().start();
+//					new LeftSwitch().start();
+//				} else if (gameData.charAt(0) == 'R' && gameData.charAt(1) == 'L') {
+//					left = new EncoderFollower(modifierLeftScaleSingle.getLeftTrajectory());
+//					right = new EncoderFollower(modifierLeftScaleSingle.getRightTrajectory());
 //					left.configureEncoder(0, 4096 * 2, 0.127);
 //					right.configureEncoder(0, 4096 * 2, 0.127);
 //					left.configurePIDVA(2, 0.0, 0, 1 / 4.5, 0);
 //					right.configurePIDVA(2, 0.0, 0, 1 / 4.5, 0);
-//					// new RightMPSwitch().start();
-//					new CenterSwitchRight().start();
-					
-					left = new EncoderFollower(modifierMiddleRightDouble.getLeftTrajectory());
-					right = new EncoderFollower(modifierMiddleRightDouble.getRightTrajectory());
-					left.configureEncoder(0, 4096 * 2, 0.127);
-					right.configureEncoder(0, 4096 * 2, 0.127);
-					left.configurePIDVA(2, 0.0, 0, 1 / 4.5, 0);
-					right.configurePIDVA(2, 0.0, 0, 1 / 4.5, 0);
-					//new CenterSwitchRightDoubleMP().start();
-					new MiddleRightDouble().start();
-					
-				}
-
-			} else if (pos == 2) { // right
-				if (gameData.charAt(0) == 'L' && gameData.charAt(1) == 'R') {
-					left = new EncoderFollower(modifierRightScaleSingle.getLeftTrajectory());
-					right = new EncoderFollower(modifierRightScaleSingle.getRightTrajectory());
-					left.configureEncoder(0, 4096 * 2, 0.127);
-					right.configureEncoder(0, 4096 * 2, 0.127);
-					left.configurePIDVA(2, 0.0, 0, 1 / 4.5, 0);
-					right.configurePIDVA(2, 0.0, 0, 1 / 4.5, 0);
-					// new RightScaleDoubleScaleMP().start();
-					//new RightScaleSingleMP().start();
-					//new RightScale().start();
-					new RightScaleNoTurn().start();
-				}
-			}
-		}
-
+//					//new LeftScaleDoubleScaleMP().start();
+//					// new LeftScaleMP().start();
+//					// new LeftScaleSingleMP().start();
+//					// new LeftSwitchAround().start();
+//					// new LeftScale().start();
+//				} else if (gameData.charAt(0) == 'L' && gameData.charAt(1) == 'L') {
+//					left = new EncoderFollower(modifierLeftScaleSingle.getLeftTrajectory());
+//					right = new EncoderFollower(modifierLeftScaleSingle.getRightTrajectory());
+//					left.configureEncoder(0, 4096 * 2, 0.127);
+//					right.configureEncoder(0, 4096 * 2, 0.127);
+//					left.configurePIDVA(2, 0.0, 0, 1 / 4.5, 0);
+//					right.configurePIDVA(2, 0.0, 0, 1 / 4.5, 0);
+//					// new LeftScaleDoubleScaleMP().start();
+//					new LeftScaleMP().start();	
+//					// new LeftScaleSingleMP().start();
+//					// new LeftScaleSWSCMP().start();
+//					// new LeftSwitch().start();
+//					// new LeftScale().start();
+//
+//				} else if (gameData.charAt(0) == 'R' && gameData.charAt(1) == 'R') {
+//					// new LeftFarScale().start();
+//					// new LeftSwitchAround().start();
+//					new DriveStraight().start();
+//				}
+//			} else if (pos == 1) { // mid
+//				if (gameData.charAt(0) == 'L') {
+//					shouldSwitchTurnRatio = true;
+//					left = new EncoderFollower(modifierMiddleLeftSingle.getLeftTrajectory());
+//					right = new EncoderFollower(modifierMiddleLeftSingle.getRightTrajectory());
+//					left.configureEncoder(0, 4096 * 2, 0.127);
+//					right.configureEncoder(0, 4096 * 2, 0.127);
+//					left.configurePIDVA(2, 0.0, 0, 1 / 3, 0);
+//					right.configurePIDVA(2, 0.0, 0, 1 / 3, 0);
+//					new LeftMPSwitch().start();
+//					// new CenterSwitchLeft().start();
+//				} else if (gameData.charAt(0) == 'R') {
+////					left = new EncoderFollower(modifierMiddleRightSingle.getLeftTrajectory());
+////					right = new EncoderFollower(modifierMiddleRightSingle.getRightTrajectory());
+////					left.configureEncoder(0, 4096 * 2, 0.127);
+////					right.configureEncoder(0, 4096 * 2, 0.127);
+////					left.configurePIDVA(2, 0.0, 0, 1 / 4.5, 0);
+////					right.configurePIDVA(2, 0.0, 0, 1 / 4.5, 0);
+////					// new RightMPSwitch().start();
+////					new CenterSwitchRight().start();
+//					
+//					left = new EncoderFollower(modifierMiddleRightDouble.getLeftTrajectory());
+//					right = new EncoderFollower(modifierMiddleRightDouble.getRightTrajectory());
+//					left.configureEncoder(0, 4096 * 2, 0.127);
+//					right.configureEncoder(0, 4096 * 2, 0.127);
+//					left.configurePIDVA(2, 0.0, 0, 1 / 4.5, 0);
+//					right.configurePIDVA(2, 0.0, 0, 1 / 4.5, 0);
+//					//new CenterSwitchRightDoubleMP().start();
+//					new MiddleRightDouble().start();
+//					
+//				}
+//
+//			} else if (pos == 2) { // right
+//				if (gameData.charAt(0) == 'L' && gameData.charAt(1) == 'R') {
+//					left = new EncoderFollower(modifierRightScaleSingle.getLeftTrajectory());
+//					right = new EncoderFollower(modifierRightScaleSingle.getRightTrajectory());
+//					left.configureEncoder(0, 4096 * 2, 0.127);
+//					right.configureEncoder(0, 4096 * 2, 0.127);
+//					left.configurePIDVA(2, 0.0, 0, 1 / 4.5, 0);
+//					right.configurePIDVA(2, 0.0, 0, 1 / 4.5, 0);
+//					// new RightScaleDoubleScaleMP().start();
+//					//new RightScaleSingleMP().start();
+//					//new RightScale().start();
+//					new RightScaleNoTurn().start();
+//				}
+//			}
+//		}
+		updateSmartDashboardTesting();
 	}
 
 	@SuppressWarnings("unused")
@@ -548,7 +554,6 @@ public class Robot extends TimedRobot {
 	public void teleopPeriodic() {
 		Scheduler.getInstance().run();
 		// teleopRun();
-		DriverStation.getInstance().reportWarning(String.valueOf(arm.getInfraredSensor()), false);
 		cleanTeleopRun();
 		updateSmartDashboardTesting();
 	}
@@ -805,10 +810,7 @@ public class Robot extends TimedRobot {
 
 		}
 
-		if (oi.operator.deployOnlyWheels())
-
-		{ // **************************************************** Deploy intake
-			// wheels
+		if (oi.operator.deployOnlyWheels()) { // **************************************************** Deploy intake wheels
 			new RunIntakeWheels(-1).start();
 		} else if (oi.operator.lowSpeedDeploy()) { // *********************************************** slow intake deploy
 			new RunIntakeWheels(-0.35).start();

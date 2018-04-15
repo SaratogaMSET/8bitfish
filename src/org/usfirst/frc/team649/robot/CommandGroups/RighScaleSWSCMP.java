@@ -27,7 +27,7 @@ public class RighScaleSWSCMP extends CommandGroup {
 //    	addParallel(new ArmMotionProfile(ArmSubsystem.ArmEncoderConstants.HIGH_DROP_FRONT,Robot.armState,false));
 //    	addParallel(new LiftMotionProfile(LiftSubsystem.LiftEncoderConstants.HIGH_SCALE_STATE,Robot.liftState,1.25));
     	addSequential(new MotionProfileDrive(false)); 
-    	addParallel(new RunIntakeForTime(0.5,false));
+    	addParallel(new RunIntakeForTime(0.5,false,1));
     	addParallel(new DriveBackForTime(-0.3,0.9));
 //    	addSequential(new SwitchMPModes(Robot.modifierSideBack));
     	addSequential(new DownAndFlipWhenPossibleIntakeRear());
@@ -40,7 +40,7 @@ public class RighScaleSWSCMP extends CommandGroup {
     	addParallel(new DriveBackForTime(0.3,0.5));
     	addSequential(new ArmMotionProfile(ArmSubsystem.ArmEncoderConstants.STORE_REAR,Robot.armState,true));
     	addSequential(new DriveBackForTime(-0.3,0.5));
-    	addSequential(new RunIntakeForTime(1,false));
+    	addSequential(new RunIntakeForTime(1,false,1));
 //    	addSequential(new ChangeRobotArmState(ArmSubsystem.ArmStateConstants.HEADING_HIGH_DROP_FRONT));
 //    	addSequential(new ChangeRobotLiftState(LiftSubsystem.LiftStateConstants.HEADING_HIGH_SCALE_STATE));
 //    	addParallel(new DrivetrainMotionProfileIn(55));
