@@ -189,7 +189,7 @@ public class Robot extends TimedRobot {
 	public static boolean isIntakeOpen;
 	public static boolean shouldCanclArmMP;
 	public static boolean isRunnigWithFlip;
-	public static int pos = 1; // left mid right forward
+	public static int pos = 4; // left mid right forward
 
 	@Override
 
@@ -206,7 +206,6 @@ public class Robot extends TimedRobot {
 		lidarCount = 0;
 		shouldCanclArmMP = false;
 		isRunnigWithFlip = false;
-
 		switches = new AutoSelector();
 		intakeTimer = new Timer();
 
@@ -679,7 +678,6 @@ public class Robot extends TimedRobot {
 						armState = ArmSubsystem.ArmStateConstants.HEADING_STORE_FRONT;
 						new ArmMotionProfile(ArmSubsystem.ArmEncoderConstants.STORE_FRONT, armState, false).start();
 					}
-
 				}
 			} else {
 				if (!isRunnigWithFlip) {
@@ -730,6 +728,7 @@ public class Robot extends TimedRobot {
 			SmartDashboard.putBoolean("Manual", false);
 			if (liftState == LiftSubsystem.LiftStateConstants.INTAKE_EXCHANGE_STORE_STATE) {
 				lift.setLift(0);
+				
 			} else if (liftState == LiftSubsystem.LiftStateConstants.SWITCH_STATE) {
 				lift.setLiftMotion(LiftSubsystem.LiftEncoderConstants.SWITCH_STATE);
 			} else if (liftState == LiftSubsystem.LiftStateConstants.LOW_SCALE_STATE) {
@@ -757,10 +756,31 @@ public class Robot extends TimedRobot {
 			} else if (armState == ArmSubsystem.ArmStateConstants.INTAKE_REAR) { // ***************** Zero Arm Back
 				arm.setArm(0);
 			}
+			if (liftState == LiftSubsystem.LiftStateConstants.INTAKE_EXCHANGE_STORE_STATE) {
+				compressor.start();
+			}else{
+				compressor.stop();
+			}
 
 		}
 
-		if (oi.operator.deployOnlyWheels()) { // **************************************************** Deploy intake wheels
+		if((armState == ArmSubsystem.ArmStateConstants.INTAKE_FRONT ||armState == ArmSubsystem.ArmStateConstants.INTAKE_REAR) && Robot.arm.getInfraredSensor() && oi.operator.deployOnlyWheels()){
+			new SetIntakePistons(false, true).start();
+			new RunIntakeWheels(-1).start();
+
+		}else if((armState == ArmSubsystem.ArmStateConstants.INTAKE_FRONT ||armState == ArmSubsystem.ArmStateConstants.INTAKE_REAR) && Robot.arm.getInfraredSensor() && oi.operator.lowSpeedDeploy()){
+			new SetIntakePistons(false, true).start();
+			new RunIntakeWheels(-0.35).start();
+			
+		}
+		else if((armState == ArmSubsystem.ArmStateConstants.INTAKE_FRONT ||armState == ArmSubsystem.ArmStateConstants.INTAKE_REAR) && Robot.arm.getInfraredSensor() && oi.operator.runIntakeWithWheelsClosed()){
+			new SetIntakePistons(false, true).start();
+			new RunIntakeWheels(1).start();
+		}else if((armState == ArmSubsystem.ArmStateConstants.INTAKE_FRONT ||armState == ArmSubsystem.ArmStateConstants.INTAKE_REAR) && Robot.arm.getInfraredSensor()){
+			new SetIntakePistons(false, true).start();
+			new RunIntakeWheels(0).start();
+
+		}else if (oi.operator.deployOnlyWheels()) { // **************************************************** Deploy intake wheels
 			new RunIntakeWheels(-1).start();
 		} else if (oi.operator.lowSpeedDeploy()) { // *********************************************** slow intake deploy
 			new RunIntakeWheels(-0.35).start();
