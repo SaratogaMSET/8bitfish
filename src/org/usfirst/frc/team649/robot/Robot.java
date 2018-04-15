@@ -201,20 +201,14 @@ public class Robot extends TimedRobot {
 
 	public void robotInit() {
 		oi = new OI();
-
 		compressor = new Compressor(4);
-
 		// pdp = new PowerDistributionPanel(RobotMap.POWER_DISTRIBUTION_PANEL);
 		// log = new VoltageLog(pdp,compressor);
-
 		lift = new LiftSubsystem();
 		drive = new DrivetrainSubsystem();
 		gyro = new GyroSubsystem();
 		arm = new ArmSubsystem();
 		intake = new IntakeSubsystem();
-
-		compressor = new Compressor(4);
-
 		lidarCount = 0;
 		shouldCanclArmMP = false;
 		isRunnigWithFlip = false;
