@@ -203,9 +203,6 @@ public class Robot extends TimedRobot {
 		gyro = new GyroSubsystem();
 		arm = new ArmSubsystem();
 		intake = new IntakeSubsystem();
-
-		compressor = new Compressor(4);
-
 		lidarCount = 0;
 		shouldCanclArmMP = false;
 		isRunnigWithFlip = false;
