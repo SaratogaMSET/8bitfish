@@ -23,8 +23,8 @@ import edu.wpi.first.wpilibj.command.CommandGroup;
  * Description: Drives forward and drops off cube in the scale, then backs away 
  * Position: Right*/
 
-public class RightScaleNoTurn extends CommandGroup {
-	public RightScaleNoTurn() {
+public class RightScaleDoubleMP extends CommandGroup {
+	public RightScaleDoubleMP() {
 		//addSequential(new ChangeRobotLiftState(9));
     	//addSequential(new ChangeRobotArmState(ArmSubsystem.ArmStateConstants.HEADING_HIGH_DROP_FRONT));
     	//addParallel(new ArmMotionProfile(ArmSubsystem.ArmEncoderConstants.HIGH_DROP_FRONT,Robot.armState,false));
@@ -33,7 +33,7 @@ public class RightScaleNoTurn extends CommandGroup {
        	//addParallel(new ChangeRobotLiftState(1));
     	//addSequential(new RunIntakeForTime(0.5,false));
     	addSequential(new SwitchMPModes(Robot.modifierSideBack));
-    	addSequential(new MotionProfileDrive(false));
+    	addSequential(new MotionProfileDrive(true));
     	//addParallel(new DownAndFlipWhenPossibleIntakeRear());
 
 
