@@ -5,6 +5,8 @@ import org.usfirst.frc.team649.robot.commands.MotionProfileDrive;
 import org.usfirst.frc.team649.robot.commands.arm.ArmMotionProfile;
 import org.usfirst.frc.team649.robot.commands.arm.ChangeRobotArmState;
 import org.usfirst.frc.team649.robot.commands.arm.ZeroArmRoutine;
+import org.usfirst.frc.team649.robot.commands.intake.RunIntakeWheels;
+import org.usfirst.frc.team649.robot.commands.intake.SetIntakePistons;
 import org.usfirst.frc.team649.robot.subsystems.ArmSubsystem;
 
 import edu.wpi.first.wpilibj.command.CommandGroup;
@@ -15,5 +17,7 @@ public class MiddleRightDouble extends CommandGroup {
 		addSequential(new ChangeRobotArmState(ArmSubsystem.ArmStateConstants.HEADING_SWITCH_FRONT));
 		addParallel(new ArmMotionProfile(ArmSubsystem.ArmEncoderConstants.SWITCH_FRONT, Robot.armState, false));
 		addSequential(new MotionProfileDrive(false));
+    	
+    	
 	}
 }
