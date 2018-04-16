@@ -6,6 +6,7 @@ import org.usfirst.frc.team649.autonomous.AutoTest;
 import org.usfirst.frc.team649.autonomous.worlds.CenterLeftSwitchDoubleMP;
 import org.usfirst.frc.team649.autonomous.worlds.CenterRightSwitchDoubleMP;
 import org.usfirst.frc.team649.autonomous.worlds.DriveStraight;
+import org.usfirst.frc.team649.autonomous.worlds.LeftFarScale;
 import org.usfirst.frc.team649.autonomous.worlds.LeftScaleSingleMP;
 import org.usfirst.frc.team649.autonomous.worlds.LeftSwitch;
 import org.usfirst.frc.team649.autonomous.worlds.RightFarScale;
