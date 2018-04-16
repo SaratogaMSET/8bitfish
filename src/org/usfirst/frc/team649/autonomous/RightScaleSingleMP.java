@@ -31,6 +31,8 @@ public class RightScaleSingleMP extends CommandGroup {
     	addParallel(new LiftMotionProfile(LiftSubsystem.LiftEncoderConstants.HIGH_SCALE_STATE,Robot.liftState,1.25));
     	addSequential(new MotionProfileDrive(false));    	
        	addParallel(new ChangeRobotLiftState(1));
-    	addSequential(new RunIntakeForTime(0.5, false, 0.5));
+    	addSequential(new RunIntakeForTime(0.5, false, 1));
+    	addSequential(new DriveBackForTime(-0.3, 0.5)); // move back from scale for safety
+    	//addSequential(new D)
 	}
 }

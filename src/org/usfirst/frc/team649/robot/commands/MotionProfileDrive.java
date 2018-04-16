@@ -44,6 +44,13 @@ public class MotionProfileDrive extends Command {
 		if(back){
 			Robot.drive.motors[0].set(ControlMode.PercentOutput, l);
 			Robot.drive.motors[2].set(ControlMode.PercentOutput, r);
+			
+			Robot.drive.motors[0].setInverted(true);
+			Robot.drive.motors[2].setInverted(true);
+			
+			Robot.drive.motors[0].setSensorPhase(true);
+			Robot.drive.motors[2].setSensorPhase(true);
+
 		}else{
 			Robot.drive.motors[0].set(ControlMode.PercentOutput, l+turn);
 			Robot.drive.motors[2].set(ControlMode.PercentOutput, r-turn);
@@ -61,6 +68,14 @@ public class MotionProfileDrive extends Command {
     protected void end() {
     	SmartDashboard.putBoolean("isMPFin", true);
     	Robot.isMPRunning = false;
+    	if(back) {
+    		Robot.drive.motors[0].setInverted(!Robot.drive.motors[0].getInverted());
+    		Robot.drive.motors[2].setInverted(!Robot.drive.motors[2].getInverted());
+    		
+    		Robot.drive.motors[0].setSensorPhase(false);
+    		Robot.drive.motors[2].setSensorPhase(false);
+    	}
+    	
 
     	Robot.drive.rawDrive(0, 0);
     }

@@ -8,12 +8,13 @@ import org.usfirst.frc.team649.autonomous.AutoTest;
 import org.usfirst.frc.team649.autonomous.CenterSwitchRight;
 import org.usfirst.frc.team649.autonomous.DriveStraight;
 import org.usfirst.frc.team649.autonomous.LeftFarScale;
+import org.usfirst.frc.team649.autonomous.LeftScaleDoubleMP;
 import org.usfirst.frc.team649.autonomous.LeftScaleMP;
 import org.usfirst.frc.team649.autonomous.LeftSwitch;
 import org.usfirst.frc.team649.autonomous.MiddleRightDouble;
 import org.usfirst.frc.team649.autonomous.RightFarScale;
 import org.usfirst.frc.team649.autonomous.RightScale;
-import org.usfirst.frc.team649.autonomous.RightScaleNoTurn;
+import org.usfirst.frc.team649.autonomous.RightScaleDoubleMP;
 import org.usfirst.frc.team649.autonomous.RightSwitch;
 import org.usfirst.frc.team649.robot.CommandGroups.CenterSwitchRightDoubleMP;
 import org.usfirst.frc.team649.robot.CommandGroups.DownAndFlipWhenPossible2ndIntakeFront;
@@ -155,6 +156,10 @@ public class Robot extends TimedRobot {
 	public static Trajectory.Config configLeftScaleSingle;
 	public static Trajectory trajectoryLeftScaleSingle;
 	public static TankModifier modifierLeftScaleSingle;
+	
+	public static Trajectory.Config configLeftScaleDouble;
+	public static Trajectory trajectoryLeftScaleDouble;
+	public static TankModifier modifierLeftScaleDouble;
 
 	public static Trajectory.Config configMiddleRightSingle;
 	public static Trajectory trajectoryMiddleRightSingle;
@@ -189,7 +194,7 @@ public class Robot extends TimedRobot {
 	public static boolean isIntakeOpen;
 	public static boolean shouldCanclArmMP;
 	public static boolean isRunnigWithFlip;
-	public static int pos = 4; // left mid right forward
+	public static int pos = 2; // left mid right forward
 
 	@Override
 
@@ -274,24 +279,22 @@ public class Robot extends TimedRobot {
 
 		} else if (pos == 2) {
 			generateRightScaleMP();
-			
 		}
 
 	}
 	
 	public void generateRightScaleMP() {
 		Waypoint[] pointsRightScaleSingle = new Waypoint[] { new Waypoint(-12.9, -3.1, 0),
-				new Waypoint(-7, -3.1, 0), new Waypoint(-4, -3.1, Pathfinder.d2r(45)), new Waypoint(-2.5, 0, 0),
-				new Waypoint(0, 0, 0) };
-
+				new Waypoint(-6, -3.0, Pathfinder.d2r(15)),
+				new Waypoint(0.8, -0.1, Pathfinder.d2r(45)) };
+			
 		configRightScaleSingle = new Trajectory.Config(Trajectory.FitMethod.HERMITE_CUBIC,
-				Trajectory.Config.SAMPLES_HIGH, 0.02, 4, 2.9, 12);
+		Trajectory.Config.SAMPLES_HIGH, 0.02, 7.5, 3.1, 12);
 		trajectoryRightScaleSingle = Pathfinder.generate(pointsRightScaleSingle, configRightScaleSingle);
 		modifierRightScaleSingle = new TankModifier(trajectoryRightScaleSingle).modify(0.66);
 		
 		Waypoint[] sideBack = new Waypoint[] { new Waypoint(0, 0, Pathfinder.d2r(60)), new Waypoint(2.3, 2.3, Pathfinder.d2r(0)), new Waypoint(4.6, 0, Pathfinder.d2r(-60)) };
-		configSideBack = new Trajectory.Config(Trajectory.FitMethod.HERMITE_CUBIC, Trajectory.Config.SAMPLES_HIGH,
-				0.02, 4, 2.9, 12);
+		configSideBack = new Trajectory.Config(Trajectory.FitMethod.HERMITE_CUBIC, Trajectory.Config.SAMPLES_HIGH, 0.02, 2, 2.5, 6);
 		trajectorySideBack = Pathfinder.generate(sideBack, configSideBack);
 		modifierSideBack = new TankModifier(trajectorySideBack).modify(0.66);
 	}
@@ -376,6 +379,7 @@ public class Robot extends TimedRobot {
 					// new LeftScaleSingleMP().start();
 					// new LeftSwitchAround().start();
 					// new LeftScale().start();
+					new LeftScaleMP().start();
 				} else if (gameData.charAt(0) == 'L' && gameData.charAt(1) == 'L') {
 					left = new EncoderFollower(modifierLeftScaleSingle.getLeftTrajectory());
 					right = new EncoderFollower(modifierLeftScaleSingle.getRightTrajectory());
@@ -384,7 +388,7 @@ public class Robot extends TimedRobot {
 					left.configurePIDVA(2, 0.0, 0, 1 / 4.5, 0);
 					right.configurePIDVA(2, 0.0, 0, 1 / 4.5, 0);
 					// new LeftScaleDoubleScaleMP().start();
-					new LeftScaleMP().start();	
+					new LeftScaleDoubleMP().start();	
 					// new LeftScaleSingleMP().start();
 					// new LeftScaleSWSCMP().start();
 					// new LeftSwitch().start();
@@ -436,7 +440,7 @@ public class Robot extends TimedRobot {
 					// new RightScaleDoubleScaleMP().start();
 					//new RightScaleSingleMP().start();
 					//new RightScale().start();
-					new RightScaleNoTurn().start();
+					new RightScaleSingleMP().start();
 				}
 			}
 		}

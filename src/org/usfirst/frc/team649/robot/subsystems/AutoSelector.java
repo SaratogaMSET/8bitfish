@@ -3,6 +3,7 @@ package org.usfirst.frc.team649.robot.subsystems;
 import java.util.HashMap;
 
 import org.usfirst.frc.team649.autonomous.*;
+import org.usfirst.frc.team649.autonomous.RightScaleSingleMP;
 import org.usfirst.frc.team649.robot.RobotMap;
 import org.usfirst.frc.team649.robot.CommandGroups.*;
 

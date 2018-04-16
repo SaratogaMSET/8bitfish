@@ -1,6 +1,7 @@
 package org.usfirst.frc.team649.robot.commands.arm;
 
 import org.usfirst.frc.team649.robot.Robot;
+import org.usfirst.frc.team649.robot.commands.intake.SetIntakePistons;
 import org.usfirst.frc.team649.robot.subsystems.ArmSubsystem;
 
 import com.ctre.phoenix.motorcontrol.ControlMode;
@@ -64,6 +65,8 @@ public class ArmMotionProfile extends Command {
     // Called repeatedly when this Command is scheduled to run
     protected void execute() {
     	if(Robot.isZero){
+			new SetIntakePistons(false, true).start();
+
     		if(doneTime.get() == 0){
     			doneTime.start();
     	    	Robot.arm.setArmBrake(false);
