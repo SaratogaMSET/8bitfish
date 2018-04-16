@@ -349,10 +349,6 @@ public class Robot extends TimedRobot {
 		drive.changeBrakeCoast(true);
 
 		new ZeroArmRoutine().start();
-//		new RightSwitch().start();
-//		new RightFarScale().start();
-//		new LeftFarScale().start();
-//		new LeftSwitch().start();
 	}
 
 	@Override
@@ -364,23 +360,22 @@ public class Robot extends TimedRobot {
 		if (gameData.length() > 0 && !hasFMS) {
 			hasFMS = true;
 			if (pos == 0) { // left
-				if (gameData.charAt(0) == 'L' && gameData.charAt(1) == 'R') {
+				if (gameData.charAt(0) == 'L' && gameData.charAt(1) == 'R') { // near Switch, far scale
 					// new LeftFarScale().start();
 					new LeftSwitch().start();
-				} else if (gameData.charAt(0) == 'R' && gameData.charAt(1) == 'L') {
+				} else if (gameData.charAt(0) == 'R' && gameData.charAt(1) == 'L') { // far Switch, near scale
 					left = new EncoderFollower(modifierLeftScaleSingle.getLeftTrajectory());
 					right = new EncoderFollower(modifierLeftScaleSingle.getRightTrajectory());
 					left.configureEncoder(0, 4096 * 2, 0.127);
 					right.configureEncoder(0, 4096 * 2, 0.127);
 					left.configurePIDVA(2, 0.0, 0, 1 / 4.5, 0);
 					right.configurePIDVA(2, 0.0, 0, 1 / 4.5, 0);
-					//new LeftScaleDoubleScaleMP().start();
+					// new LeftScaleDoubleScaleMP().start();
 					// new LeftScaleMP().start();
 					// new LeftScaleSingleMP().start();
-					// new LeftSwitchAround().start();
-					// new LeftScale().start();
+					// new DriveStraight().start();
 					new LeftScaleMP().start();
-				} else if (gameData.charAt(0) == 'L' && gameData.charAt(1) == 'L') {
+				} else if (gameData.charAt(0) == 'L' && gameData.charAt(1) == 'L') { // near Switch, near scale
 					left = new EncoderFollower(modifierLeftScaleSingle.getLeftTrajectory());
 					right = new EncoderFollower(modifierLeftScaleSingle.getRightTrajectory());
 					left.configureEncoder(0, 4096 * 2, 0.127);
@@ -392,15 +387,12 @@ public class Robot extends TimedRobot {
 					// new LeftScaleSingleMP().start();
 					// new LeftScaleSWSCMP().start();
 					// new LeftSwitch().start();
-					// new LeftScale().start();
-
-				} else if (gameData.charAt(0) == 'R' && gameData.charAt(1) == 'R') {
-					// new LeftFarScale().start();
-					// new LeftSwitchAround().start();
-					new DriveStraight().start();
+				} else if (gameData.charAt(0) == 'R' && gameData.charAt(1) == 'R') { // far Switch, far scale
+					new LeftFarScale().start();
+					// new DriveStraight().start();
 				}
 			} else if (pos == 1) { // mid
-				if (gameData.charAt(0) == 'L') {
+				if (gameData.charAt(0) == 'L') { // left switch
 					shouldSwitchTurnRatio = true;
 					left = new EncoderFollower(modifierMiddleLeftSingle.getLeftTrajectory());
 					right = new EncoderFollower(modifierMiddleLeftSingle.getRightTrajectory());
@@ -409,8 +401,7 @@ public class Robot extends TimedRobot {
 					left.configurePIDVA(2, 0.0, 0, 1 / 3, 0);
 					right.configurePIDVA(2, 0.0, 0, 1 / 3, 0);
 					new LeftMPSwitch().start();
-					// new CenterSwitchLeft().start();
-				} else if (gameData.charAt(0) == 'R') {
+				} else if (gameData.charAt(0) == 'R') { // right switch
 					left = new EncoderFollower(modifierMiddleRightSingle.getLeftTrajectory());
 					right = new EncoderFollower(modifierMiddleRightSingle.getRightTrajectory());
 					left.configureEncoder(0, 4096 * 2, 0.127);
@@ -418,19 +409,14 @@ public class Robot extends TimedRobot {
 					left.configurePIDVA(2, 0.0, 0, 1 / 4.5, 0);
 					right.configurePIDVA(2, 0.0, 0, 1 / 4.5, 0);
 					new RightMPSwitch().start();
-//					new CenterSwitchRight().start();
-					
-//					left = new EncoderFollower(modifierRightScaleSingle.getLeftTrajectory());
-//					right = new EncoderFollower(modifierRightScaleSingle.getRightTrajectory());
-//					left.configureEncoder(0, 4096 * 2, 0.127);
-//					right.configureEncoder(0, 4096 * 2, 0.127);
-//					left.configurePIDVA(2, 0.0, 0, 1 / 4.5, 0);
-//					right.configurePIDVA(2, 0.0, 0, 1 / 4.5, 0);
 					//new CenterSwitchRightDoubleMP().start();
 				}
 
 			} else if (pos == 2) { // right
-				if (gameData.charAt(0) == 'L' && gameData.charAt(1) == 'R') {
+				if (gameData.charAt(0) == 'R' && gameData.charAt(1) == 'L') { // near switch, far scale
+					new RightFarScale().start();
+					// new RightSwitch().start();
+				} else if (gameData.charAt(0) == 'L' && gameData.charAt(1) == 'R') { // far switch, near scale
 					left = new EncoderFollower(modifierRightScaleSingle.getLeftTrajectory());
 					right = new EncoderFollower(modifierRightScaleSingle.getRightTrajectory());
 					left.configureEncoder(0, 4096 * 2, 0.127);
@@ -438,9 +424,23 @@ public class Robot extends TimedRobot {
 					left.configurePIDVA(2, 0.0, 0, 1 / 4.5, 0);
 					right.configurePIDVA(2, 0.0, 0, 1 / 4.5, 0);
 					// new RightScaleDoubleScaleMP().start();
-					//new RightScaleSingleMP().start();
-					//new RightScale().start();
+					// new RightScaleSingleMP().start();
 					new RightScaleSingleMP().start();
+					// new DriveStraight().start();
+				} else if (gameData.charAt(0) == 'R' && gameData.charAt(1) == 'R') { // near switch, near scale
+					left = new EncoderFollower(modifierRightScaleSingle.getLeftTrajectory());
+					right = new EncoderFollower(modifierRightScaleSingle.getRightTrajectory());
+					left.configureEncoder(0, 4096 * 2, 0.127);
+					right.configureEncoder(0, 4096 * 2, 0.127);
+					left.configurePIDVA(2, 0.0, 0, 1 / 4.5, 0);
+					right.configurePIDVA(2, 0.0, 0, 1 / 4.5, 0);
+					// new RightScaleDoubleScaleMP().start();
+					// new RightScaleSingleMP().start();
+					new RightScaleSingleMP().start();
+					// new RightSwitch().start();
+				} else if (gameData.charAt(0) == 'L' && gameData.charAt(1) == 'L') { // far switch, far scale
+					new RightFarScale().start();
+					// new DriveStraight().start();
 				}
 			}
 		}
@@ -497,26 +497,10 @@ public class Robot extends TimedRobot {
 	@Override
 	public void teleopPeriodic() {
 		Scheduler.getInstance().run();
-		// teleopRun();
 		cleanTeleopRun();
 		updateSmartDashboardTesting();
 	}
 
-	// public void teleopRun() {
-	// // if (oi.driver.shiftUp()) {
-	// // drive.shift(true);
-	// // } else {
-	// // drive.shift(false);
-	// // }
-	// if (oi.operator.turnOffCompressorManually())
-	// {
-	// compressor.stop();
-	// }
-	// if (oi.operator.turnOnCompressorManually())
-	// {
-	// compressor.start();
-	// }
-	// }
 
 	public void cleanTeleopRun() {
 		// *********************************************************************************** driving and shifting
