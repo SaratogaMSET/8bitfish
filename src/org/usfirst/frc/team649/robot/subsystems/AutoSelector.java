@@ -3,7 +3,14 @@ package org.usfirst.frc.team649.robot.subsystems;
 import java.util.HashMap;
 
 import org.usfirst.frc.team649.autonomous.*;
-import org.usfirst.frc.team649.autonomous.RightScaleSingleMP;
+import org.usfirst.frc.team649.autonomous.worlds.CenterLeftSwitchDoubleMP;
+import org.usfirst.frc.team649.autonomous.worlds.CenterRightSwitchDoubleMP;
+import org.usfirst.frc.team649.autonomous.worlds.DriveStraight;
+import org.usfirst.frc.team649.autonomous.worlds.LeftFarScale;
+import org.usfirst.frc.team649.autonomous.worlds.LeftSwitch;
+import org.usfirst.frc.team649.autonomous.worlds.RightFarScale;
+import org.usfirst.frc.team649.autonomous.worlds.RightScaleSingleMP;
+import org.usfirst.frc.team649.autonomous.worlds.RightSwitch;
 import org.usfirst.frc.team649.robot.RobotMap;
 import org.usfirst.frc.team649.robot.CommandGroups.*;
 
@@ -340,7 +347,7 @@ public class AutoSelector {
 			case 3:
 				if (fieldConf.charAt(1) == 'L') {
 					// left near scale single
-					return LeftScaleSingleMP.class;
+					return LeftScaleSingleMPOld.class;
 				} else {
 					// left far scale single
 					return LeftFarScale.class;
@@ -362,9 +369,9 @@ public class AutoSelector {
 				return DriveStraight.class;
 			case 1:
 				if (fieldConf.charAt(0) == 'L') {
-					return LeftMPSwitch.class;
+					return CenterLeftSwitchDoubleMP.class;
 				} else {
-					return RightMPSwitch.class;
+					return CenterRightSwitchDoubleMP.class;
 				}
 			default:
 				return DriveStraight.class;

@@ -1,37 +1,22 @@
 
 package org.usfirst.frc.team649.robot;
 
-import java.util.concurrent.ScheduledExecutorService;
-
 import org.opencv.core.Mat;
 import org.usfirst.frc.team649.autonomous.AutoTest;
-import org.usfirst.frc.team649.autonomous.CenterSwitchRight;
-import org.usfirst.frc.team649.autonomous.DriveStraight;
-import org.usfirst.frc.team649.autonomous.LeftFarScale;
-import org.usfirst.frc.team649.autonomous.LeftScaleDoubleMP;
-import org.usfirst.frc.team649.autonomous.LeftScaleMP;
-import org.usfirst.frc.team649.autonomous.LeftSwitch;
-import org.usfirst.frc.team649.autonomous.MiddleRightDouble;
-import org.usfirst.frc.team649.autonomous.RightFarScale;
-import org.usfirst.frc.team649.autonomous.RightScale;
-import org.usfirst.frc.team649.autonomous.RightScaleDoubleMP;
-import org.usfirst.frc.team649.autonomous.RightSwitch;
-import org.usfirst.frc.team649.robot.CommandGroups.CenterSwitchRightDoubleMP;
+import org.usfirst.frc.team649.autonomous.worlds.CenterLeftSwitchDoubleMP;
+import org.usfirst.frc.team649.autonomous.worlds.CenterRightSwitchDoubleMP;
+import org.usfirst.frc.team649.autonomous.worlds.DriveStraight;
+import org.usfirst.frc.team649.autonomous.worlds.LeftScaleSingleMP;
+import org.usfirst.frc.team649.autonomous.worlds.LeftSwitch;
+import org.usfirst.frc.team649.autonomous.worlds.RightFarScale;
+import org.usfirst.frc.team649.autonomous.worlds.RightScaleSingleMP;
+import org.usfirst.frc.team649.autonomous.worlds.RightSwitch;
 import org.usfirst.frc.team649.robot.CommandGroups.DownAndFlipWhenPossible2ndIntakeFront;
 import org.usfirst.frc.team649.robot.CommandGroups.DownAndFlipWhenPossible2ndIntakeRear;
 import org.usfirst.frc.team649.robot.CommandGroups.DownAndFlipWhenPossibleIntakeFront;
 import org.usfirst.frc.team649.robot.CommandGroups.DownAndFlipWhenPossibleIntakeRear;
 import org.usfirst.frc.team649.robot.CommandGroups.DownAndFlipWhenPossibleStoreFront;
 import org.usfirst.frc.team649.robot.CommandGroups.DownAndFlipWhenPossibleStoreRear;
-import org.usfirst.frc.team649.robot.CommandGroups.LeftMPSwitch;
-import org.usfirst.frc.team649.robot.CommandGroups.LeftScaleDoubleScaleMP;
-import org.usfirst.frc.team649.robot.CommandGroups.RightMPSwitch;
-import org.usfirst.frc.team649.robot.CommandGroups.RightScaleDoubleScaleMP;
-
-import org.usfirst.frc.team649.robot.CommandGroups.RightScaleSingleMP;
-import org.usfirst.frc.team649.robot.commands.Diagnostic;
-import org.usfirst.frc.team649.robot.commands.MotionProfileDrive;
-
 import org.usfirst.frc.team649.robot.commands.arm.ArmMotionProfile;
 import org.usfirst.frc.team649.robot.commands.arm.MoveArmCommand;
 import org.usfirst.frc.team649.robot.commands.arm.ZeroArmRoutine;
@@ -261,6 +246,9 @@ public class Robot extends TimedRobot {
 			}
 		}).start();
 		isAutoInTeleopPrev = false;
+		
+		
+		// generate motion profile trajectories
 		if (pos == 0) {
 			generateLeftScaleMP();
 		} else if (pos == 1) {
@@ -365,8 +353,12 @@ public class Robot extends TimedRobot {
 			hasFMS = true;
 			if (pos == 0) { // left
 				if (gameData.charAt(0) == 'L' && gameData.charAt(1) == 'R') {
-					// new LeftFarScale().start();
+					
 					new LeftSwitch().start();
+//					new LeftFarScale().start();
+//					new DriveStraight().start();
+
+					
 				} else if (gameData.charAt(0) == 'R' && gameData.charAt(1) == 'L') {
 					left = new EncoderFollower(modifierLeftScaleSingle.getLeftTrajectory());
 					right = new EncoderFollower(modifierLeftScaleSingle.getRightTrajectory());
@@ -374,12 +366,10 @@ public class Robot extends TimedRobot {
 					right.configureEncoder(0, 4096 * 2, 0.127);
 					left.configurePIDVA(2, 0.0, 0, 1 / 4.5, 0);
 					right.configurePIDVA(2, 0.0, 0, 1 / 4.5, 0);
-					//new LeftScaleDoubleScaleMP().start();
-					// new LeftScaleMP().start();
-					// new LeftScaleSingleMP().start();
-					// new LeftSwitchAround().start();
-					// new LeftScale().start();
-					new LeftScaleMP().start();
+					
+					new LeftScaleSingleMP().start();
+//					new DriveStraight().start();
+					
 				} else if (gameData.charAt(0) == 'L' && gameData.charAt(1) == 'L') {
 					left = new EncoderFollower(modifierLeftScaleSingle.getLeftTrajectory());
 					right = new EncoderFollower(modifierLeftScaleSingle.getRightTrajectory());
@@ -387,19 +377,20 @@ public class Robot extends TimedRobot {
 					right.configureEncoder(0, 4096 * 2, 0.127);
 					left.configurePIDVA(2, 0.0, 0, 1 / 4.5, 0);
 					right.configurePIDVA(2, 0.0, 0, 1 / 4.5, 0);
-					// new LeftScaleDoubleScaleMP().start();
-					new LeftScaleDoubleMP().start();	
-					// new LeftScaleSingleMP().start();
-					// new LeftScaleSWSCMP().start();
-					// new LeftSwitch().start();
-					// new LeftScale().start();
+					
+					new LeftScaleSingleMP().start();
+//					new LeftSwitch().start();
+//					new DriveStraight().start();
+
 
 				} else if (gameData.charAt(0) == 'R' && gameData.charAt(1) == 'R') {
-					// new LeftFarScale().start();
-					// new LeftSwitchAround().start();
+					
+//					new LeftFarScale().start();
 					new DriveStraight().start();
+					
 				}
-			} else if (pos == 1) { // mid
+			} else if (pos == 1) { 
+				// mid - never run scale from middle, so only check switch position
 				if (gameData.charAt(0) == 'L') {
 					shouldSwitchTurnRatio = true;
 					left = new EncoderFollower(modifierMiddleLeftSingle.getLeftTrajectory());
@@ -408,8 +399,12 @@ public class Robot extends TimedRobot {
 					right.configureEncoder(0, 4096 * 2, 0.127);
 					left.configurePIDVA(2, 0.0, 0, 1 / 3, 0);
 					right.configurePIDVA(2, 0.0, 0, 1 / 3, 0);
-					new LeftMPSwitch().start();
-					// new CenterSwitchLeft().start();
+					
+					new CenterLeftSwitchDoubleMP().start();
+//					new CenterSwitchLeft().start();
+//					new DriveStraight().start();
+
+					
 				} else if (gameData.charAt(0) == 'R') {
 					left = new EncoderFollower(modifierMiddleRightSingle.getLeftTrajectory());
 					right = new EncoderFollower(modifierMiddleRightSingle.getRightTrajectory());
@@ -417,30 +412,41 @@ public class Robot extends TimedRobot {
 					right.configureEncoder(0, 4096 * 2, 0.127);
 					left.configurePIDVA(2, 0.0, 0, 1 / 4.5, 0);
 					right.configurePIDVA(2, 0.0, 0, 1 / 4.5, 0);
-					new RightMPSwitch().start();
-//					new CenterSwitchRight().start();
 					
-//					left = new EncoderFollower(modifierRightScaleSingle.getLeftTrajectory());
-//					right = new EncoderFollower(modifierRightScaleSingle.getRightTrajectory());
-//					left.configureEncoder(0, 4096 * 2, 0.127);
-//					right.configureEncoder(0, 4096 * 2, 0.127);
-//					left.configurePIDVA(2, 0.0, 0, 1 / 4.5, 0);
-//					right.configurePIDVA(2, 0.0, 0, 1 / 4.5, 0);
-					//new CenterSwitchRightDoubleMP().start();
+					new CenterRightSwitchDoubleMP().start();
+//					new CenterSwitchRight().start();
+//					new DriveStraight().start();
+
 				}
 
 			} else if (pos == 2) { // right
-				if (gameData.charAt(0) == 'L' && gameData.charAt(1) == 'R') {
+				if(gameData.charAt(0) == 'L' && gameData.charAt(1) == 'L') {
+					
+					new RightFarScale().start();
+//					new DriveStraight().start();
+					
+				}
+				else if (gameData.charAt(0) == 'L' && gameData.charAt(1) == 'R') {
 					left = new EncoderFollower(modifierRightScaleSingle.getLeftTrajectory());
 					right = new EncoderFollower(modifierRightScaleSingle.getRightTrajectory());
 					left.configureEncoder(0, 4096 * 2, 0.127);
 					right.configureEncoder(0, 4096 * 2, 0.127);
 					left.configurePIDVA(2, 0.0, 0, 1 / 4.5, 0);
 					right.configurePIDVA(2, 0.0, 0, 1 / 4.5, 0);
-					// new RightScaleDoubleScaleMP().start();
-					//new RightScaleSingleMP().start();
-					//new RightScale().start();
+					
 					new RightScaleSingleMP().start();
+//					new DriveStraight().start();
+
+				}
+				else if (gameData.charAt(0) == 'R' && gameData.charAt(1) == 'L') {
+					
+					new RightSwitch().start();
+//					new RightFarScale().start();
+//					new DriveStraight().start();
+					
+				}
+				else if (gameData.charAt(0) == 'R' && gameData.charAt(1) == 'R') {
+					
 				}
 			}
 		}
