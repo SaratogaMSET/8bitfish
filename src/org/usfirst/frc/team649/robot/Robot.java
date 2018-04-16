@@ -10,7 +10,6 @@ import org.usfirst.frc.team649.autonomous.worlds.LeftScaleSingleMP;
 import org.usfirst.frc.team649.autonomous.worlds.LeftSwitch;
 import org.usfirst.frc.team649.autonomous.worlds.RightFarScale;
 import org.usfirst.frc.team649.autonomous.worlds.RightScaleSingleMP;
-import org.usfirst.frc.team649.autonomous.worlds.RightSwitch;
 import org.usfirst.frc.team649.robot.CommandGroups.DownAndFlipWhenPossible2ndIntakeFront;
 import org.usfirst.frc.team649.robot.CommandGroups.DownAndFlipWhenPossible2ndIntakeRear;
 import org.usfirst.frc.team649.robot.CommandGroups.DownAndFlipWhenPossibleIntakeFront;
@@ -349,8 +348,11 @@ public class Robot extends TimedRobot {
 			hasFMS = true;
 			if (pos == 0) { // left
 				if (gameData.charAt(0) == 'L' && gameData.charAt(1) == 'R') { // near Switch, far scale
+					
 					// new LeftFarScale().start();
 					new LeftSwitch().start();
+					// new DriveStraight().start();
+					
 				} else if (gameData.charAt(0) == 'R' && gameData.charAt(1) == 'L') { // far Switch, near scale
 					left = new EncoderFollower(modifierLeftScaleSingle.getLeftTrajectory());
 					right = new EncoderFollower(modifierLeftScaleSingle.getRightTrajectory());
@@ -358,11 +360,10 @@ public class Robot extends TimedRobot {
 					right.configureEncoder(0, 4096 * 2, 0.127);
 					left.configurePIDVA(2, 0.0, 0, 1 / 4.5, 0);
 					right.configurePIDVA(2, 0.0, 0, 1 / 4.5, 0);
-					// new LeftScaleDoubleScaleMP().start();
-					// new LeftScaleMP().start();
-					// new LeftScaleSingleMP().start();
+					
+					new LeftScaleSingleMP().start();
 					// new DriveStraight().start();
-					new LeftScaleMP().start();
+					
 				} else if (gameData.charAt(0) == 'L' && gameData.charAt(1) == 'L') { // near Switch, near scale
 					left = new EncoderFollower(modifierLeftScaleSingle.getLeftTrajectory());
 					right = new EncoderFollower(modifierLeftScaleSingle.getRightTrajectory());
@@ -370,14 +371,17 @@ public class Robot extends TimedRobot {
 					right.configureEncoder(0, 4096 * 2, 0.127);
 					left.configurePIDVA(2, 0.0, 0, 1 / 4.5, 0);
 					right.configurePIDVA(2, 0.0, 0, 1 / 4.5, 0);
-					// new LeftScaleDoubleScaleMP().start();
-					new LeftScaleDoubleMP().start();	
+					
+					
 					// new LeftScaleSingleMP().start();
-					// new LeftScaleSWSCMP().start();
 					// new LeftSwitch().start();
+					// new DriveStraight().start();
+
 				} else if (gameData.charAt(0) == 'R' && gameData.charAt(1) == 'R') { // far Switch, far scale
+					
 					new LeftFarScale().start();
 					// new DriveStraight().start();
+					
 				}
 			} else if (pos == 1) { // mid
 				if (gameData.charAt(0) == 'L') { // left switch
@@ -388,7 +392,12 @@ public class Robot extends TimedRobot {
 					right.configureEncoder(0, 4096 * 2, 0.127);
 					left.configurePIDVA(2, 0.0, 0, 1 / 3, 0);
 					right.configurePIDVA(2, 0.0, 0, 1 / 3, 0);
-					new LeftMPSwitch().start();
+					
+					new CenterLeftSwitchDoubleMP().start();
+//					new CenterSwitchLeft().start();
+					// new DriveStraight().start();
+
+					
 				} else if (gameData.charAt(0) == 'R') { // right switch
 					left = new EncoderFollower(modifierMiddleRightSingle.getLeftTrajectory());
 					right = new EncoderFollower(modifierMiddleRightSingle.getRightTrajectory());
@@ -396,14 +405,21 @@ public class Robot extends TimedRobot {
 					right.configureEncoder(0, 4096 * 2, 0.127);
 					left.configurePIDVA(2, 0.0, 0, 1 / 4.5, 0);
 					right.configurePIDVA(2, 0.0, 0, 1 / 4.5, 0);
-					new RightMPSwitch().start();
-					//new CenterSwitchRightDoubleMP().start();
+					
+					// new CenterSwitchRight().start();
+					new CenterRightSwitchDoubleMP().start();
+					// new DriveStraight().start();
+
 				}
 
 			} else if (pos == 2) { // right
 				if (gameData.charAt(0) == 'R' && gameData.charAt(1) == 'L') { // near switch, far scale
+					
 					new RightFarScale().start();
 					// new RightSwitch().start();
+					// new DriveStraight().start();
+
+					
 				} else if (gameData.charAt(0) == 'L' && gameData.charAt(1) == 'R') { // far switch, near scale
 					left = new EncoderFollower(modifierRightScaleSingle.getLeftTrajectory());
 					right = new EncoderFollower(modifierRightScaleSingle.getRightTrajectory());
@@ -411,10 +427,10 @@ public class Robot extends TimedRobot {
 					right.configureEncoder(0, 4096 * 2, 0.127);
 					left.configurePIDVA(2, 0.0, 0, 1 / 4.5, 0);
 					right.configurePIDVA(2, 0.0, 0, 1 / 4.5, 0);
-					// new RightScaleDoubleScaleMP().start();
+					
 					// new RightScaleSingleMP().start();
-					new RightScaleSingleMP().start();
-					// new DriveStraight().start();
+					new DriveStraight().start();
+					
 				} else if (gameData.charAt(0) == 'R' && gameData.charAt(1) == 'R') { // near switch, near scale
 					left = new EncoderFollower(modifierRightScaleSingle.getLeftTrajectory());
 					right = new EncoderFollower(modifierRightScaleSingle.getRightTrajectory());
@@ -422,10 +438,13 @@ public class Robot extends TimedRobot {
 					right.configureEncoder(0, 4096 * 2, 0.127);
 					left.configurePIDVA(2, 0.0, 0, 1 / 4.5, 0);
 					right.configurePIDVA(2, 0.0, 0, 1 / 4.5, 0);
-					// new RightScaleDoubleScaleMP().start();
-					// new RightScaleSingleMP().start();
+					
+				
 					new RightScaleSingleMP().start();
 					// new RightSwitch().start();
+					// new DriveStraight().start();
+
+					
 				} else if (gameData.charAt(0) == 'L' && gameData.charAt(1) == 'L') { // far switch, far scale
 					new RightFarScale().start();
 					// new DriveStraight().start();
