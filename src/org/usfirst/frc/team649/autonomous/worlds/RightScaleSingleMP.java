@@ -35,6 +35,6 @@ public class RightScaleSingleMP extends CommandGroup {
        	addParallel(new ChangeRobotLiftState(1));
     	addSequential(new RunIntakeForTime(0.5, false, 1));
     	addSequential(new DriveBackForTime(-0.3, 0.5)); // move back from scale for safety
-    	//addSequential(new D)
+    	//TODO: Fix move back, left scale single MP works, so change based on that
 	}
 }

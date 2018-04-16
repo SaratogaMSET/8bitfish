@@ -31,9 +31,6 @@ public class LeftScaleSingleMP extends CommandGroup {
     	addParallel(new ChangeRobotLiftState(1));
     	addSequential(new RunIntakeForTime(0.5, false, 1));
     	addSequential(new DriveBackForTime(-0.3, 0.5)); // move back from scale for safety
-    	
-    	
-    	
-
+    	// TODO: Use to debug RightScaleSingleMP
 	}
 }
