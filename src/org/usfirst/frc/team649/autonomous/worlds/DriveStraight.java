@@ -1,4 +1,4 @@
-package org.usfirst.frc.team649.autonomous;
+package org.usfirst.frc.team649.autonomous.worlds;
 
 import org.usfirst.frc.team649.robot.Robot;
 import org.usfirst.frc.team649.robot.commands.arm.ArmMotionProfile;

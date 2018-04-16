@@ -1,37 +1,22 @@
 
 package org.usfirst.frc.team649.robot;
 
-import java.util.concurrent.ScheduledExecutorService;
-
 import org.opencv.core.Mat;
 import org.usfirst.frc.team649.autonomous.AutoTest;
-import org.usfirst.frc.team649.autonomous.CenterSwitchRight;
-import org.usfirst.frc.team649.autonomous.DriveStraight;
-import org.usfirst.frc.team649.autonomous.LeftFarScale;
-import org.usfirst.frc.team649.autonomous.LeftScaleDoubleMP;
-import org.usfirst.frc.team649.autonomous.LeftScaleMP;
-import org.usfirst.frc.team649.autonomous.LeftSwitch;
-import org.usfirst.frc.team649.autonomous.MiddleRightDouble;
-import org.usfirst.frc.team649.autonomous.RightFarScale;
-import org.usfirst.frc.team649.autonomous.RightScale;
-import org.usfirst.frc.team649.autonomous.RightScaleDoubleMP;
-import org.usfirst.frc.team649.autonomous.RightSwitch;
-import org.usfirst.frc.team649.robot.CommandGroups.CenterSwitchRightDoubleMP;
+import org.usfirst.frc.team649.autonomous.worlds.CenterLeftSwitchDoubleMP;
+import org.usfirst.frc.team649.autonomous.worlds.CenterRightSwitchDoubleMP;
+import org.usfirst.frc.team649.autonomous.worlds.DriveStraight;
+import org.usfirst.frc.team649.autonomous.worlds.LeftScaleSingleMP;
+import org.usfirst.frc.team649.autonomous.worlds.LeftSwitch;
+import org.usfirst.frc.team649.autonomous.worlds.RightFarScale;
+import org.usfirst.frc.team649.autonomous.worlds.RightScaleSingleMP;
+import org.usfirst.frc.team649.autonomous.worlds.RightSwitch;
 import org.usfirst.frc.team649.robot.CommandGroups.DownAndFlipWhenPossible2ndIntakeFront;
 import org.usfirst.frc.team649.robot.CommandGroups.DownAndFlipWhenPossible2ndIntakeRear;
 import org.usfirst.frc.team649.robot.CommandGroups.DownAndFlipWhenPossibleIntakeFront;
 import org.usfirst.frc.team649.robot.CommandGroups.DownAndFlipWhenPossibleIntakeRear;
 import org.usfirst.frc.team649.robot.CommandGroups.DownAndFlipWhenPossibleStoreFront;
 import org.usfirst.frc.team649.robot.CommandGroups.DownAndFlipWhenPossibleStoreRear;
-import org.usfirst.frc.team649.robot.CommandGroups.LeftMPSwitch;
-import org.usfirst.frc.team649.robot.CommandGroups.LeftScaleDoubleScaleMP;
-import org.usfirst.frc.team649.robot.CommandGroups.RightMPSwitch;
-import org.usfirst.frc.team649.robot.CommandGroups.RightScaleDoubleScaleMP;
-
-import org.usfirst.frc.team649.robot.CommandGroups.RightScaleSingleMP;
-import org.usfirst.frc.team649.robot.commands.Diagnostic;
-import org.usfirst.frc.team649.robot.commands.MotionProfileDrive;
-
 import org.usfirst.frc.team649.robot.commands.arm.ArmMotionProfile;
 import org.usfirst.frc.team649.robot.commands.arm.MoveArmCommand;
 import org.usfirst.frc.team649.robot.commands.arm.ZeroArmRoutine;
@@ -261,6 +246,9 @@ public class Robot extends TimedRobot {
 			}
 		}).start();
 		isAutoInTeleopPrev = false;
+		
+		
+		// generate motion profile trajectories
 		if (pos == 0) {
 			generateLeftScaleMP();
 		} else if (pos == 1) {

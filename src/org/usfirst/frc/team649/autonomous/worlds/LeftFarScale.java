@@ -1,5 +1,7 @@
-package org.usfirst.frc.team649.autonomous;
+package org.usfirst.frc.team649.autonomous.worlds;
 
+import org.usfirst.frc.team649.autonomous.AutoTest;
+import org.usfirst.frc.team649.autonomous.AutoTest.LeftScaleFarVal;
 import org.usfirst.frc.team649.robot.Robot;
 import org.usfirst.frc.team649.robot.commands.Delay;
 import org.usfirst.frc.team649.robot.commands.arm.ArmMotionProfile;

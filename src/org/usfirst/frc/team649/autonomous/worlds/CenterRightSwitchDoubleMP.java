@@ -1,4 +1,4 @@
-package org.usfirst.frc.team649.robot.CommandGroups;
+package org.usfirst.frc.team649.autonomous.worlds;
 
 import org.usfirst.frc.team649.robot.Robot;
 import org.usfirst.frc.team649.robot.commands.MotionProfileDrive;
@@ -18,9 +18,13 @@ import edu.wpi.first.wpilibj.command.CommandGroup;
 /**
  *
  */
-public class RightMPSwitch extends CommandGroup {
 
-    public RightMPSwitch() {
+
+// AUTO TESTED
+
+public class CenterRightSwitchDoubleMP extends CommandGroup {
+
+    public CenterRightSwitchDoubleMP() {
     	addSequential(new ChangeRobotArmState(ArmSubsystem.ArmStateConstants.HEADING_SWITCH_FRONT));
     	addParallel(new ArmMotionProfile(ArmSubsystem.ArmEncoderConstants.SWITCH_FRONT,Robot.armState,false));
         addSequential(new MotionProfileDrive(false));

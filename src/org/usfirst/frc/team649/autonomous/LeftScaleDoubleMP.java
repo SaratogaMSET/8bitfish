@@ -14,6 +14,8 @@ import org.usfirst.frc.team649.robot.subsystems.LiftSubsystem;
 
 import edu.wpi.first.wpilibj.command.CommandGroup;
 
+// AUTONOMOUS NOT TESTED
+
 public class LeftScaleDoubleMP extends CommandGroup {
 	public LeftScaleDoubleMP() {
 		addSequential(new ChangeRobotLiftState(9));
