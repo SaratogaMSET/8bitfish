@@ -88,7 +88,7 @@ public class ArmSubsystem extends Subsystem {
 		bottomMotor.configNominalOutputReverse(0, Robot.timeoutMs);
 		bottomMotor.configPeakOutputForward(1.0, Robot.timeoutMs);
 		bottomMotor.configPeakOutputReverse(-1.0, Robot.timeoutMs);
-		bottomMotor.setSensorPhase(true); // false on practice bot
+		bottomMotor.setSensorPhase(false); // true on f bot
 		bottomMotor.setInverted(true);
 		bottomMotor.setStatusFramePeriod(StatusFrameEnhanced.Status_10_MotionMagic, 10, Robot.timeoutMs);
 		frontHal = new DigitalInput(RobotMap.Arm.ARM_HAL_FRONT);

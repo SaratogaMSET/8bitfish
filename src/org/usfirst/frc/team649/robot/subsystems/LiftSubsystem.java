@@ -90,10 +90,10 @@ public class LiftSubsystem extends PIDSubsystem {
     	super(LiftPIDConstants.k_P, LiftPIDConstants.k_I, LiftPIDConstants.k_D);
     	mainLiftMotor = new TalonSRX(RobotMap.Lift.RIGHT_WINCH_MOTOR);
     	mainLiftMotor.configSelectedFeedbackSensor(FeedbackDevice.CTRE_MagEncoder_Relative, 0, Robot.timeoutMs);
-    	mainLiftMotor.setInverted(true); // false on practice bot
+    	mainLiftMotor.setInverted(false); // true on final bot
     	mainLiftMotor.setSensorPhase(false);
     	followerLiftMotor = new TalonSRX(RobotMap.Lift.LEFT_WINCH_MOTOR);
-    	followerLiftMotor.setInverted(false); // true on practice bot
+    	followerLiftMotor.setInverted(true); // false on f bot
     	followerLiftMotor.set(ControlMode.Follower, RobotMap.Lift.RIGHT_WINCH_MOTOR);
     	
     	mainLiftMotor.configNominalOutputForward(0, Robot.timeoutMs);

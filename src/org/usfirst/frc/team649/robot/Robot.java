@@ -26,6 +26,7 @@ import org.usfirst.frc.team649.robot.commands.liftCommands.LiftMotionProfile;
 import org.usfirst.frc.team649.robot.commands.liftCommands.MoveLiftCommand;
 import org.usfirst.frc.team649.robot.subsystems.ArmSubsystem;
 import org.usfirst.frc.team649.robot.subsystems.DrivetrainSubsystem;
+import org.usfirst.frc.team649.robot.subsystems.GyroBackSubsystem;
 import org.usfirst.frc.team649.robot.subsystems.GyroSubsystem;
 import org.usfirst.frc.team649.robot.subsystems.IntakeSubsystem;
 import org.usfirst.frc.team649.robot.subsystems.LiftSubsystem;
@@ -60,6 +61,7 @@ public class Robot extends TimedRobot {
 	// *************************************************** Subsystems
 	public static DrivetrainSubsystem drive;
 	public static GyroSubsystem gyro;
+	public static GyroBackSubsystem gyroBack;
 	public static Lidar lidar;
 	public static ArmSubsystem arm;
 	public static LiftSubsystem lift;
@@ -177,7 +179,7 @@ public class Robot extends TimedRobot {
 	public static boolean isIntakeOpen;
 	public static boolean shouldCanclArmMP;
 	public static boolean isRunnigWithFlip;
-	public static int pos = 2; // left mid right forward
+	public static int pos = 0; // left mid right forward
 
 	@Override
 
@@ -186,15 +188,17 @@ public class Robot extends TimedRobot {
 		compressor = new Compressor(4);
 		// pdp = new PowerDistributionPanel(RobotMap.POWER_DISTRIBUTION_PANEL);
 		// log = new VoltageLog(pdp,compressor);
+		
 		lift = new LiftSubsystem();
 		drive = new DrivetrainSubsystem();
 		gyro = new GyroSubsystem();
+		gyroBack = new GyroBackSubsystem();
 		arm = new ArmSubsystem();
 		intake = new IntakeSubsystem();
+		
 		lidarCount = 0;
 		shouldCanclArmMP = false;
 		isRunnigWithFlip = false;
-		//switches = new AutoSelector();
 		intakeTimer = new Timer();
 
 		isHigh = false;

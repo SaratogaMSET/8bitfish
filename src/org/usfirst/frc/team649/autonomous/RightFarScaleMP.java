@@ -19,6 +19,6 @@ public class RightFarScaleMP extends CommandGroup {
     	addSequential(new ChangeRobotArmState(ArmSubsystem.ArmStateConstants.HEADING_HIGH_DROP_FRONT));
         addParallel(new LiftMotionProfile(LiftSubsystem.LiftEncoderConstants.HIGH_SCALE_STATE,Robot.liftState,1.25));
     	addParallel(new ArmMotionProfile(ArmSubsystem.ArmEncoderConstants.HIGH_DROP_FRONT,Robot.armState,false));
-    	addSequential(new RunIntakeForTime(1, false));
+    	addSequential(new RunIntakeForTime(1, false,0.5));
 	}
 }
