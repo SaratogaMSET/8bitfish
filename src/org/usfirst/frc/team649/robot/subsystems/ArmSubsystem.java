@@ -56,18 +56,18 @@ public class ArmSubsystem extends Subsystem {
 		public static final int SWITCH_REAR = -15;
 	}
 	public static class ArmEncoderConstants{
-		public static final int INTAKE_FRONT = -5;
-		public static final int INTAKE_REAR = -4265;
-		public static final int SWITCH_FRONT = -1400;
-		public static final int SWITCH_REAR = -2820;
+		public static final int INTAKE_FRONT = 0;
+		public static final int INTAKE_REAR = -4335;
+		public static final int SWITCH_FRONT = -1700;
+		public static final int SWITCH_REAR = -2850;
 		public static final int EXCHANGE_FRONT = -400;
-		public static final int EXCHANGE_REAR = -3880;
-		public static final int MID_DROP_FRONT = -500;
-		public static final int MID_DROP_REAR = -3770;
-		public static final int HIGH_DROP_FRONT = -800;
-		public static final int HIGH_DROP_REAR = -3470;
-		public static final int STORE_FRONT = -1500;
-		public static final int STORE_REAR = -2870;
+		public static final int EXCHANGE_REAR = -3850;
+		public static final int MID_DROP_FRONT = -550;
+		public static final int MID_DROP_REAR = -3800;
+		public static final int HIGH_DROP_FRONT = -900;
+		public static final int HIGH_DROP_REAR = -3500;
+		public static final int STORE_FRONT = -1625;
+		public static final int STORE_REAR = -2605;
 		public static final int ADJ = 150;
 		public static final int MID = (INTAKE_FRONT + INTAKE_REAR)/2;
 	}
@@ -88,7 +88,7 @@ public class ArmSubsystem extends Subsystem {
 		bottomMotor.configNominalOutputReverse(0, Robot.timeoutMs);
 		bottomMotor.configPeakOutputForward(1.0, Robot.timeoutMs);
 		bottomMotor.configPeakOutputReverse(-1.0, Robot.timeoutMs);
-		bottomMotor.setSensorPhase(false); // true on f bot
+		bottomMotor.setSensorPhase(true); // true on f bot
 		bottomMotor.setInverted(true);
 		bottomMotor.setStatusFramePeriod(StatusFrameEnhanced.Status_10_MotionMagic, 10, Robot.timeoutMs);
 		frontHal = new DigitalInput(RobotMap.Arm.ARM_HAL_FRONT);
@@ -118,7 +118,6 @@ public class ArmSubsystem extends Subsystem {
 	}
 	public void setArm(double power){
 		bottomMotor.set(ControlMode.PercentOutput, -power);
-//		topMotor.set(ControlMode.Follower, RobotMap.Arm.BOTTOM_ARM_MOTOR);
 	}
 	public boolean getInfraredSensor() {
 		return !infraredSensor.get();

@@ -12,8 +12,8 @@ public class RobotMap {
 	
 	public static class Drivetrain {
 		// FL,BL,BR,FR
-		public static final int[] MOTOR_PORTS = {12, 13, 18, 19}; //20 on final bot
-		public static final int[] RIGHT_DRIVE_SOL = {4,4,5}; //{4, 4, 1}; // 4,4,5
+		public static final int[] MOTOR_PORTS = {12, 13, 20, 19}; //20 on final bot
+		public static final int[] RIGHT_DRIVE_SOL = {4,4,1}; //{4, 4, 1}; // 4,4,5
 		public static final int[] LEFT_DRIVE_SOL = { 3, 2, 3 };
 	}
 	public static class Lift {
@@ -39,7 +39,7 @@ public class RobotMap {
 		public static final int BOTTOM_ARM_MOTOR = 8;
 		public static final int TOP_ARM_MOTOR = 17;
 		public static final int INFRARED_SENSOR = 8;
-		public static final int[] ARM_BRAKE = {4,0,7}; //final 4,6,7  4,0,7
+		public static final int[] ARM_BRAKE = {4,6,7}; //final 4,6,7  4,0,7
 		public static final int ARM_HAL_FRONT = 9;
 		public static final int ARM_HAL_REAR = 10;
 	}
