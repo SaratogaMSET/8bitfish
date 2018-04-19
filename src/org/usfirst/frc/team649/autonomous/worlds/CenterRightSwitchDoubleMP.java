@@ -30,9 +30,9 @@ public class CenterRightSwitchDoubleMP extends CommandGroup {
         addSequential(new MotionProfileDrive(false));
         addSequential(new RunIntakeForTime(0.5,false,1));
         addSequential(new DrivetrainMotionProfileIn(-62.5));
+        addSequential(new SetIntakePistons(true,false));
         addParallel(new ChangeRobotArmState(ArmSubsystem.ArmStateConstants.HEADING_INTAKE_FRONT));
         addParallel(new ArmMotionProfile(ArmSubsystem.ArmEncoderConstants.INTAKE_FRONT,Robot.armState,false));
-        addParallel(new SetIntakePistons(true,false));
         addSequential(new GyroPID(-70));
     	addParallel(new RunIntakeWheels(1.0));
     	addSequential(new DrivetrainMotionProfileIn(22.5));

@@ -28,6 +28,8 @@ public class GyroPID extends Command {
         // Use requires() here to declare subsystem dependencies
         // eg. requires(chassis);
     	this.angle = angle;
+    	requires(Robot.drive);
+
     	drivePID = Robot.gyro.getPIDController();
     	time = new Timer();
     	timeout = new Timer();
@@ -85,6 +87,9 @@ public class GyroPID extends Command {
 
     // Make this return true when this Command no longer needs to run execute()
     protected boolean isFinished() {
+    	if(Robot.endAuto){
+    		return true;
+    	}
         return isFinished;
     }
 

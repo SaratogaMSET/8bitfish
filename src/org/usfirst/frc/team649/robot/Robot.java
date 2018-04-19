@@ -17,6 +17,7 @@ import org.usfirst.frc.team649.robot.CommandGroups.DownAndFlipWhenPossibleIntake
 import org.usfirst.frc.team649.robot.CommandGroups.DownAndFlipWhenPossibleIntakeRear;
 import org.usfirst.frc.team649.robot.CommandGroups.DownAndFlipWhenPossibleStoreFront;
 import org.usfirst.frc.team649.robot.CommandGroups.DownAndFlipWhenPossibleStoreRear;
+import org.usfirst.frc.team649.robot.commands.Diagnostic;
 import org.usfirst.frc.team649.robot.commands.arm.ArmMotionProfile;
 import org.usfirst.frc.team649.robot.commands.arm.MoveArmCommand;
 import org.usfirst.frc.team649.robot.commands.arm.ZeroArmRoutine;
@@ -33,6 +34,7 @@ import org.usfirst.frc.team649.robot.subsystems.LiftSubsystem;
 import org.usfirst.frc.team649.robot.subsystems.LiftSubsystem.LiftStateConstants;
 import org.usfirst.frc.team649.robot.util.CameraServer;
 import org.usfirst.frc.team649.robot.util.Lidar;
+import org.usfirst.frc.team649.robot.util.VoltageLog;
 
 import com.ctre.phoenix.motorcontrol.NeutralMode;
 
@@ -164,7 +166,7 @@ public class Robot extends TimedRobot {
 	public static SerialPort sp;
 	int state;
 
-	//public static VoltageLog log;
+	public static VoltageLog log;
 	public static PowerDistributionPanel pdp;
 
 	public static I2C arduino;
@@ -179,15 +181,16 @@ public class Robot extends TimedRobot {
 	public static boolean isIntakeOpen;
 	public static boolean shouldCanclArmMP;
 	public static boolean isRunnigWithFlip;
-	public static int pos = 0; // left mid right forward
+	public static boolean endAuto;
+	public static int pos = 1; // left mid right forward
 
 	@Override
 
 	public void robotInit() {
 		oi = new OI();
 		compressor = new Compressor(4);
-		// pdp = new PowerDistributionPanel(RobotMap.POWER_DISTRIBUTION_PANEL);
-		// log = new VoltageLog(pdp,compressor);
+		pdp = new PowerDistributionPanel(RobotMap.POWER_DISTRIBUTION_PANEL);
+		log = new VoltageLog(pdp,compressor,oi.driveJoystickHorizontal,oi.driveJoystickVertical,oi.operatorJoystick,oi.buttonBoard,oi.buttonBoard2);
 		
 		lift = new LiftSubsystem();
 		drive = new DrivetrainSubsystem();
@@ -227,26 +230,26 @@ public class Robot extends TimedRobot {
 		prevStateFlipAndStore = false;
 		prevStateFlipAndIntakeHigh = false;
 		prevStateFlipAndIntakeLow = false;
-		new Thread(() -> {
-			// 10.6.49.7 = tanAxisCamera
-			AxisCamera camera = CameraServer.getInstance().addAxisCamera(RobotMap.Camera.axisName,
-					RobotMap.Camera.axisPort);
-			camera.setResolution(RobotMap.Camera.axisResWidth, RobotMap.Camera.axisResWidth);
-			camera.setFPS(RobotMap.Camera.axisFPS);
-			CvSink cvSink = CameraServer.getInstance().getVideo(RobotMap.Camera.axisName);
-			CvSource outputStream = CameraServer.getInstance().putVideo("649Camera", 320, 480);
-
-			Mat frame = new Mat();
-
-			while (!Thread.interrupted()) {
-
-				if (cvSink.grabFrame(frame) == 0) {
-					continue;
-				}
-				outputStream.putFrame(frame);
-
-			}
-		}).start();
+//		new Thread(() -> {
+//			// 10.6.49.7 = tanAxisCamera
+//			AxisCamera camera = CameraServer.getInstance().addAxisCamera(RobotMap.Camera.axisName,
+//					RobotMap.Camera.axisPort);
+//			camera.setResolution(RobotMap.Camera.axisResWidth, RobotMap.Camera.axisResWidth);
+//			camera.setFPS(RobotMap.Camera.axisFPS);
+//			CvSink cvSink = CameraServer.getInstance().getVideo(RobotMap.Camera.axisName);
+//			CvSource outputStream = CameraServer.getInstance().putVideo("649Camera", 320, 480);
+//
+//			Mat frame = new Mat();
+//
+//			while (!Thread.interrupted()) {
+//
+//				if (cvSink.grabFrame(frame) == 0) {
+//					continue;
+//				}
+//				outputStream.putFrame(frame);
+//
+//			}
+//		}).start();
 		isAutoInTeleopPrev = false;
 		
 		
@@ -315,7 +318,7 @@ public class Robot extends TimedRobot {
 
 	@Override
 	public void disabledInit() {
-		// log.endLogging();
+		 log.endLogging();
 	}
 
 	@Override
@@ -328,8 +331,10 @@ public class Robot extends TimedRobot {
 	public void autonomousInit() {
 		// TODO Comment back in: log.startLoggingWithInterval("practicing",
 		// 100L);
+		log.startLoggingWithInterval("practicing",100L);
 		hasFMS = false;
 		shouldSwitchTurnRatio = false;
+		endAuto = false;
 		for (int i = 0; i < 4; i++) {
 			drive.motors[i].setNeutralMode(NeutralMode.Brake);
 			drive.motors[i].configMotionAcceleration(9000, timeoutMs);
@@ -347,6 +352,9 @@ public class Robot extends TimedRobot {
 		drive.changeBrakeCoast(true);
 
 		new ZeroArmRoutine().start();
+//		new SetIntakePistons(true,false)
+//    	new SetIntakePistons(false,true).start();
+
 	}
 
 	@Override
@@ -361,7 +369,9 @@ public class Robot extends TimedRobot {
 			if (pos == 0) { // left
 				if (gameData.charAt(0) == 'L' && gameData.charAt(1) == 'R') { // near Switch, far scale
 					// TODO: If we get left far scale to work, we should probs run it here, but for now, left switch works fine.
-					new LeftSwitch().start();					
+//					new LeftSwitch().start();
+					new LeftFarScale().start();	
+
 				} else if (gameData.charAt(0) == 'R' && gameData.charAt(1) == 'L') { // far Switch, near scale
 					left = new EncoderFollower(modifierLeftScaleSingle.getLeftTrajectory());
 					right = new EncoderFollower(modifierLeftScaleSingle.getRightTrajectory());
@@ -369,7 +379,9 @@ public class Robot extends TimedRobot {
 					right.configureEncoder(0, 4096 * 2, 0.127);
 					left.configurePIDVA(2, 0.0, 0, 1 / 4.5, 0);
 					right.configurePIDVA(2, 0.0, 0, 1 / 4.5, 0);
-					new LeftScaleSingleMP().start();					
+//					new LeftScaleSingleMP().start();	
+					new LeftFarScale().start();	
+
 				} else if (gameData.charAt(0) == 'L' && gameData.charAt(1) == 'L') { // near Switch, near scale
 					//TODO: Change command and encoder values if we want to run switch instead
 					left = new EncoderFollower(modifierLeftScaleSingle.getLeftTrajectory());
@@ -378,7 +390,9 @@ public class Robot extends TimedRobot {
 					right.configureEncoder(0, 4096 * 2, 0.127);
 					left.configurePIDVA(2, 0.0, 0, 1 / 4.5, 0);
 					right.configurePIDVA(2, 0.0, 0, 1 / 4.5, 0);
-					new LeftScaleSingleMP().start();	
+//					new LeftScaleSingleMP().start();	\
+					new LeftFarScale().start();	
+
 				} else if (gameData.charAt(0) == 'R' && gameData.charAt(1) == 'R') { // far Switch, far scale
 					//TODO: Set the encoder values if we decide to make this MP
 					new LeftFarScale().start();	
@@ -401,6 +415,8 @@ public class Robot extends TimedRobot {
 					left.configurePIDVA(2, 0.0, 0, 1 / 4.5, 0);
 					right.configurePIDVA(2, 0.0, 0, 1 / 4.5, 0);					
 					new CenterRightSwitchDoubleMP().start();
+//					new CenterLeftSwitchDoubleMP().start();
+
 				}
 			} else if (pos == 2) { // right
 				if (gameData.charAt(0) == 'R' && gameData.charAt(1) == 'L') { // near switch, far scale
@@ -433,10 +449,11 @@ public class Robot extends TimedRobot {
 
 	@Override
 	public void teleopInit() {
+		log.startLoggingWithInterval("practicing",100L);
 		intakeTimer.start();
 		isZero = true;
 		drive.changeBrakeCoast(false);
-
+		endAuto = true;
 		isAutoShift = true;
 		isVPid = true;
 		isArmPidRunning = false;
@@ -458,7 +475,7 @@ public class Robot extends TimedRobot {
 		new SetIntakePistons(false, true).start();
 		isOpen = false;
 		drive.shift(false);
-
+		drive.driveForwardRotateTeleop(0, 0);
 		SmartDashboard.putBoolean("Going Back to front Op 8 Left", false);
 		SmartDashboard.putBoolean("Flipping Arm Op 6", false);
 		SmartDashboard.putBoolean("In Intake Low Flip", false);

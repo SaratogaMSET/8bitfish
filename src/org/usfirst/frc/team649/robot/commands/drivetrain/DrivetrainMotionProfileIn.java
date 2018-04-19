@@ -19,6 +19,7 @@ public class DrivetrainMotionProfileIn extends Command {
     public DrivetrainMotionProfileIn(double setpoint) {
         // Use requires() here to declare subsystem dependencies
         // eg. requires(chassis);
+    	requires(Robot.drive);
     	this.setpoint = setpoint;
     	isFinished = false;
 
@@ -61,6 +62,9 @@ public class DrivetrainMotionProfileIn extends Command {
     // ((setpoint/(4*Math.PI))/ (14*60)) * 2048;  
     // Make this return true when this Command no longer needs to run execute()
     protected boolean isFinished() {
+    	if(Robot.endAuto){
+    		return true;
+    	}
     	SmartDashboard.putBoolean("Is TalonDistance Finished?", true);
         return isFinished;
     }

@@ -178,8 +178,8 @@ public class DrivetrainSubsystem extends PIDSubsystem {
 	public void shift(boolean isHigh){
 		isHighGear = isHigh;
 		SmartDashboard.putBoolean("Gear", isHigh);
-		driveSolLeft.set(!isHigh ? DoubleSolenoid.Value.kForward : DoubleSolenoid.Value.kReverse);
-		driveSolRight.set(isHigh ? DoubleSolenoid.Value.kReverse : DoubleSolenoid.Value.kForward);
+		driveSolLeft.set(isHigh ? DoubleSolenoid.Value.kForward : DoubleSolenoid.Value.kReverse);
+		driveSolRight.set(!isHigh ? DoubleSolenoid.Value.kReverse : DoubleSolenoid.Value.kForward);
 		if(isHigh){
 			SmartDashboard.putBoolean("Gear Finish0", true);
 			SmartDashboard.putBoolean("Gear Finish", true);

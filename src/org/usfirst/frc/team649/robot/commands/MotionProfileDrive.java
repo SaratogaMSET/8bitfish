@@ -16,6 +16,8 @@ public class MotionProfileDrive extends Command {
     public MotionProfileDrive(boolean isBack) {
         // Use requires() here to declare subsystem dependencies
         // eg. requires(chassis);
+    	requires(Robot.drive);
+
     	back = isBack;
     }
 
@@ -54,6 +56,8 @@ public class MotionProfileDrive extends Command {
 		}else{
 			Robot.drive.motors[0].set(ControlMode.PercentOutput, l+turn);
 			Robot.drive.motors[2].set(ControlMode.PercentOutput, r-turn);
+//			Robot.drive.motors[0].set(ControlMode.PercentOutput, l);
+//			Robot.drive.motors[2].set(ControlMode.PercentOutput, r);
 		}
 		SmartDashboard.putNumber("turn", turn);
 		
@@ -61,6 +65,9 @@ public class MotionProfileDrive extends Command {
 
     // Make this return true when this Command no longer needs to run execute()
     protected boolean isFinished() {
+    	if(Robot.endAuto){
+    		return true;
+    	}
         return Robot.left.isFinished()&&Robot.right.isFinished();
     }
 
