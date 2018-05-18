@@ -14,8 +14,6 @@ public class DriveBackForTime extends Command {
 	double time;
     public DriveBackForTime(double speed,double time) {
         // Use requires() here to declare subsystem dependencies
-    	
-    	requires(Robot.drive);
     	this.speed = speed;
     	this.time = time;
     	timer = new Timer();
@@ -36,9 +34,6 @@ public class DriveBackForTime extends Command {
 
     // Make this return true when this Command no longer needs to run execute()
     protected boolean isFinished() {
-    	if(Robot.endAuto){
-    		return true;
-    	}
         return timer.get() > time;
     }
 
@@ -52,5 +47,6 @@ public class DriveBackForTime extends Command {
     // Called when another command which requires one or more of the same
     // subsystems is scheduled to run
     protected void interrupted() {
+    	end();
     }
 }

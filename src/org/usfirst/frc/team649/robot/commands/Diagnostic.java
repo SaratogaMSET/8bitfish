@@ -44,7 +44,6 @@ public class Diagnostic extends Command {
 
     // Called just before this Command runs the first time
     protected void initialize() {
-    	
     	prevStateIntake = solState(Robot.intake.intakeSol.get());
     	prevStateBrake = solState(Robot.arm.armBrake.get());
     	prevStateShift = solState(Robot.drive.driveSolRight.get());

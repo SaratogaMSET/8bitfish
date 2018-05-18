@@ -56,6 +56,9 @@ public class DrivetrainSubsystem extends PIDSubsystem {
     	public static final double MAX_RPM_LOW = 0;
     	public static final double MAX_RPM_HIGH = 21000;
     	public static final int DISTANCE_PER_REV = 2048;
+    	//high end is when to shift up
+    	//low end is when to shift back down
+    	//might need to add something for turning we will see
     	public static final double SHIFT_LOW_END = 0;
     	public static final double SHIFT_HIGH_END = 0;
     	public static final double k_P_LOW = 0.0;
@@ -84,6 +87,9 @@ public class DrivetrainSubsystem extends PIDSubsystem {
 		drivePIDOutput = 0;
 		driveSolLeft = new DoubleSolenoid(RobotMap.Drivetrain.LEFT_DRIVE_SOL[0], RobotMap.Drivetrain.LEFT_DRIVE_SOL[1], RobotMap.Drivetrain.LEFT_DRIVE_SOL[2]);
 		driveSolRight = new DoubleSolenoid(RobotMap.Drivetrain.RIGHT_DRIVE_SOL[0], RobotMap.Drivetrain.RIGHT_DRIVE_SOL[1], RobotMap.Drivetrain.RIGHT_DRIVE_SOL[2]);
+//		leftEncoder = new Encoder(RobotMap.Drivetrain.LEFT_SIDE_ENCODER[0],RobotMap.Drivetrain.LEFT_SIDE_ENCODER[1]);
+//		leftEncoder.setDistancePerPulse(4.00 * Math.PI / 2048.0 * 14 / 60);
+//		rightEncoder = new Encoder(RobotMap.Drivetrain.RIGHT_SIDE_ENCODER[0],RobotMap.Drivetrain.RIGHT_SIDE_ENCODER[1]);
 		motors = new TalonSRX[4];
 		for (int i = 0; i < motors.length; i++) {
 			motors[i] = new TalonSRX(RobotMap.Drivetrain.MOTOR_PORTS[i]);
@@ -182,6 +188,8 @@ public class DrivetrainSubsystem extends PIDSubsystem {
 		driveSolRight.set(!isHigh ? DoubleSolenoid.Value.kReverse : DoubleSolenoid.Value.kForward);
 		if(isHigh){
 			SmartDashboard.putBoolean("Gear Finish0", true);
+//			leftEncoder.setDistancePerPulse(AutoPIDConstants.DISTANCE_PER_PULSE_HIGH);
+//			rightEncoder.setDistancePerPulse(AutoPIDConstants.DISTANCE_PER_PULSE_HIGH);
 			SmartDashboard.putBoolean("Gear Finish", true);
 
 			if(isLeftVPid){
@@ -203,6 +211,8 @@ public class DrivetrainSubsystem extends PIDSubsystem {
 			}
 		}else{
 			SmartDashboard.putBoolean("Gear Finish5", true);
+//			leftEncoder.setDistancePerPulse(AutoPIDConstants.DISTANCE_PER_PULSE_LOW);
+//			rightEncoder.setDistancePerPulse(AutoPIDConstants.DISTANCE_PER_PULSE_LOW);
 			if(isLeftVPid){
 				motors[0].config_kF(0,VPIDConstants.k_F_LOW,30); 
 				motors[0].config_kP(0,VPIDConstants.k_P_LOW,30);
@@ -241,7 +251,11 @@ public class DrivetrainSubsystem extends PIDSubsystem {
 		if(isVBus){
 			changeDrivetrainModesLeft(false);
 			changeDrivetrainModesRight(false);
-			
+//			if(left<-0.95 && right > 0.95){
+//				right = 0.5;
+//			}else if(left>0.95 && right<-0.95){
+//				
+//			}
 			motors[0].set(ControlMode.PercentOutput,left);
 			motors[2].set(ControlMode.PercentOutput,right);
 		}else{
@@ -275,20 +289,28 @@ public class DrivetrainSubsystem extends PIDSubsystem {
 	private void rawDriveVelPidLeft(double left){
 		SmartDashboard.putNumber("IS in Pid Left Speed", left);
 		SmartDashboard.putNumber("Lefty", left);
+//		if(Math.abs(left) > 0.05){
+			SmartDashboard.putBoolean("Is during inside idk", true);
 
-		SmartDashboard.putBoolean("Is during inside idk", true);
-
-		changeDrivetrainModesLeft(true);
+			changeDrivetrainModesLeft(true);
 			
-		SmartDashboard.putBoolean("Did finish", true);
+			SmartDashboard.putBoolean("Did finish", true);
 
-		if(isHighGear){
-			motors[0].set(ControlMode.Velocity, left * VPIDConstants.MAX_RPM_HIGH); 
-		}else{
-			motors[0].set(ControlMode.Velocity, left * VPIDConstants.MAX_RPM_LOW);	
-		}
+			if(isHighGear){
+				motors[0].set(ControlMode.Velocity, left * VPIDConstants.MAX_RPM_HIGH); 
+			}else{
+				motors[0].set(ControlMode.Velocity, left * VPIDConstants.MAX_RPM_LOW);
+				
+			}
+
+//		s}
+//		else{
+//			SmartDashboard.putBoolean("Is during inside idk", false);
+//			changeDrivetrainModesLeft(false);
+//			motors[0].set(ControlMode.PercentOutput,0);
+//		}
+
 	}
-	
 	private void rawDriveVelPidRight(double right){
 		SmartDashboard.putNumber("IS in Pid Right Speed", right);
 

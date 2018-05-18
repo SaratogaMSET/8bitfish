@@ -12,8 +12,8 @@ public class RobotMap {
 	
 	public static class Drivetrain {
 		// FL,BL,BR,FR
-		public static final int[] MOTOR_PORTS = {12, 13, 20, 19}; //20 on final bot
-		public static final int[] RIGHT_DRIVE_SOL = {4,4,1}; //{4, 4, 1}; // 4,4,5
+		public static final int[] MOTOR_PORTS = {12, 13, 20, 19}; //18-->20
+		public static final int[] RIGHT_DRIVE_SOL = {4, 4, 1}; // 4,4,5
 		public static final int[] LEFT_DRIVE_SOL = { 3, 2, 3 };
 	}
 	public static class Lift {
@@ -39,7 +39,7 @@ public class RobotMap {
 		public static final int BOTTOM_ARM_MOTOR = 8;
 		public static final int TOP_ARM_MOTOR = 17;
 		public static final int INFRARED_SENSOR = 8;
-		public static final int[] ARM_BRAKE = {4,6,7}; //final 4,6,7  4,0,7
+		public static final int[] ARM_BRAKE = {4,6,7}; // 4,6,7  4,0,7
 		public static final int ARM_HAL_FRONT = 9;
 		public static final int ARM_HAL_REAR = 10;
 	}
@@ -64,5 +64,26 @@ public class RobotMap {
         public static final int axisResWidth = 160;
         public static final int axisResHeight = 120;
         public static final int axisFPS = 20;
+//        public static final String axis2Port = "10.6.49.17";
+//        public static final String axis2Name = "blackAxisCamera";
+//        public static final int axis2ResWidth = 320;
+//        public static final int axis2ResHeight = 480;
+//        public static final int axis2FPS = 30;
+//        public static final String axis3Port = "10.6.49.13";
+//        public static final String axis3Name = "whiteAxisCamera";
+//        public static final int axis3ResWidth = 320;
+//        public static final int axis3ResHeight = 480;
+//        public static final int axis3FPS = 30;
+//        public static final String axis4Port = "10.6.49.9";
+//        public static final String axis4Name = "greenAxisCamera";
+//        public static final int axis4ResWidth = 320;
+//        public static final int axis4ResHeight = 480;
+//        public static final int axis4FPS = 30;
+//        public static final String axis5Port = "10.6.49.11";
+//        public static final String axis5Name = "greenAxisCamera";
+//        public static final int axis5ResWidth = 320;
+//        public static final int axis5ResHeight = 480;
+////        public static final int axis5FPS = 30;
+
     }
 }

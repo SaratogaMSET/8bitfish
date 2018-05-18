@@ -23,9 +23,6 @@ import edu.wpi.first.wpilibj.command.CommandGroup;
  ***** Drive straight and turn then drop off block
  *Position: Left
  */
-
-// AUTO NOT TESTED
-
 public class LeftScale extends CommandGroup {
 
     public LeftScale() {

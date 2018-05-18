@@ -26,8 +26,6 @@ public class MoveLiftCommand extends Command {
 	protected void initialize() {
 		isFinished = false;
 		chooseLiftCommand();
-		Robot.compressor.stop();
-
 	}
 
 	// Called repeatedly when this Command is scheduled to run
@@ -41,8 +39,6 @@ public class MoveLiftCommand extends Command {
 
 	// Called once after isFinished returns true
 	protected void end() {
-		Robot.compressor.start();
-
 	}
 
 	// Called when another command which requires one or more of the same

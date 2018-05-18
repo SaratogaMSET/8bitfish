@@ -19,7 +19,6 @@ public class DrivetrainMotionProfileIn extends Command {
     public DrivetrainMotionProfileIn(double setpoint) {
         // Use requires() here to declare subsystem dependencies
         // eg. requires(chassis);
-    	requires(Robot.drive);
     	this.setpoint = setpoint;
     	isFinished = false;
 
@@ -58,13 +57,13 @@ public class DrivetrainMotionProfileIn extends Command {
     	if (Math.abs(converted - Robot.drive.motors[0].getSelectedSensorPosition(0)) < 100) {//(Math.abs(Robot.drive.getTalonDistanceLeft() - setpoint) < 2) {
 			isFinished = true;
 		}
+    	if(Robot.auto.get() > 14.8){
+    		isFinished = true;
+    	}
     }
     // ((setpoint/(4*Math.PI))/ (14*60)) * 2048;  
     // Make this return true when this Command no longer needs to run execute()
     protected boolean isFinished() {
-    	if(Robot.endAuto){
-    		return true;
-    	}
     	SmartDashboard.putBoolean("Is TalonDistance Finished?", true);
         return isFinished;
     }
@@ -80,5 +79,7 @@ public class DrivetrainMotionProfileIn extends Command {
     // Called when another command which requires one or more of the same
     // subsystems is scheduled to run
     protected void interrupted() {
+    	end();
+
     }
 }

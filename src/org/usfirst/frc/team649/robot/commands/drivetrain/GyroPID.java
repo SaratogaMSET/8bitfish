@@ -28,8 +28,6 @@ public class GyroPID extends Command {
         // Use requires() here to declare subsystem dependencies
         // eg. requires(chassis);
     	this.angle = angle;
-    	requires(Robot.drive);
-
     	drivePID = Robot.gyro.getPIDController();
     	time = new Timer();
     	timeout = new Timer();
@@ -52,6 +50,8 @@ public class GyroPID extends Command {
     	SmartDashboard.putNumber("Setpoint", setpoint);
     	time.start();
     	timeout.start();
+    	SmartDashboard.putBoolean("End", false);
+
     	//drivePIDRight.setSetpoint(setpoint);
     	System.out.println("DT PID: setpoint = " + setpoint);
     	drivePID.enable();
@@ -72,6 +72,9 @@ public class GyroPID extends Command {
     		gyroVal = Robot.gyro.getGyroAngle();
     		actuallyFinished = "true";
     	}
+    	if(Robot.auto.get() > 14.8){
+    		isFinished = true;
+    	}
     	if (timeout.get() > 3) {
     		isFinished = true;
     		isTimeout = true;
@@ -88,6 +91,7 @@ public class GyroPID extends Command {
     // Make this return true when this Command no longer needs to run execute()
     protected boolean isFinished() {
     	if(Robot.endAuto){
+    		System.out.println("Finishing Gyro PID In Teleop");
     		return true;
     	}
         return isFinished;
@@ -111,5 +115,7 @@ public class GyroPID extends Command {
     // Called when another command which requires one or more of the same
     // subsystems is scheduled to run
     protected void interrupted() {
+    	end();
+
     }
 }

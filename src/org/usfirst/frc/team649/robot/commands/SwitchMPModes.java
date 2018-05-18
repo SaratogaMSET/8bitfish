@@ -13,6 +13,8 @@ import jaci.pathfinder.modifiers.TankModifier;
 public class SwitchMPModes extends Command {
 	TankModifier tank;
     public SwitchMPModes(TankModifier path) {
+        // Use requires() here to declare subsystem dependencies
+        // eg. requires(chassis);
     	tank = path;
     }
 

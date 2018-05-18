@@ -19,10 +19,6 @@ import edu.wpi.first.wpilibj.command.CommandGroup;
  *****little and drop off block
  *Positions: Center
  */
-
-
-// AUTO NOT TESTED
-
 public class CenterTwoSwitchLeft extends CommandGroup {
 
     public CenterTwoSwitchLeft() {

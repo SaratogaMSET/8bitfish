@@ -1,31 +1,46 @@
 
 package org.usfirst.frc.team649.robot;
 
+import java.util.concurrent.ScheduledExecutorService;
+
 import org.opencv.core.Mat;
 import org.usfirst.frc.team649.autonomous.AutoTest;
-import org.usfirst.frc.team649.autonomous.worlds.CenterLeftSwitchDoubleMP;
-import org.usfirst.frc.team649.autonomous.worlds.CenterRightSwitchDoubleMP;
-import org.usfirst.frc.team649.autonomous.worlds.LeftFarScale;
-import org.usfirst.frc.team649.autonomous.worlds.LeftScaleSingleMP;
-import org.usfirst.frc.team649.autonomous.worlds.LeftSwitch;
-import org.usfirst.frc.team649.autonomous.worlds.RightFarScale;
-import org.usfirst.frc.team649.autonomous.worlds.RightScaleSingleMP;
-import org.usfirst.frc.team649.autonomous.worlds.RightSwitch;
+import org.usfirst.frc.team649.autonomous.CenterSwitchRight;
+import org.usfirst.frc.team649.autonomous.DriveStraight;
+import org.usfirst.frc.team649.autonomous.LeftFarScale;
+import org.usfirst.frc.team649.autonomous.LeftScaleMP;
+import org.usfirst.frc.team649.autonomous.LeftSwitch;
+import org.usfirst.frc.team649.autonomous.MiddleRightDouble;
+import org.usfirst.frc.team649.autonomous.RightFarScale;
+import org.usfirst.frc.team649.autonomous.RightScale;
+import org.usfirst.frc.team649.autonomous.RightScaleNoTurn;
+import org.usfirst.frc.team649.autonomous.RightSwitch;
+import org.usfirst.frc.team649.robot.CommandGroups.CenterSwitchRightDoubleMP;
 import org.usfirst.frc.team649.robot.CommandGroups.DownAndFlipWhenPossible2ndIntakeFront;
 import org.usfirst.frc.team649.robot.CommandGroups.DownAndFlipWhenPossible2ndIntakeRear;
 import org.usfirst.frc.team649.robot.CommandGroups.DownAndFlipWhenPossibleIntakeFront;
 import org.usfirst.frc.team649.robot.CommandGroups.DownAndFlipWhenPossibleIntakeRear;
 import org.usfirst.frc.team649.robot.CommandGroups.DownAndFlipWhenPossibleStoreFront;
 import org.usfirst.frc.team649.robot.CommandGroups.DownAndFlipWhenPossibleStoreRear;
+import org.usfirst.frc.team649.robot.CommandGroups.LeftMPSwitch;
+import org.usfirst.frc.team649.robot.CommandGroups.LeftScaleDoubleScaleMP;
+import org.usfirst.frc.team649.robot.CommandGroups.RightMPSwitch;
+import org.usfirst.frc.team649.robot.CommandGroups.RightScaleDoubleScaleMP;
+
+import org.usfirst.frc.team649.robot.CommandGroups.RightScaleSingleMP;
 import org.usfirst.frc.team649.robot.commands.Diagnostic;
+import org.usfirst.frc.team649.robot.commands.MotionProfileDrive;
+
 import org.usfirst.frc.team649.robot.commands.arm.ArmMotionProfile;
 import org.usfirst.frc.team649.robot.commands.arm.MoveArmCommand;
 import org.usfirst.frc.team649.robot.commands.arm.ZeroArmRoutine;
+import org.usfirst.frc.team649.robot.commands.drivetrain.GyroPID;
 import org.usfirst.frc.team649.robot.commands.intake.RunIntakeWheels;
 import org.usfirst.frc.team649.robot.commands.intake.SetIntakePistons;
 import org.usfirst.frc.team649.robot.commands.liftCommands.LiftMotionProfile;
 import org.usfirst.frc.team649.robot.commands.liftCommands.MoveLiftCommand;
 import org.usfirst.frc.team649.robot.subsystems.ArmSubsystem;
+import org.usfirst.frc.team649.robot.subsystems.AutoSelector;
 import org.usfirst.frc.team649.robot.subsystems.DrivetrainSubsystem;
 import org.usfirst.frc.team649.robot.subsystems.GyroBackSubsystem;
 import org.usfirst.frc.team649.robot.subsystems.GyroSubsystem;
@@ -48,6 +63,7 @@ import edu.wpi.first.wpilibj.PowerDistributionPanel;
 import edu.wpi.first.wpilibj.SerialPort;
 import edu.wpi.first.wpilibj.TimedRobot;
 import edu.wpi.first.wpilibj.Timer;
+import edu.wpi.first.wpilibj.command.CommandGroup;
 import edu.wpi.first.wpilibj.command.Scheduler;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import jaci.pathfinder.Pathfinder;
@@ -63,7 +79,6 @@ public class Robot extends TimedRobot {
 	// *************************************************** Subsystems
 	public static DrivetrainSubsystem drive;
 	public static GyroSubsystem gyro;
-	public static GyroBackSubsystem gyroBack;
 	public static Lidar lidar;
 	public static ArmSubsystem arm;
 	public static LiftSubsystem lift;
@@ -71,7 +86,7 @@ public class Robot extends TimedRobot {
 
 	public static Compressor compressor;
 	public static AutoTest autoTest;
-	//public static AutoSelector switches;
+	public static AutoSelector switches;
 
 	public static boolean canFlipArm;
 	public static boolean isPIDActive;
@@ -80,6 +95,7 @@ public class Robot extends TimedRobot {
 	public static boolean isHigh;
 	public static boolean isTuningPID = true;
 	public static boolean isZero;
+	public static GyroBackSubsystem gyroBack;
 	public static boolean isArmPidRunning;
 	public static boolean isDrivePIDRunning;
 	public static boolean isLiftPidRunning;
@@ -143,18 +159,14 @@ public class Robot extends TimedRobot {
 	public static Trajectory.Config configLeftScaleSingle;
 	public static Trajectory trajectoryLeftScaleSingle;
 	public static TankModifier modifierLeftScaleSingle;
-	
-	public static Trajectory.Config configLeftScaleDouble;
-	public static Trajectory trajectoryLeftScaleDouble;
-	public static TankModifier modifierLeftScaleDouble;
 
-	public static Trajectory.Config configMiddleRightDouble;
-	public static Trajectory trajectoryMiddleRightDouble;
-	public static TankModifier modifierMiddleRightDouble;
+	public static Trajectory.Config configMiddleRightSingle;
+	public static Trajectory trajectoryMiddleRightSingle;
+	public static TankModifier modifierMiddleRightSingle;
 
-	public static Trajectory.Config configMiddleLeftDouble;
-	public static Trajectory trajectoryMiddleLeftDouble;
-	public static TankModifier modifierMiddleLeftDouble;
+	public static Trajectory.Config configMiddleLeftSingle;
+	public static Trajectory trajectoryMiddleLeftSingle;
+	public static TankModifier modifierMiddleLeftSingle;
 
 	public static Trajectory.Config configSideBack;
 	public static Trajectory trajectorySideBack;
@@ -182,26 +194,30 @@ public class Robot extends TimedRobot {
 	public static boolean shouldCanclArmMP;
 	public static boolean isRunnigWithFlip;
 	public static boolean endAuto;
-	public static int pos = 1; // left mid right forward
+	public static Timer auto;
+
+	public static int pos = 4; // left mid right forward
 
 	@Override
 
 	public void robotInit() {
 		oi = new OI();
 		compressor = new Compressor(4);
-		pdp = new PowerDistributionPanel(RobotMap.POWER_DISTRIBUTION_PANEL);
-		log = new VoltageLog(pdp,compressor,oi.driveJoystickHorizontal,oi.driveJoystickVertical,oi.operatorJoystick,oi.buttonBoard,oi.buttonBoard2);
-		
+		endAuto = false;
+		auto = new Timer();
+		// pdp = new PowerDistributionPanel(RobotMap.POWER_DISTRIBUTION_PANEL);
+		// log = new VoltageLog(pdp,compressor);
 		lift = new LiftSubsystem();
 		drive = new DrivetrainSubsystem();
 		gyro = new GyroSubsystem();
-		gyroBack = new GyroBackSubsystem();
 		arm = new ArmSubsystem();
 		intake = new IntakeSubsystem();
-		
 		lidarCount = 0;
 		shouldCanclArmMP = false;
 		isRunnigWithFlip = false;
+		gyroBack = new GyroBackSubsystem();
+
+		switches = new AutoSelector();
 		intakeTimer = new Timer();
 
 		isHigh = false;
@@ -230,77 +246,66 @@ public class Robot extends TimedRobot {
 		prevStateFlipAndStore = false;
 		prevStateFlipAndIntakeHigh = false;
 		prevStateFlipAndIntakeLow = false;
-//		new Thread(() -> {
-//			// 10.6.49.7 = tanAxisCamera
-//			AxisCamera camera = CameraServer.getInstance().addAxisCamera(RobotMap.Camera.axisName,
-//					RobotMap.Camera.axisPort);
-//			camera.setResolution(RobotMap.Camera.axisResWidth, RobotMap.Camera.axisResWidth);
-//			camera.setFPS(RobotMap.Camera.axisFPS);
-//			CvSink cvSink = CameraServer.getInstance().getVideo(RobotMap.Camera.axisName);
-//			CvSource outputStream = CameraServer.getInstance().putVideo("649Camera", 320, 480);
-//
-//			Mat frame = new Mat();
-//
-//			while (!Thread.interrupted()) {
-//
-//				if (cvSink.grabFrame(frame) == 0) {
-//					continue;
-//				}
-//				outputStream.putFrame(frame);
-//
-//			}
-//		}).start();
+		new Thread(() -> {
+			// 10.6.49.7 = tanAxisCamera
+			AxisCamera camera = CameraServer.getInstance().addAxisCamera(RobotMap.Camera.axisName,
+					RobotMap.Camera.axisPort);
+			camera.setResolution(RobotMap.Camera.axisResWidth, RobotMap.Camera.axisResWidth);
+			camera.setFPS(RobotMap.Camera.axisFPS);
+			CvSink cvSink = CameraServer.getInstance().getVideo(RobotMap.Camera.axisName);
+			CvSource outputStream = CameraServer.getInstance().putVideo("649Camera", 240, 360);//320 480
+
+			Mat frame = new Mat();
+
+			while (!Thread.interrupted()) {
+
+				if (cvSink.grabFrame(frame) == 0) {
+					continue;
+				}
+				outputStream.putFrame(frame);
+
+			}
+		}).start();
 		isAutoInTeleopPrev = false;
-		
-		
-		// generate motion profile trajectories
-		// Input your method calls here
 		if (pos == 0) {
-			generateLeftScaleSingleMP();
+			Waypoint[] pointsLeftScaleSingle = new Waypoint[] { new Waypoint(-12.9, 3.1, 0),
+					new Waypoint(-6, 3.0, Pathfinder.d2r(-15)),
+					new Waypoint(0.8, 1, Pathfinder.d2r(-60)) };
+
+			configLeftScaleSingle = new Trajectory.Config(Trajectory.FitMethod.HERMITE_CUBIC,
+					Trajectory.Config.SAMPLES_HIGH, 0.02, 5.5, 2.6, 7); //3.1 accel
+			trajectoryLeftScaleSingle = Pathfinder.generate(pointsLeftScaleSingle, configLeftScaleSingle);
+			modifierLeftScaleSingle = new TankModifier(trajectoryLeftScaleSingle).modify(0.66);
+
 		} else if (pos == 1) {
-			//TODO: Comment out which one you aren't running
-			generateMiddleRightDoubleSwitchMP();
-			generateMiddleLeftDoubleSwitchMP();
+			Waypoint[] pointsMiddleRightSingle = new Waypoint[] { new Waypoint(-5.8, 0, 0), new Waypoint(0, 0, 0) };
+
+			configMiddleRightSingle = new Trajectory.Config(Trajectory.FitMethod.HERMITE_CUBIC,
+					Trajectory.Config.SAMPLES_HIGH, 0.02, 4.5, 3.3, 12);
+			trajectoryMiddleRightSingle = Pathfinder.generate(pointsMiddleRightSingle, configMiddleRightSingle);
+			modifierMiddleRightSingle = new TankModifier(trajectoryMiddleRightSingle).modify(0.66);
+			Waypoint[] pointsMiddleLeftSingle = new Waypoint[] { new Waypoint(-1.2, -5, 0),
+					new Waypoint(-.7, -5, Pathfinder.d2r(30)), new Waypoint(0, 0, 0), };
+			configMiddleLeftSingle = new Trajectory.Config(Trajectory.FitMethod.HERMITE_CUBIC,
+					Trajectory.Config.SAMPLES_HIGH, 0.02, 3, 2.3, 12);
+			trajectoryMiddleLeftSingle = Pathfinder.generate(pointsMiddleLeftSingle, configMiddleLeftSingle);
+			modifierMiddleLeftSingle = new TankModifier(trajectoryMiddleLeftSingle).modify(0.66);
+
 		} else if (pos == 2) {
-			generateRightScaleSingleMP();
+			Waypoint[] pointsRightScaleSingle = new Waypoint[] { new Waypoint(-12.9, -3.1, 0),
+					new Waypoint(-6, -3.0, Pathfinder.d2r(15)),
+					new Waypoint(0.8, -0.1, Pathfinder.d2r(45)) };
+				
+			configRightScaleSingle = new Trajectory.Config(Trajectory.FitMethod.HERMITE_CUBIC,
+			Trajectory.Config.SAMPLES_HIGH, 0.02, 7.5, 3.1, 12);
+			trajectoryRightScaleSingle = Pathfinder.generate(pointsRightScaleSingle, configRightScaleSingle);
+			modifierRightScaleSingle = new TankModifier(trajectoryRightScaleSingle).modify(0.66);
+			
 		}
 
 	}
-	// IDK why the variables are for single switch, but these are double switches
-	public void generateMiddleRightDoubleSwitchMP() {
-		Waypoint[] pointsMiddleRightDouble = new Waypoint[] { new Waypoint(-5.8, 0, 0), new Waypoint(0, 0, 0) };
-		configMiddleRightDouble = new Trajectory.Config(Trajectory.FitMethod.HERMITE_CUBIC,
-				Trajectory.Config.SAMPLES_HIGH, 0.02, 4.5, 3.3, 12);
-		trajectoryMiddleRightDouble = Pathfinder.generate(pointsMiddleRightDouble, configMiddleRightDouble);
-		modifierMiddleRightDouble = new TankModifier(trajectoryMiddleRightDouble).modify(0.66);
-	}
 	
-	public void generateMiddleLeftDoubleSwitchMP() {
-		Waypoint[] pointsMiddleLeftDouble = new Waypoint[] { new Waypoint(-1.2, -4, 0),
-				new Waypoint(-.7, -4, Pathfinder.d2r(30)), new Waypoint(0, 0, 0), };
-		configMiddleLeftDouble = new Trajectory.Config(Trajectory.FitMethod.HERMITE_CUBIC,
-				Trajectory.Config.SAMPLES_HIGH, 0.02, 3, 2.3, 12);
-		trajectoryMiddleLeftDouble = Pathfinder.generate(pointsMiddleLeftDouble, configMiddleLeftDouble);
-		modifierMiddleLeftDouble = new TankModifier(trajectoryMiddleLeftDouble).modify(0.66);
-	}
-	
-	public void generateRightScaleSingleMP() {
-		Waypoint[] pointsRightScaleSingle = new Waypoint[] { new Waypoint(-12.9, -3.1, 0),
-				new Waypoint(-6, -3.0, Pathfinder.d2r(15)),
-				new Waypoint(0.8, -0.1, Pathfinder.d2r(45)) };
-			
-		configRightScaleSingle = new Trajectory.Config(Trajectory.FitMethod.HERMITE_CUBIC,
-		Trajectory.Config.SAMPLES_HIGH, 0.02, 7.5, 3.1, 12);
-		trajectoryRightScaleSingle = Pathfinder.generate(pointsRightScaleSingle, configRightScaleSingle);
-		modifierRightScaleSingle = new TankModifier(trajectoryRightScaleSingle).modify(0.66);
-		
-		Waypoint[] sideBack = new Waypoint[] { new Waypoint(0, 0, Pathfinder.d2r(60)), new Waypoint(2.3, 2.3, Pathfinder.d2r(0)), new Waypoint(4.6, 0, Pathfinder.d2r(-60)) };
-		configSideBack = new Trajectory.Config(Trajectory.FitMethod.HERMITE_CUBIC, Trajectory.Config.SAMPLES_HIGH, 0.02, 2, 2.5, 6);
-		trajectorySideBack = Pathfinder.generate(sideBack, configSideBack);
-		modifierSideBack = new TankModifier(trajectorySideBack).modify(0.66);
-	}
-	
-	public void generateLeftScaleSingleMP() {
+	public void leftScaleMP() {
 		Waypoint[] pointsLeftScaleSingle = new Waypoint[] { new Waypoint(-12.9, 3.1, 0),
 				new Waypoint(-6, 3.0, Pathfinder.d2r(-15)),
 				new Waypoint(0.8, 1, Pathfinder.d2r(-60)) };
@@ -318,7 +323,7 @@ public class Robot extends TimedRobot {
 
 	@Override
 	public void disabledInit() {
-		 log.endLogging();
+		// log.endLogging();
 	}
 
 	@Override
@@ -331,10 +336,10 @@ public class Robot extends TimedRobot {
 	public void autonomousInit() {
 		// TODO Comment back in: log.startLoggingWithInterval("practicing",
 		// 100L);
-		log.startLoggingWithInterval("practicing",100L);
+		auto.start();
 		hasFMS = false;
+		compressor.stop();
 		shouldSwitchTurnRatio = false;
-		endAuto = false;
 		for (int i = 0; i < 4; i++) {
 			drive.motors[i].setNeutralMode(NeutralMode.Brake);
 			drive.motors[i].configMotionAcceleration(9000, timeoutMs);
@@ -352,72 +357,105 @@ public class Robot extends TimedRobot {
 		drive.changeBrakeCoast(true);
 
 		new ZeroArmRoutine().start();
-//		new SetIntakePistons(true,false)
-//    	new SetIntakePistons(false,true).start();
-
+//		new RightSwitch().start();
+//		new RightFarScale().start();
+//		new LeftFarScale().start();
+//		new GyroPID(90).start();
+//		new LeftSwitch().start();
 	}
 
 	@Override
 	public void autonomousPeriodic() {
 		Scheduler.getInstance().run();
-		
+		if (lift.getLiftState() == LiftSubsystem.LiftHalConstants.LOWEST_STATE) { // ******** Zero Lift
+			lift.resetLiftEncoder();
+		}
+//		SmartDashboard.putNumber("match timer per part of match", (int) DriverStation.getInstance().getMatchTime());
+		 if (arm.getArmHalZeroFront()) {
+			 arm.bottomMotor.setSelectedSensorPosition(ArmSubsystem.ArmEncoderConstants.INTAKE_FRONT, 0, 20);
+		 } else if (arm.getArmHalZeroBack()) {
+			 arm.bottomMotor.setSelectedSensorPosition(ArmSubsystem.ArmEncoderConstants.INTAKE_REAR, 0, 20);
+		 }
 		String gameData = DriverStation.getInstance().getGameSpecificMessage();
 		
 		if (gameData.length() > 0 && !hasFMS) {
 			hasFMS = true;
-			//TODO: Make sure you make the encoder values the same as the auto you want to run(i.e. modifierLeftScaleSingle for left scale single auto); otherwise it won't run
 			if (pos == 0) { // left
-				if (gameData.charAt(0) == 'L' && gameData.charAt(1) == 'R') { // near Switch, far scale
-					// TODO: If we get left far scale to work, we should probs run it here, but for now, left switch works fine.
+				if (gameData.charAt(0) == 'L' && gameData.charAt(1) == 'R') {
+					
+//					new LeftFarScale().start();
 //					new LeftSwitch().start();
-					new LeftFarScale().start();	
+					new DriveStraight().start();
 
-				} else if (gameData.charAt(0) == 'R' && gameData.charAt(1) == 'L') { // far Switch, near scale
+				} else if (gameData.charAt(0) == 'R' && gameData.charAt(1) == 'L') {
 					left = new EncoderFollower(modifierLeftScaleSingle.getLeftTrajectory());
 					right = new EncoderFollower(modifierLeftScaleSingle.getRightTrajectory());
 					left.configureEncoder(0, 4096 * 2, 0.127);
 					right.configureEncoder(0, 4096 * 2, 0.127);
 					left.configurePIDVA(2, 0.0, 0, 1 / 4.5, 0);
 					right.configurePIDVA(2, 0.0, 0, 1 / 4.5, 0);
-//					new LeftScaleSingleMP().start();	
-					new LeftFarScale().start();	
+					//new LeftScaleDoubleScaleMP().start();
+//					 new LeftScaleMP().start();
+//					 new LeftScaleSingleMP().start();
+					// new LeftSwitchAround().start();
+					// new LeftScale().start();
+					new DriveStraight().start();
 
-				} else if (gameData.charAt(0) == 'L' && gameData.charAt(1) == 'L') { // near Switch, near scale
-					//TODO: Change command and encoder values if we want to run switch instead
+				} else if (gameData.charAt(0) == 'L' && gameData.charAt(1) == 'L') {
 					left = new EncoderFollower(modifierLeftScaleSingle.getLeftTrajectory());
 					right = new EncoderFollower(modifierLeftScaleSingle.getRightTrajectory());
 					left.configureEncoder(0, 4096 * 2, 0.127);
 					right.configureEncoder(0, 4096 * 2, 0.127);
 					left.configurePIDVA(2, 0.0, 0, 1 / 4.5, 0);
 					right.configurePIDVA(2, 0.0, 0, 1 / 4.5, 0);
-//					new LeftScaleSingleMP().start();	\
-					new LeftFarScale().start();	
+					// new LeftScaleDoubleScaleMP().start();
+//					new LeftScaleMP().start();	
+//					 new LeftScaleSingleMP().start();
+					// new LeftScaleSWSCMP().start();
+//					 new LeftSwitch().start();
+					// new LeftScale().start();
+					new DriveStraight().start();
 
-				} else if (gameData.charAt(0) == 'R' && gameData.charAt(1) == 'R') { // far Switch, far scale
-					//TODO: Set the encoder values if we decide to make this MP
-					new LeftFarScale().start();	
+
+				} else if (gameData.charAt(0) == 'R' && gameData.charAt(1) == 'R') {
+					
+
+//					 new LeftFarScale().start();
+					// new LeftSwitchAround().start();
+					new DriveStraight().start();
 				}
 			} else if (pos == 1) { // mid
-				if (gameData.charAt(0) == 'L') { // left switch
+				if (gameData.charAt(0) == 'L') {
 					shouldSwitchTurnRatio = true;
-					left = new EncoderFollower(modifierMiddleLeftDouble.getLeftTrajectory());
-					right = new EncoderFollower(modifierMiddleLeftDouble.getRightTrajectory());
+					left = new EncoderFollower(modifierMiddleLeftSingle.getLeftTrajectory());
+					right = new EncoderFollower(modifierMiddleLeftSingle.getRightTrajectory());
 					left.configureEncoder(0, 4096 * 2, 0.127);
 					right.configureEncoder(0, 4096 * 2, 0.127);
 					left.configurePIDVA(2, 0.0, 0, 1 / 3, 0);
 					right.configurePIDVA(2, 0.0, 0, 1 / 3, 0);
-					new CenterLeftSwitchDoubleMP().start();
-				} else if (gameData.charAt(0) == 'R') { // right switch
-					left = new EncoderFollower(modifierMiddleRightDouble.getLeftTrajectory());
-					right = new EncoderFollower(modifierMiddleRightDouble.getRightTrajectory());
+					new LeftMPSwitch().start();
+//					new RightMPSwitch().start();
+
+					// new CenterSwitchLeft().start();
+				} else if (gameData.charAt(0) == 'R') {
+					left = new EncoderFollower(modifierMiddleRightSingle.getLeftTrajectory());
+					right = new EncoderFollower(modifierMiddleRightSingle.getRightTrajectory());
 					left.configureEncoder(0, 4096 * 2, 0.127);
 					right.configureEncoder(0, 4096 * 2, 0.127);
 					left.configurePIDVA(2, 0.0, 0, 1 / 4.5, 0);
-					right.configurePIDVA(2, 0.0, 0, 1 / 4.5, 0);					
-					new CenterRightSwitchDoubleMP().start();
-//					new CenterLeftSwitchDoubleMP().start();
-
+					right.configurePIDVA(2, 0.0, 0, 1 / 4.5, 0);
+					new RightMPSwitch().start();
+//					new CenterSwitchRight().start();
+					
+//					left = new EncoderFollower(modifierRightScaleSingle.getLeftTrajectory());
+//					right = new EncoderFollower(modifierRightScaleSingle.getRightTrajectory());
+//					left.configureEncoder(0, 4096 * 2, 0.127);
+//					right.configureEncoder(0, 4096 * 2, 0.127);
+//					left.configurePIDVA(2, 0.0, 0, 1 / 4.5, 0);
+//					right.configurePIDVA(2, 0.0, 0, 1 / 4.5, 0);
+					//new CenterSwitchRightDoubleMP().start();
 				}
+
 			} else if (pos == 2) { // right
 				if (gameData.charAt(0) == 'R' && gameData.charAt(1) == 'L') { // near switch, far scale
 					new RightSwitch().start();
@@ -428,7 +466,8 @@ public class Robot extends TimedRobot {
 					right.configureEncoder(0, 4096 * 2, 0.127);
 					left.configurePIDVA(2, 0.0, 0, 1 / 4.5, 0);
 					right.configurePIDVA(2, 0.0, 0, 1 / 4.5, 0);
-					new RightScaleSingleMP().start();
+//					new RightScaleSingleMP().start();
+					new DriveStraight().start();
 				} else if (gameData.charAt(0) == 'R' && gameData.charAt(1) == 'R') { // near switch, near scale
 					//TODO: Change command and encoder values if we want to run switch instead
 					left = new EncoderFollower(modifierRightScaleSingle.getLeftTrajectory());
@@ -437,27 +476,39 @@ public class Robot extends TimedRobot {
 					right.configureEncoder(0, 4096 * 2, 0.127);
 					left.configurePIDVA(2, 0.0, 0, 1 / 4.5, 0);
 					right.configurePIDVA(2, 0.0, 0, 1 / 4.5, 0);
-					new RightScaleSingleMP().start();
+//					new RightScaleSingleMP().start();
+//					new DriveStraight().start();
+					new RightSwitch().start();
+
 				} else if (gameData.charAt(0) == 'L' && gameData.charAt(1) == 'L') { // far switch, far scale
 					//TODO: Set the encoder values if we decide to make this MP
-					new RightFarScale().start();
+//					new RightFarScale().start();
+					new DriveStraight().start();
+
 				}
 			}
 		}
 		updateSmartDashboardTesting();
 	}
 
+	@SuppressWarnings("unused")
 	@Override
 	public void teleopInit() {
-		log.startLoggingWithInterval("practicing",100L);
+		auto.reset();
+
+		compressor.start();
+
+		// log.startLoggingWithInterval("practicing", 100L);
+
 		intakeTimer.start();
 		isZero = true;
 		drive.changeBrakeCoast(false);
-		endAuto = true;
+
 		isAutoShift = true;
 		isVPid = true;
+		endAuto = true;
 		isArmPidRunning = false;
-
+		
 		autoShiftButtonPrevState = oi.driver.switchToNormalShift();
 		VPidButtonPrevState = oi.driver.switchToVbus();
 
@@ -475,7 +526,7 @@ public class Robot extends TimedRobot {
 		new SetIntakePistons(false, true).start();
 		isOpen = false;
 		drive.shift(false);
-		drive.driveForwardRotateTeleop(0, 0);
+
 		SmartDashboard.putBoolean("Going Back to front Op 8 Left", false);
 		SmartDashboard.putBoolean("Flipping Arm Op 6", false);
 		SmartDashboard.putBoolean("In Intake Low Flip", false);
@@ -494,10 +545,26 @@ public class Robot extends TimedRobot {
 	@Override
 	public void teleopPeriodic() {
 		Scheduler.getInstance().run();
+		// teleopRun();
 		cleanTeleopRun();
 		updateSmartDashboardTesting();
 	}
 
+	// public void teleopRun() {
+	// // if (oi.driver.shiftUp()) {
+	// // drive.shift(true);
+	// // } else {
+	// // drive.shift(false);
+	// // }
+	// if (oi.operator.turnOffCompressorManually())
+	// {
+	// compressor.stop();
+	// }
+	// if (oi.operator.turnOnCompressorManually())
+	// {
+	// compressor.start();
+	// }
+	// }
 
 	public void cleanTeleopRun() {
 		// *********************************************************************************** driving and shifting
@@ -506,6 +573,7 @@ public class Robot extends TimedRobot {
 			drive.shift(isHigh);
 		}
 		drive.driveForwardRotateTeleop(oi.driver.getForward(), oi.driver.getRotation());
+
 
 		if (oi.operator.getIntakeState()) { // *********************************** Move Lift to bottom, arm to intake
 			new MoveLiftCommand(LiftStateConstants.INTAKE_EXCHANGE_STORE_STATE, false).start();
@@ -535,6 +603,7 @@ public class Robot extends TimedRobot {
 			} else {
 				new MoveArmCommand(ArmSubsystem.ArmStateConstants.MID_DROP_REAR, false).start();
 			}
+			
 		} else if (oi.operator.getScaleMidState()) { // ************************* Move Lift to mid scale, arm to mid drop
 			new MoveLiftCommand(LiftSubsystem.LiftStateConstants.MID_SCALE_STATE, false).start();
 			if (armIsFront) {
@@ -654,6 +723,7 @@ public class Robot extends TimedRobot {
 						armState = ArmSubsystem.ArmStateConstants.HEADING_STORE_FRONT;
 						new ArmMotionProfile(ArmSubsystem.ArmEncoderConstants.STORE_FRONT, armState, false).start();
 					}
+
 				}
 			} else {
 				if (!isRunnigWithFlip) {
@@ -704,7 +774,6 @@ public class Robot extends TimedRobot {
 			SmartDashboard.putBoolean("Manual", false);
 			if (liftState == LiftSubsystem.LiftStateConstants.INTAKE_EXCHANGE_STORE_STATE) {
 				lift.setLift(0);
-				
 			} else if (liftState == LiftSubsystem.LiftStateConstants.SWITCH_STATE) {
 				lift.setLiftMotion(LiftSubsystem.LiftEncoderConstants.SWITCH_STATE);
 			} else if (liftState == LiftSubsystem.LiftStateConstants.LOW_SCALE_STATE) {
@@ -742,7 +811,7 @@ public class Robot extends TimedRobot {
 
 		if((armState == ArmSubsystem.ArmStateConstants.INTAKE_FRONT ||armState == ArmSubsystem.ArmStateConstants.INTAKE_REAR) && Robot.arm.getInfraredSensor() && oi.operator.deployOnlyWheels()){
 			new SetIntakePistons(false, true).start();
-			new RunIntakeWheels(-1).start();
+			new RunIntakeWheels(-0.85).start();
 
 		}else if((armState == ArmSubsystem.ArmStateConstants.INTAKE_FRONT ||armState == ArmSubsystem.ArmStateConstants.INTAKE_REAR) && Robot.arm.getInfraredSensor() && oi.operator.lowSpeedDeploy()){
 			new SetIntakePistons(false, true).start();
@@ -779,7 +848,6 @@ public class Robot extends TimedRobot {
 			new SetIntakePistons(false, true).start();
 			Robot.intake.setIntakeMotors(0, 0);
 		}
-
 		if (arm.getArmRaw() > (ArmSubsystem.ArmEncoderConstants.INTAKE_FRONT
 				+ ArmSubsystem.ArmEncoderConstants.INTAKE_REAR) / 2) {
 			armIsFront = true;
@@ -794,7 +862,7 @@ public class Robot extends TimedRobot {
 		 if (arm.getArmHalZeroFront()) {
 			 arm.bottomMotor.setSelectedSensorPosition(ArmSubsystem.ArmEncoderConstants.INTAKE_FRONT, 0, 20);
 		 } else if (arm.getArmHalZeroBack()) {
-			 arm.bottomMotor.setSelectedSensorPosition(ArmSubsystem.ArmEncoderConstants.INTAKE_REAR, 0, 20);
+//			 arm.bottomMotor.setSelectedSensorPosition(ArmSubsystem.ArmEncoderConstants.INTAKE_REAR, 0, 20);
 		 }
 		if (arm.getArmHalZeroFront() || oi.operatorJoystick.getRawButton(7)) { // ********************* Zero Arm Front
 			arm.setEncoder(ArmSubsystem.ArmEncoderConstants.INTAKE_FRONT);
@@ -826,7 +894,20 @@ public class Robot extends TimedRobot {
 			lift.mainLiftMotor.setSelectedSensorPosition(-1000, 0, timeoutMs);
 		}
 	}
-	
+
+	private void checkAutoShiftToggle() {
+		// on release
+		if (!oi.driver.switchToNormalShift() && autoShiftButtonPrevState) {
+			isAutoShift = !isAutoShift;
+		}
+	}
+
+	private void checkVbusToggle() {
+		if (!oi.driver.switchToVbus() && VPidButtonPrevState) {
+			isVPid = !isVPid;
+		}
+	}
+
 	private void updateSmartDashboardTesting() {
 		SmartDashboard.putNumber("Gyro Val", gyro.getGyroAngle());
 		SmartDashboard.putBoolean("PID Tuning?", isTuningPID);
@@ -865,4 +946,9 @@ public class Robot extends TimedRobot {
 			SmartDashboard.putString("Lift State (carriage/second)", "Mid Low");
 		}
 	}
+
+	private void updateSmartDashboardComp() {
+
+	}
+
 }

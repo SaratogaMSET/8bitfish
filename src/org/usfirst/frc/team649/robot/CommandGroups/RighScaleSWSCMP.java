@@ -1,7 +1,6 @@
-package org.usfirst.frc.team649.autonomous;
+package org.usfirst.frc.team649.robot.CommandGroups;
 
 import org.usfirst.frc.team649.robot.Robot;
-import org.usfirst.frc.team649.robot.CommandGroups.DownAndFlipWhenPossibleIntakeRear;
 import org.usfirst.frc.team649.robot.commands.Delay;
 import org.usfirst.frc.team649.robot.commands.MotionProfileDrive;
 import org.usfirst.frc.team649.robot.commands.arm.ArmMotionProfile;

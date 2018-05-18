@@ -173,13 +173,8 @@ public class OI {
 			return buttonBoard2.getRawButton(7);
 		}
 		public boolean flipAndIntakeLow(){
-			boolean value = buttonBoard2.getRawButton(8);
-			if (value == true && flipPrev == false) {
-				flipPrev = value;
-				return true;
-			}
-			flipPrev = value;
-			return false;
+			return buttonBoard2.getRawButton(8);
+			
 		}
 		public boolean isManual() {
 			return operatorJoystick.getRawButton(12);

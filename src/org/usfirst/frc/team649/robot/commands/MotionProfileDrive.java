@@ -16,8 +16,6 @@ public class MotionProfileDrive extends Command {
     public MotionProfileDrive(boolean isBack) {
         // Use requires() here to declare subsystem dependencies
         // eg. requires(chassis);
-    	requires(Robot.drive);
-
     	back = isBack;
     }
 
@@ -46,18 +44,9 @@ public class MotionProfileDrive extends Command {
 		if(back){
 			Robot.drive.motors[0].set(ControlMode.PercentOutput, l);
 			Robot.drive.motors[2].set(ControlMode.PercentOutput, r);
-			
-			Robot.drive.motors[0].setInverted(true);
-			Robot.drive.motors[2].setInverted(true);
-			
-			Robot.drive.motors[0].setSensorPhase(true);
-			Robot.drive.motors[2].setSensorPhase(true);
-
 		}else{
 			Robot.drive.motors[0].set(ControlMode.PercentOutput, l+turn);
 			Robot.drive.motors[2].set(ControlMode.PercentOutput, r-turn);
-//			Robot.drive.motors[0].set(ControlMode.PercentOutput, l);
-//			Robot.drive.motors[2].set(ControlMode.PercentOutput, r);
 		}
 		SmartDashboard.putNumber("turn", turn);
 		
@@ -65,9 +54,6 @@ public class MotionProfileDrive extends Command {
 
     // Make this return true when this Command no longer needs to run execute()
     protected boolean isFinished() {
-    	if(Robot.endAuto){
-    		return true;
-    	}
         return Robot.left.isFinished()&&Robot.right.isFinished();
     }
 
@@ -75,14 +61,6 @@ public class MotionProfileDrive extends Command {
     protected void end() {
     	SmartDashboard.putBoolean("isMPFin", true);
     	Robot.isMPRunning = false;
-    	if(back) {
-    		Robot.drive.motors[0].setInverted(!Robot.drive.motors[0].getInverted());
-    		Robot.drive.motors[2].setInverted(!Robot.drive.motors[2].getInverted());
-    		
-    		Robot.drive.motors[0].setSensorPhase(false);
-    		Robot.drive.motors[2].setSensorPhase(false);
-    	}
-    	
 
     	Robot.drive.rawDrive(0, 0);
     }
@@ -90,5 +68,6 @@ public class MotionProfileDrive extends Command {
     // Called when another command which requires one or more of the same
     // subsystems is scheduled to run
     protected void interrupted() {
+    	end();
     }
 }

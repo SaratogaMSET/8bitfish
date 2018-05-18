@@ -1,7 +1,5 @@
-package org.usfirst.frc.team649.autonomous.worlds;
+package org.usfirst.frc.team649.autonomous;
 
-import org.usfirst.frc.team649.autonomous.AutoTest;
-import org.usfirst.frc.team649.autonomous.AutoTest.CenterRightSwitch;
 import org.usfirst.frc.team649.robot.Robot;
 import org.usfirst.frc.team649.robot.CommandGroups.DeployWithWheelsAndIntake;
 import org.usfirst.frc.team649.robot.commands.Delay;

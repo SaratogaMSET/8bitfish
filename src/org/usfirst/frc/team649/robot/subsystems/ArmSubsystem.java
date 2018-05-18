@@ -57,17 +57,17 @@ public class ArmSubsystem extends Subsystem {
 	}
 	public static class ArmEncoderConstants{
 		public static final int INTAKE_FRONT = 0;
-		public static final int INTAKE_REAR = -4220;
-		public static final int SWITCH_FRONT = -1700;
-		public static final int SWITCH_REAR = -2520;
+		public static final int INTAKE_REAR = -4350; //4220
+		public static final int SWITCH_FRONT = -1450;
+		public static final int SWITCH_REAR = -2900;
 		public static final int EXCHANGE_FRONT = -400;
-		public static final int EXCHANGE_REAR = -3820;
+		public static final int EXCHANGE_REAR = -3950;
 		public static final int MID_DROP_FRONT = -550;
-		public static final int MID_DROP_REAR = -3670;
+		public static final int MID_DROP_REAR = -3800;
 		public static final int HIGH_DROP_FRONT = -1000;
-		public static final int HIGH_DROP_REAR = -3220;
+		public static final int HIGH_DROP_REAR = -3350;
 		public static final int STORE_FRONT = -1625;
-		public static final int STORE_REAR = -2595;
+		public static final int STORE_REAR = -2725;
 		public static final int ADJ = 150;
 		public static final int MID = (INTAKE_FRONT + INTAKE_REAR)/2;
 	}
@@ -118,6 +118,7 @@ public class ArmSubsystem extends Subsystem {
 	}
 	public void setArm(double power){
 		bottomMotor.set(ControlMode.PercentOutput, -power);
+//		topMotor.set(ControlMode.Follower, RobotMap.Arm.BOTTOM_ARM_MOTOR);
 	}
 	public boolean getInfraredSensor() {
 		return !infraredSensor.get();

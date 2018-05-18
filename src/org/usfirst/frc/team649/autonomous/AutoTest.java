@@ -1,9 +1,5 @@
 package org.usfirst.frc.team649.autonomous;
 
-import org.usfirst.frc.team649.autonomous.worlds.CenterSwitchLeft;
-import org.usfirst.frc.team649.autonomous.worlds.CenterSwitchRight;
-import org.usfirst.frc.team649.autonomous.worlds.LeftSwitch;
-import org.usfirst.frc.team649.autonomous.worlds.RightSwitch;
 import org.usfirst.frc.team649.robot.Robot;
 
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
@@ -118,10 +114,10 @@ public class AutoTest {
 	}
 	
 	public static class LeftScaleFarVal {
-		public static double FIRST_DRIVE = 230.8-Robot.robotLength/2 - 20;
+		public static double FIRST_DRIVE = 230.8-Robot.robotLength/2 - 30;
 		public static double FIRST_ANGLE_TURN = 83; // need to tune, should be 90
-		public static double SECOND_DRIVE = 155-Robot.robotLength/2-10;// + 155
-		public static double SECOND_ANGLE_TURN = -95;
+		public static double SECOND_DRIVE = 185-Robot.robotLength/2;// + 155
+		public static double SECOND_ANGLE_TURN = -105;
 		public static double THIRD_DRIVE = 20;
 	}
 	
