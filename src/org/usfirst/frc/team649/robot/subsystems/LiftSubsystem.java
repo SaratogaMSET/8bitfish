@@ -2,6 +2,7 @@ package org.usfirst.frc.team649.robot.subsystems;
 
 import org.usfirst.frc.team649.robot.Robot;
 import org.usfirst.frc.team649.robot.RobotMap;
+import org.usfirst.frc.team649.robot.subsystems.LiftSubsystem.LiftPIDConstants;
 import org.usfirst.frc.team649.robot.util.Lidar;
 
 import com.ctre.phoenix.motorcontrol.ControlMode;
@@ -67,12 +68,12 @@ public class LiftSubsystem extends PIDSubsystem {
     }
     public static class LiftEncoderConstants{
     	public static int LOW_STATE = 0;
-    	public static int SWITCH_STATE = 20000;
-    	public static int LOW_SCALE_STATE = 32500;
-    	public static int MID_SCALE_STATE = 46000;
-    	public static int HIGH_SCALE_STATE = 48100;
+    	public static int SWITCH_STATE = 20000; // 20000 P
+    	public static int LOW_SCALE_STATE = 32000; // 35500 P
+    	public static int MID_SCALE_STATE = 44900; // 46000 P
+    	public static int HIGH_SCALE_STATE = 44900; // 48100 P
     	public static int ADJ_DIST = 4000;
-    	public static int INTAKE_2_STATE = 7500;
+    	public static int INTAKE_2_STATE = 12500;
     	public static int LOW_MID_SCALE = 38000;
     }
     public static class LiftConstants{
@@ -89,11 +90,11 @@ public class LiftSubsystem extends PIDSubsystem {
     public LiftSubsystem(){
     	super(LiftPIDConstants.k_P, LiftPIDConstants.k_I, LiftPIDConstants.k_D);
     	mainLiftMotor = new TalonSRX(RobotMap.Lift.RIGHT_WINCH_MOTOR);
-    	mainLiftMotor.configSelectedFeedbackSensor(FeedbackDevice.CTRE_MagEncoder_Relative, 0, Robot.timeoutMs);
-    	mainLiftMotor.setInverted(false);
-    	mainLiftMotor.setSensorPhase(false);
+//    	mainLiftMotor.configSelectedFeedbackSensor(FeedbackDevice.CTRE_MagEncoder_Relative, 0, Robot.timeoutMs);
+    	mainLiftMotor.setInverted(false); // true on final bot
+    	mainLiftMotor.setSensorPhase(true);
     	followerLiftMotor = new TalonSRX(RobotMap.Lift.LEFT_WINCH_MOTOR);
-    	followerLiftMotor.setInverted(true);
+    	followerLiftMotor.setInverted(true); // false on f bot
     	followerLiftMotor.set(ControlMode.Follower, RobotMap.Lift.RIGHT_WINCH_MOTOR);
     	
     	mainLiftMotor.configNominalOutputForward(0, Robot.timeoutMs);

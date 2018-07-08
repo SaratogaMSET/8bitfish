@@ -4,6 +4,7 @@ import org.usfirst.frc.team649.robot.Robot;
 import org.usfirst.frc.team649.robot.commands.MotionProfileDrive;
 import org.usfirst.frc.team649.robot.commands.arm.ArmMotionProfile;
 import org.usfirst.frc.team649.robot.commands.arm.ChangeRobotArmState;
+import org.usfirst.frc.team649.robot.commands.drivetrain.DriveBackForTime;
 import org.usfirst.frc.team649.robot.commands.intake.RunIntakeForTime;
 import org.usfirst.frc.team649.robot.commands.liftCommands.ChangeRobotLiftState;
 import org.usfirst.frc.team649.robot.commands.liftCommands.LiftMotionProfile;
@@ -23,11 +24,8 @@ public class RightScaleSingleMP extends CommandGroup {
     	addParallel(new ArmMotionProfile(ArmSubsystem.ArmEncoderConstants.HIGH_DROP_FRONT,Robot.armState,false));
     	addParallel(new LiftMotionProfile(LiftSubsystem.LiftEncoderConstants.HIGH_SCALE_STATE,Robot.liftState,1.25));
     	addSequential(new MotionProfileDrive(false));    	
-    	//addParallel(new DrivetrainPIDCommand(-15));
-    	//addParallel(new ChangeRobotLiftState(1));
-    	addSequential(new RunIntakeForTime(0.5,false, 1));
-    	//addSequential(new LiftMotionProfile(LiftSubsystem.LiftEncoderConstants.LOW_STATE,Robot.liftState,0.1));
-    	//addSequential(new ChangeRobotArmState(ArmSubsystem.ArmStateConstants.HEADING_INTAKE_REAR));
-    	//addSequential(new ArmMotionProfile(ArmSubsystem.ArmEncoderConstants.INTAKE_REAR,Robot.armState,false));
+       	addParallel(new ChangeRobotLiftState(1));
+    	addSequential(new RunIntakeForTime(0.5, false, 1));
+    	addSequential(new DriveBackForTime(-0.3, 0.5)); // move back from scale for safety
     }
 }

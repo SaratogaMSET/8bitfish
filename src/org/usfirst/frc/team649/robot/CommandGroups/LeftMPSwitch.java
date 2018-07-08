@@ -31,9 +31,10 @@ public class LeftMPSwitch extends CommandGroup {
         addParallel(new ArmMotionProfile(ArmSubsystem.ArmEncoderConstants.INTAKE_FRONT,Robot.armState,false));
         addParallel(new SetIntakePistons(true,false));
         addSequential(new GyroPID(70));
-    	addParallel(new RunIntakeWheels(0.5));
+    	addParallel(new RunIntakeWheels(0.3));
     	addSequential(new DrivetrainMotionProfileIn(22.5));
     	addSequential(new SetIntakePistons(false,true));
+    	addParallel(new RunIntakeWheels(1.0));
     	addSequential(new WaitTime(0.5));
     	addSequential(new RunIntakeWheels(0));
     	addParallel(new ChangeRobotArmState(ArmSubsystem.ArmStateConstants.HEADING_SWITCH_FRONT));

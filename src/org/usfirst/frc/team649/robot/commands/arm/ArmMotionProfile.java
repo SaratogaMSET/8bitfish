@@ -28,25 +28,25 @@ public class ArmMotionProfile extends Command {
     protected void initialize() {
     	SmartDashboard.putBoolean("ran is fin", false);
     	if(isSlow){
+    		Robot.arm.bottomMotor.configMotionCruiseVelocity(700, Robot.timeoutMs);
     		Robot.arm.bottomMotor.configMotionAcceleration(450, Robot.timeoutMs);
     		Robot.arm.bottomMotor.config_kP(0, 1, Robot.timeoutMs);
     		Robot.arm.bottomMotor.config_kI(0, 0, Robot.timeoutMs);
     		Robot.arm.bottomMotor.config_kD(0, 0, Robot.timeoutMs);
     		Robot.arm.bottomMotor.config_kF(0, 1.25, Robot.timeoutMs);
-    	}else if((state == ArmSubsystem.ArmStateConstants.HEADING_INTAKE_FRONT || state == ArmSubsystem.ArmStateConstants.HEADING_INTAKE_REAR) && Robot.arm.getInfraredSensor()){
-    		Robot.arm.bottomMotor.configMotionAcceleration(525, Robot.timeoutMs);
+    	}else if(!Robot.arm.getInfraredSensor()){
+    		Robot.arm.bottomMotor.configMotionCruiseVelocity(700, Robot.timeoutMs);
     		Robot.arm.bottomMotor.configMotionAcceleration(450, Robot.timeoutMs);
     		Robot.arm.bottomMotor.config_kP(0, 1, Robot.timeoutMs);
     		Robot.arm.bottomMotor.config_kI(0, 0, Robot.timeoutMs);
     		Robot.arm.bottomMotor.config_kD(0, 0, Robot.timeoutMs);
     		Robot.arm.bottomMotor.config_kF(0, 1.25, Robot.timeoutMs);
     	}else{
-    	
-    		Robot.arm.bottomMotor.configMotionAcceleration(650, Robot.timeoutMs);
-    		Robot.arm.bottomMotor.configMotionAcceleration(450, Robot.timeoutMs);
+    		Robot.arm.bottomMotor.configMotionCruiseVelocity(700, Robot.timeoutMs);
+    		Robot.arm.bottomMotor.configMotionAcceleration(1000, Robot.timeoutMs);
     		Robot.arm.bottomMotor.config_kP(0, 1, Robot.timeoutMs);
     		Robot.arm.bottomMotor.config_kI(0, 0, Robot.timeoutMs);
-    		Robot.arm.bottomMotor.config_kD(0, 0.02, Robot.timeoutMs);
+    		Robot.arm.bottomMotor.config_kD(0, 0.1, Robot.timeoutMs);
     		Robot.arm.bottomMotor.config_kF(0, 1.25, Robot.timeoutMs);
     	}
     	state = Robot.armState;
@@ -54,6 +54,7 @@ public class ArmMotionProfile extends Command {
     	doneTime = new Timer();
     	donePos = 0;
     	Robot.intake.setIntakeMotors(-0.12, -0.12);
+//    	Robot.compressor.stop();
 //    	doneTime.start();
 //    	if(state == ArmSubsystem.ArmStateConstants.HEADING_INTAKE_FRONT|| state == ArmSubsystem.ArmStateConstants.HEADING_INTAKE_REAR){
 //    		Robot.intake.setIntakeMotors(-0.7, -0.7);
@@ -111,6 +112,7 @@ public class ArmMotionProfile extends Command {
     // Called once after isFinished returns true
     protected void end() {
     	SmartDashboard.putBoolean("Delayed end", true);
+//    	Robot.compressor.start();
     	if(!Robot.shouldCanclArmMP){
     		if(Robot.armState > 0){
         		if(Robot.armState == ArmSubsystem.ArmStateConstants.HEADING_CUSTOM_UP){

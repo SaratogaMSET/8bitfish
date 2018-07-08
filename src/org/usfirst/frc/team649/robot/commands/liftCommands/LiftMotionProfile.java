@@ -36,6 +36,7 @@ public class LiftMotionProfile extends Command {
 
     // Called just before this Command runs the first time
     protected void initialize() {
+    	Robot.compressor.stop();
     	
     	SmartDashboard.putBoolean("ran is fin", false);
 //		Robot.isArmPidRunning = true;
@@ -46,21 +47,21 @@ public class LiftMotionProfile extends Command {
     	startTime.start();
     	wasCancl = false;
     	if(value > Robot.lift.getRawLift()){
-    		Robot.lift.mainLiftMotor.configMotionCruiseVelocity(3200, Robot.timeoutMs);
-			Robot.lift.mainLiftMotor.configMotionAcceleration(4500, Robot.timeoutMs); // 400 actual
+    		Robot.lift.mainLiftMotor.configMotionCruiseVelocity(4500, Robot.timeoutMs);
+			Robot.lift.mainLiftMotor.configMotionAcceleration(5300, Robot.timeoutMs); // 400 actual
 			Robot.lift.mainLiftMotor.selectProfileSlot(0, 0);
-			Robot.lift.mainLiftMotor.config_kF(0, 0.307, Robot.timeoutMs);
-			Robot.lift.mainLiftMotor.config_kP(0, 5.8, Robot.timeoutMs);
+			Robot.lift.mainLiftMotor.config_kF(0, 0.432, Robot.timeoutMs);
+			Robot.lift.mainLiftMotor.config_kP(0, 6.3, Robot.timeoutMs);
 			Robot.lift.mainLiftMotor.config_kI(0, 0, Robot.timeoutMs);
 			Robot.lift.mainLiftMotor.config_kD(0, 0.05, Robot.timeoutMs);
     	}else{
-    		Robot.lift.mainLiftMotor.configMotionCruiseVelocity(4400, Robot.timeoutMs);
-			Robot.lift.mainLiftMotor.configMotionAcceleration(4800, Robot.timeoutMs); // 400 actual
+    		Robot.lift.mainLiftMotor.configMotionCruiseVelocity(5000, Robot.timeoutMs);
+			Robot.lift.mainLiftMotor.configMotionAcceleration(6400, Robot.timeoutMs); // 400 actual
 			Robot.lift.mainLiftMotor.selectProfileSlot(0, 0);
-			Robot.lift.mainLiftMotor.config_kF(0, 0.335, Robot.timeoutMs);
-			Robot.lift.mainLiftMotor.config_kP(0, 3, Robot.timeoutMs);
+			Robot.lift.mainLiftMotor.config_kF(0, 0.411, Robot.timeoutMs);
+			Robot.lift.mainLiftMotor.config_kP(0, 1.5, Robot.timeoutMs);
 			Robot.lift.mainLiftMotor.config_kI(0, 0, Robot.timeoutMs);
-			Robot.lift.mainLiftMotor.config_kD(0, 0.04 , Robot.timeoutMs);
+			Robot.lift.mainLiftMotor.config_kD(0, 0.01 , Robot.timeoutMs);
     	}
 //    	timeout.start();
     	System.out.println("LiftMotionProfile" + state);    	
@@ -101,7 +102,7 @@ public class LiftMotionProfile extends Command {
         		doneTime.reset();
         	}else if(Math.abs(Robot.lift.getRawLift() - value)< 100 && doneTime.get() == 0){
         		doneTime.start();
-        	} else if (timeout.get() > 5) {
+        	} else if (timeout.get() > 2.5) {
         		return true;
         	}
         	else if(state != Robot.liftState ){
@@ -110,6 +111,7 @@ public class LiftMotionProfile extends Command {
         	}else if(Math.abs(Robot.lift.getRawLift()-value)<LiftSubsystem.LiftConstants.absTol){
         		return true;
         	}
+        	//else if(Robot.lift.getLiftState() == LiftSubsystem.LiftStateConstants.LO)
         	return false;
     	}
     	return false;
@@ -117,6 +119,7 @@ public class LiftMotionProfile extends Command {
 
     // Called once after isFinished returns true
     protected void end() {
+    	Robot.compressor.start();
     	if(!wasCancl){
     		if(state == LiftSubsystem.LiftStateConstants.HEADING_CUSTOM_STATE_UP){
         		Robot.liftState--;

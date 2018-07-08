@@ -11,7 +11,7 @@ import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 /**
  *
  */
-public class GyroPID extends Command {
+public class GyroPIDBack extends Command {
 	
 	public PIDController drivePID;
 	public double encoderRight;
@@ -24,11 +24,11 @@ public class GyroPID extends Command {
 	double angle;
 	String actuallyFinished;
 	
-    public GyroPID(double angle) {
+    public GyroPIDBack(double angle) {
         // Use requires() here to declare subsystem dependencies
         // eg. requires(chassis);
     	this.angle = angle;
-    	drivePID = Robot.gyro.getPIDController();
+    	drivePID = Robot.gyroBack.getPIDController();
     	time = new Timer();
     	timeout = new Timer();
     	isFinished = false;
@@ -50,8 +50,6 @@ public class GyroPID extends Command {
     	SmartDashboard.putNumber("Setpoint", setpoint);
     	time.start();
     	timeout.start();
-    	SmartDashboard.putBoolean("End", false);
-
     	//drivePIDRight.setSetpoint(setpoint);
     	System.out.println("DT PID: setpoint = " + setpoint);
     	drivePID.enable();
@@ -72,7 +70,7 @@ public class GyroPID extends Command {
     		gyroVal = Robot.gyro.getGyroAngle();
     		actuallyFinished = "true";
     	}
-    	if(Robot.auto.get() > 14.8){
+    	if(Robot.auto.get()>14.8){
     		isFinished = true;
     	}
     	if (timeout.get() > 3) {
@@ -90,10 +88,6 @@ public class GyroPID extends Command {
 
     // Make this return true when this Command no longer needs to run execute()
     protected boolean isFinished() {
-    	if(Robot.endAuto){
-    		System.out.println("Finishing Gyro PID In Teleop");
-    		return true;
-    	}
         return isFinished;
     }
 

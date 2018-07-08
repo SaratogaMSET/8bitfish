@@ -6,6 +6,7 @@ import org.usfirst.frc.team649.robot.commands.Delay;
 import org.usfirst.frc.team649.robot.commands.arm.ArmMotionProfile;
 import org.usfirst.frc.team649.robot.commands.arm.ChangeRobotArmState;
 import org.usfirst.frc.team649.robot.commands.arm.ZeroArmRoutine;
+import org.usfirst.frc.team649.robot.commands.drivetrain.DriveBackForTime;
 import org.usfirst.frc.team649.robot.commands.drivetrain.DrivetrainMotionProfileIn;
 import org.usfirst.frc.team649.robot.commands.drivetrain.GyroPID;
 import org.usfirst.frc.team649.robot.commands.intake.RunIntakeForTime;
@@ -29,6 +30,7 @@ public class LeftSwitch extends CommandGroup {
     	addParallel(new ArmMotionProfile(ArmSubsystem.ArmEncoderConstants.SWITCH_FRONT, Robot.armState,false));
     	addSequential(new DrivetrainMotionProfileIn(AutoTest.LeftSwitchVal.FIRST_DRIVE));// drive forward
       	addSequential(new GyroPID(AutoTest.LeftSwitchVal.FIRST_ANGLE_TURN));// turn 90 degrees
+      	addSequential(new DriveBackForTime(0.4,0.5));
 //      	addSequential(new DrivetrainMotionProfileIn(AutoTest.LeftSwitchVal.SECOND_DRIVE)); // drive forward
     	addSequential(new RunIntakeForTime(1, false, 1));
     	addSequential(new DrivetrainMotionProfileIn(-10));
