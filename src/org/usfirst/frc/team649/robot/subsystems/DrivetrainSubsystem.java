@@ -23,8 +23,6 @@ import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 public class DrivetrainSubsystem extends PIDSubsystem {
 	
 	//if it is actualy running not if it should be in that mode
-	private static boolean isLeftVPid;
-	private static boolean isRightVPid;
 	private static boolean isHighGear;
 	public double wheelSize=5;
 	public int scalingFactor=2;
@@ -103,9 +101,7 @@ public class DrivetrainSubsystem extends PIDSubsystem {
 		motors[3].configPeakOutputReverse(-1, Robot.timeoutMs);
 		motors[3].set(ControlMode.Follower,RobotMap.Drivetrain.MOTOR_PORTS[2]);
 		motors[3].setInverted(true);
-		
-		isLeftVPid = false;
-		isRightVPid = false;
+
 		isHighGear = true;
 	}
 	
@@ -206,14 +202,8 @@ public class DrivetrainSubsystem extends PIDSubsystem {
 	protected void usePIDOutput(double output) {
 		// TODO Auto-generated method stub
 		//currentMotorPower = output;
-		drivePIDOutput = output;
 		
 	}
-	
-	public double getDrivePIDOutput() {
-		return drivePIDOutput;
-	}
-	
 	
 	public int convert(double d){
 		int i = (int)((scalingFactor*d*50*4096)/(Math.PI*wheelSize*24));

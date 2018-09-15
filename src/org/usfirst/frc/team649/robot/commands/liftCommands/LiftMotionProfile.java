@@ -39,13 +39,16 @@ public class LiftMotionProfile extends Command {
     	Robot.compressor.stop();
     	
     	SmartDashboard.putBoolean("ran is fin", false);
-//		Robot.isArmPidRunning = true;
+    	
     	state = Robot.liftState;
+    	
     	startTime = new Timer();
     	timeout = new Timer();
     	doneTime = new Timer();
     	startTime.start();
+    	
     	wasCancl = false;
+    	
     	if(value > Robot.lift.getRawLift()){
     		Robot.lift.mainLiftMotor.configMotionCruiseVelocity(4500, Robot.timeoutMs);
 			Robot.lift.mainLiftMotor.configMotionAcceleration(5300, Robot.timeoutMs); // 400 actual
@@ -83,16 +86,6 @@ public class LiftMotionProfile extends Command {
 
     // Make this return true when this Command no longer needs to run execute()
     protected boolean isFinished() {
-//    	if(stallTime.get() > 1){
-//    		if(Math.abs(Math.abs(Robot.lift.getRawLift()) - Math.abs(prevEncoder)) < 10 && Robot.lift.getLiftState() != LiftSubsystem.LiftHalConstants.CARRIAGE_HIGH_SECOND_HIGH && Robot.lift.getLiftState() != LiftSubsystem.LiftHalConstants.LOWEST_STATE){
-//    			Robot.liftState = LiftSubsystem.LiftStateConstants.INTAKE_EXCHANGE_STORE_STATE;
-//    			return true;
-//    		}else{
-//    			stallTime.stop();
-//    			stallTime.reset();
-//    			prevEncoder = Robot.lift.getRawLift();
-//    		}
-//    	}
     	if(Robot.isZero){
     		if(doneTime.get() > 0.15){
         		return true;

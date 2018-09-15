@@ -83,7 +83,9 @@ public class ArmSubsystem extends Subsystem {
 		bottomMotor = new TalonSRX(RobotMap.Arm.BOTTOM_ARM_MOTOR);
 		bottomMotor.configSelectedFeedbackSensor(FeedbackDevice.CTRE_MagEncoder_Relative, 0, Robot.timeoutMs);
 		topMotor = new TalonSRX(RobotMap.Arm.TOP_ARM_MOTOR);
+		
 		infraredSensor = new DigitalInput(RobotMap.Arm.INFRARED_SENSOR);
+		
 		bottomMotor.configNominalOutputForward(0, Robot.timeoutMs);
 		bottomMotor.configNominalOutputReverse(0, Robot.timeoutMs);
 		bottomMotor.configPeakOutputForward(1.0, Robot.timeoutMs);
@@ -91,34 +93,31 @@ public class ArmSubsystem extends Subsystem {
 		bottomMotor.setSensorPhase(true); // true on f bot
 		bottomMotor.setInverted(true);
 		bottomMotor.setStatusFramePeriod(StatusFrameEnhanced.Status_10_MotionMagic, 10, Robot.timeoutMs);
+		
 		frontHal = new DigitalInput(RobotMap.Arm.ARM_HAL_FRONT);
 		rearHal = new DigitalInput(RobotMap.Arm.ARM_HAL_REAR);
+		
 		lastVal = 0;
-		time = new Timer();
-		time.start();
+		
 		bottomMotor.configMotionAcceleration(650, Robot.timeoutMs);
 		bottomMotor.configMotionCruiseVelocity(700, Robot.timeoutMs);
-//		bottomMotor.config_kP(0, 1, Robot.timeoutMs);
-//		bottomMotor.config_kI(0, 0, Robot.timeoutMs);
-//		bottomMotor.config_kD(0, 0.07, Robot.timeoutMs);
-//		bottomMotor.config_kF(0, 1.25, Robot.timeoutMs);
+
 		bottomMotor.config_kP(0, 1, Robot.timeoutMs);
 		bottomMotor.config_kI(0, 0, Robot.timeoutMs);
 		bottomMotor.config_kD(0, 0, Robot.timeoutMs);
 		bottomMotor.config_kF(0, 1.25, Robot.timeoutMs);
 		bottomMotor.selectProfileSlot(0, 0);
+		
 		bottomMotor.setNeutralMode(NeutralMode.Brake);
 		topMotor.setNeutralMode(NeutralMode.Brake);
 
 		topMotor.setInverted(false);
 		topMotor.set(ControlMode.Follower, RobotMap.Arm.BOTTOM_ARM_MOTOR);
 		armBrake = new DoubleSolenoid(RobotMap.Arm.ARM_BRAKE[0],RobotMap.Arm.ARM_BRAKE[1],RobotMap.Arm.ARM_BRAKE[2]);
-		
-
 	}
+	
 	public void setArm(double power){
 		bottomMotor.set(ControlMode.PercentOutput, -power);
-//		topMotor.set(ControlMode.Follower, RobotMap.Arm.BOTTOM_ARM_MOTOR);
 	}
 	public boolean getInfraredSensor() {
 		return !infraredSensor.get();
@@ -135,15 +134,7 @@ public class ArmSubsystem extends Subsystem {
 	public int getArmRaw() {
 		return bottomMotor.getSelectedSensorPosition(0);
 	}
-	
-	public double getArmPosition() {
-		return getArmRaw()/4096.0 /2.0;
-	}
-	
-	public double getArmAngle() {
-		return getArmRaw()/4050.0 * 360.0;
-	}
-	
+
 	public double getVel() {
 		lastVal = bottomMotor.getSensorCollection().getQuadratureVelocity();
 		return lastVal;
@@ -157,9 +148,7 @@ public class ArmSubsystem extends Subsystem {
 		bottomMotor.setSelectedSensorPosition(position, 0, Robot.timeoutMs);
 	}
 	
-	public double getTime() {
-		return time.get();
-	}
+
     public void initDefaultCommand() {
         // Set the default command for a subsystem here.
         //setDefaultCommand(new MySpecialCommand());

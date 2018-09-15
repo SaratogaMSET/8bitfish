@@ -209,21 +209,23 @@ public class Robot extends TimedRobot {
 		oi = new OI();
 		compressor = new Compressor(4);
 		endAuto = false;
+		
 		auto = new Timer();
-		// pdp = new PowerDistributionPanel(RobotMap.POWER_DISTRIBUTION_PANEL);
-		// log = new VoltageLog(pdp,compressor);
+		intakeTimer = new Timer();
+		
 		lift = new LiftSubsystem();
 		drive = new DrivetrainSubsystem();
 		gyro = new GyroSubsystem();
 		arm = new ArmSubsystem();
 		intake = new IntakeSubsystem();
+		gyroBack = new GyroBackSubsystem();
+
 		lidarCount = 0;
 		shouldCanclArmMP = false;
 		isRunnigWithFlip = false;
-		gyroBack = new GyroBackSubsystem();
-
+		
 		switches = new AutoSelector();
-		intakeTimer = new Timer();
+		
 
 		isHigh = false;
 		lidar = new Lidar(I2C.Port.kOnboard, 0xC4 >> 1);
@@ -251,6 +253,7 @@ public class Robot extends TimedRobot {
 		prevStateFlipAndStore = false;
 		prevStateFlipAndIntakeHigh = false;
 		prevStateFlipAndIntakeLow = false;
+		
 		new Thread(() -> {
 			// 10.6.49.7 = tanAxisCamera
 			AxisCamera camera = CameraServer.getInstance().addAxisCamera(RobotMap.Camera.axisName,
@@ -348,14 +351,7 @@ public class Robot extends TimedRobot {
 		hasFMS = false;
 		compressor.stop();
 		shouldSwitchTurnRatio = false;
-		for (int i = 0; i < 4; i++) {
-			drive.motors[i].setNeutralMode(NeutralMode.Brake);
-			drive.motors[i].configMotionAcceleration(9000, timeoutMs);
-			drive.motors[i].configMotionCruiseVelocity(18000, timeoutMs);
-			drive.motors[i].config_kP(0, 1.5, Robot.timeoutMs);
-			drive.motors[i].config_kI(0, 0, Robot.timeoutMs);
-			drive.motors[i].config_kD(0, 0.9, Robot.timeoutMs);
-		}
+		
 
 		isZero = false;
 
@@ -365,11 +361,6 @@ public class Robot extends TimedRobot {
 		drive.changeBrakeCoast(true);
 
 		new ZeroArmRoutine().start();
-//		new RightSwitch().start();
-//		new RightFarScale().start();
-//		new LeftFarScale().start();
-//		new GyroPID(90).start();
-//		new LeftSwitch().start();
 	}
 
 	@Override
@@ -502,14 +493,15 @@ public class Robot extends TimedRobot {
 	@SuppressWarnings("unused")
 	@Override
 	public void teleopInit() {
-		auto.reset();
+//		auto.reset();
 
 		compressor.start();
 
-		// log.startLoggingWithInterval("practicing", 100L);
-
 		intakeTimer.start();
+		time.start();
+		
 		isZero = true;
+		
 		drive.changeBrakeCoast(false);
 
 		isAutoShift = true;
@@ -517,11 +509,7 @@ public class Robot extends TimedRobot {
 		endAuto = true;
 		isArmPidRunning = false;
 		
-		autoShiftButtonPrevState = oi.driver.switchToNormalShift();
-		VPidButtonPrevState = oi.driver.switchToVbus();
-
 		drive.resetEncoders();
-		time.start();
 
 		isDrivePIDRunning = false;
 		isArmPidRunning = false;
@@ -532,6 +520,7 @@ public class Robot extends TimedRobot {
 		customArmPos = (int) arm.getArmRaw();
 
 		new SetIntakePistons(false, true).start();
+		
 		isOpen = false;
 		drive.shift(false);
 
@@ -939,6 +928,7 @@ public class Robot extends TimedRobot {
 		SmartDashboard.putNumber("right 1 Talon Voltage", drive.motors[2].getMotorOutputVoltage());
 		SmartDashboard.putNumber("right 2 Talon Voltage", drive.motors[3].getMotorOutputVoltage());
 		
+		SmartDashboard.putString("Current Command", Scheduler.getInstance().getName());
 
 		if (lidarCount == 12) {
 			SmartDashboard.putNumber("Lidar", lidar.getSample());

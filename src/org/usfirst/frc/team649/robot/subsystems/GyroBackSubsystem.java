@@ -49,19 +49,6 @@ public class GyroBackSubsystem extends PIDSubsystem {
 		// TODO Auto-generated method stub
 		if(drivingStraight) {
 			GyroPIDOutput = output;
-//			double left;
-//			double right;
-//			if (output > 0) {
-//				left = 1.0;
-//				right = 1.0 - output;
-//			} else if (output < 0) {
-//				right = 1.0 + output;
-//				left = 1.0;
-//			} else {
-//				right = 1.0;
-//				left = 1.0;
-//			}
-//			Robot.drive.rawDrive(left, right);
 		} else {
 			if (this.getPIDController().getSetpoint() < 0) {
 				Robot.drive.rawDrive(0, output);
