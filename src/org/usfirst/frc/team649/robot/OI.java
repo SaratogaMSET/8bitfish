@@ -197,21 +197,18 @@ public class OI {
 		}
 
 		public boolean getButton2() {
-			if (Robot.isTuningPID) {
-				boolean value = buttonBoard.getRawButton(2);
+				boolean value = operatorJoystick.getRawButton(2);
 				if (value == true && oldValue2 == false) {
 					oldValue2 = value;
 					return true;
 				}
 				oldValue2 = value;
 				return false;
-			}
-			return buttonBoard.getRawButton(2);
 		}
 
 		public boolean getButton3() {
 			if (Robot.isTuningPID) {
-				boolean value = buttonBoard.getRawButton(3);
+				boolean value = operatorJoystick.getRawButton(3);
 				if (value == true && oldValue3 == false) {
 					oldValue3 = value;
 					return true;
@@ -219,12 +216,12 @@ public class OI {
 				oldValue3 = value;
 				return false;
 			}
-			return buttonBoard.getRawButton(3);
+			return operatorJoystick.getRawButton(3);
 		}
 
 		public boolean getButton4() {
 			if (Robot.isTuningPID) {
-				boolean value = buttonBoard.getRawButton(4);
+				boolean value = operatorJoystick.getRawButton(4);
 				if (value == true && oldValue4 == false) {
 					oldValue4 = value;
 					return true;
@@ -232,7 +229,7 @@ public class OI {
 				oldValue4 = value;
 				return false;
 			}
-			return buttonBoard.getRawButton(4);
+			return operatorJoystick.getRawButton(4);
 		}
 
 		public boolean getButton5() {

@@ -30,13 +30,13 @@ public class DrivetrainMotionProfileIn extends Command {
     	Robot.drive.changeBrakeCoast(true);
     	Robot.isDrivePIDRunning = true;
     	converted = Robot.drive.convert(setpoint);
-    	SmartDashboard.putNumber("Converted", converted);
-    	SmartDashboard.putBoolean("Is Here in Execute", false);
-		
+    	SmartDashboard.putNumber("Converted", converted);		
     	Robot.drive.resetEncoders();
     	
 		SmartDashboard.putNumber("Setpoint", setpoint);
 		SmartDashboard.putString("Current Command", getName() + setpoint);
+    	SmartDashboard.putBoolean("Is TalonDistance Finished?", false);
+
 		
     }
 
@@ -46,22 +46,15 @@ public class DrivetrainMotionProfileIn extends Command {
 		Robot.drive.motors[1].set(ControlMode.Follower, RobotMap.Drivetrain.MOTOR_PORTS[0]);
 		Robot.drive.motors[2].set(ControlMode.MotionMagic, (int)converted);
 		Robot.drive.motors[3].set(ControlMode.Follower, RobotMap.Drivetrain.MOTOR_PORTS[2]);
-//		SmartDashboard.putNumber("Setpoint", ((setpoint/(4.0*Math.PI))/ (14.0/60.0)) * 4096);
-		
-//		if (Math.abs(Robot.drive.motors[0].getEncPosition() - setpoint) < 2) {
-//			isFinished = true;
-//		}
-    	SmartDashboard.putBoolean("Is Here in Execute", true);
     	SmartDashboard.putNumber("Left Talon Distance", Robot.drive.getTalonDistanceLeft());
     	
     	if (Math.abs(converted - Robot.drive.motors[0].getSelectedSensorPosition(0)) < 100) {//(Math.abs(Robot.drive.getTalonDistanceLeft() - setpoint) < 2) {
 			isFinished = true;
 		}
-    	if(Robot.auto.get() > 14.8){
-    		isFinished = true;
-    	}
-    }
-    // ((setpoint/(4*Math.PI))/ (14*60)) * 2048;  
+//    	if(Robot.auto.get() > 14.8){
+//    		isFinished = true;
+//    	}
+    } 
     // Make this return true when this Command no longer needs to run execute()
     protected boolean isFinished() {
     	SmartDashboard.putBoolean("Is TalonDistance Finished?", true);

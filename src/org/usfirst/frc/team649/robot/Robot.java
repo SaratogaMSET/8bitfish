@@ -34,6 +34,7 @@ import org.usfirst.frc.team649.robot.commands.MotionProfileDrive;
 import org.usfirst.frc.team649.robot.commands.arm.ArmMotionProfile;
 import org.usfirst.frc.team649.robot.commands.arm.MoveArmCommand;
 import org.usfirst.frc.team649.robot.commands.arm.ZeroArmRoutine;
+import org.usfirst.frc.team649.robot.commands.drivetrain.DrivetrainMotionProfileIn;
 import org.usfirst.frc.team649.robot.commands.drivetrain.GyroPID;
 import org.usfirst.frc.team649.robot.commands.intake.RunIntakeWheels;
 import org.usfirst.frc.team649.robot.commands.intake.SetIntakePistons;
@@ -51,6 +52,7 @@ import org.usfirst.frc.team649.robot.util.CameraServer;
 import org.usfirst.frc.team649.robot.util.Lidar;
 import org.usfirst.frc.team649.robot.util.VoltageLog;
 
+import com.ctre.phoenix.motorcontrol.ControlMode;
 import com.ctre.phoenix.motorcontrol.NeutralMode;
 
 import edu.wpi.cscore.AxisCamera;
@@ -60,6 +62,7 @@ import edu.wpi.first.wpilibj.Compressor;
 import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.I2C;
 import edu.wpi.first.wpilibj.PowerDistributionPanel;
+import edu.wpi.first.wpilibj.Preferences;
 import edu.wpi.first.wpilibj.SerialPort;
 import edu.wpi.first.wpilibj.TimedRobot;
 import edu.wpi.first.wpilibj.Timer;
@@ -195,7 +198,9 @@ public class Robot extends TimedRobot {
 	public static boolean isRunnigWithFlip;
 	public static boolean endAuto;
 	public static Timer auto;
-
+	
+	Preferences prefs;
+	double distance = 100;
 	public static int pos = 4; // left mid right forward
 
 	@Override
@@ -302,6 +307,9 @@ public class Robot extends TimedRobot {
 			modifierRightScaleSingle = new TankModifier(trajectoryRightScaleSingle).modify(0.66);
 			
 		}
+		prefs  = Preferences.getInstance();
+		distance = prefs.getDouble("distance", 100);
+		
 
 	}
 	
@@ -539,15 +547,16 @@ public class Robot extends TimedRobot {
 		liftManualPrevState = false;
 		armManualPrevState = false;
 		prevStateFlipArm = false;
-
 	}
 
 	@Override
 	public void teleopPeriodic() {
 		Scheduler.getInstance().run();
 		// teleopRun();
-		cleanTeleopRun();
+		testMotionMagic();
+//		cleanTeleopRun();
 		updateSmartDashboardTesting();
+		
 	}
 
 	// public void teleopRun() {
@@ -809,19 +818,24 @@ public class Robot extends TimedRobot {
 
 		}
 
-		if((armState == ArmSubsystem.ArmStateConstants.INTAKE_FRONT ||armState == ArmSubsystem.ArmStateConstants.INTAKE_REAR) && Robot.arm.getInfraredSensor() && oi.operator.deployOnlyWheels()){
+		if((armState == ArmSubsystem.ArmStateConstants.INTAKE_FRONT ||
+				armState == ArmSubsystem.ArmStateConstants.INTAKE_REAR) && 
+				Robot.arm.getInfraredSensor() && oi.operator.deployOnlyWheels()){
 			new SetIntakePistons(false, true).start();
 			new RunIntakeWheels(-0.85).start();
 
-		}else if((armState == ArmSubsystem.ArmStateConstants.INTAKE_FRONT ||armState == ArmSubsystem.ArmStateConstants.INTAKE_REAR) && Robot.arm.getInfraredSensor() && oi.operator.lowSpeedDeploy()){
+		}else if((armState == ArmSubsystem.ArmStateConstants.INTAKE_FRONT ||
+				armState == ArmSubsystem.ArmStateConstants.INTAKE_REAR) && Robot.arm.getInfraredSensor() && oi.operator.lowSpeedDeploy()){
 			new SetIntakePistons(false, true).start();
 			new RunIntakeWheels(-0.35).start();
 			
 		}
-		else if((armState == ArmSubsystem.ArmStateConstants.INTAKE_FRONT ||armState == ArmSubsystem.ArmStateConstants.INTAKE_REAR) && Robot.arm.getInfraredSensor() && oi.operator.runIntakeWithWheelsClosed()){
+		else if((armState == ArmSubsystem.ArmStateConstants.INTAKE_FRONT ||
+				armState == ArmSubsystem.ArmStateConstants.INTAKE_REAR) && Robot.arm.getInfraredSensor() && oi.operator.runIntakeWithWheelsClosed()){
 			new SetIntakePistons(false, true).start();
 			new RunIntakeWheels(1).start();
-		}else if((armState == ArmSubsystem.ArmStateConstants.INTAKE_FRONT ||armState == ArmSubsystem.ArmStateConstants.INTAKE_REAR) && Robot.arm.getInfraredSensor()){
+		}else if((armState == ArmSubsystem.ArmStateConstants.INTAKE_FRONT ||
+				armState == ArmSubsystem.ArmStateConstants.INTAKE_REAR) && Robot.arm.getInfraredSensor()){
 			new SetIntakePistons(false, true).start();
 			new RunIntakeWheels(0).start();
 
@@ -920,6 +934,11 @@ public class Robot extends TimedRobot {
 		SmartDashboard.putBoolean("is Carriage at Top", lift.isCarriageAtTop());
 		SmartDashboard.putNumber("Lift Raw", lift.getRawLift());
 		SmartDashboard.putNumber("Arm Raw", arm.getArmRaw());
+		
+		SmartDashboard.putNumber("left Talon Voltage", drive.motors[0].getMotorOutputVoltage());
+		SmartDashboard.putNumber("right 1 Talon Voltage", drive.motors[2].getMotorOutputVoltage());
+		SmartDashboard.putNumber("right 2 Talon Voltage", drive.motors[3].getMotorOutputVoltage());
+		
 
 		if (lidarCount == 12) {
 			SmartDashboard.putNumber("Lidar", lidar.getSample());
@@ -949,6 +968,28 @@ public class Robot extends TimedRobot {
 
 	private void updateSmartDashboardComp() {
 
+	}
+	
+	private void getPrefs() {
+		distance = prefs.getDouble("Distance", 100);
+		SmartDashboard.putNumber("Distance", distance);
+	}
+	
+	private void testMotionMagic(){
+		if(isTuningPID) {
+			if(oi.operator.getButton3()) {
+				new DrivetrainMotionProfileIn(100).start();
+			}
+			if(oi.operator.getButton4()) {
+				new DrivetrainMotionProfileIn(200).start();
+			}
+		} else {
+			drive.driveForwardRotateTeleop(oi.driver.getForward(), oi.driver.getRotation());
+		}
+		if(oi.operator.getButton2()) {
+			isTuningPID = !isTuningPID;
+		}
+		getPrefs();
 	}
 
 }
