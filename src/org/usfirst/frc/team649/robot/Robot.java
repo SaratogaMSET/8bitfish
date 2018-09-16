@@ -193,7 +193,6 @@ public class Robot extends TimedRobot {
 	public static boolean hasFMS;
 	public static boolean shouldSwitchTurnRatio;
 	public static boolean isAutoInTeleopPrev;
-	public static boolean isIntakeOpen;
 	public static boolean shouldCanclArmMP;
 	public static boolean isRunnigWithFlip;
 	public static boolean endAuto;
@@ -212,6 +211,8 @@ public class Robot extends TimedRobot {
 		
 		auto = new Timer();
 		intakeTimer = new Timer();
+
+		time = new Timer();
 		
 		lift = new LiftSubsystem();
 		drive = new DrivetrainSubsystem();
@@ -221,35 +222,42 @@ public class Robot extends TimedRobot {
 		gyroBack = new GyroBackSubsystem();
 
 		lidarCount = 0;
-		shouldCanclArmMP = false;
-		isRunnigWithFlip = false;
+
 		
 		switches = new AutoSelector();
 		
 
-		isHigh = false;
 		lidar = new Lidar(I2C.Port.kOnboard, 0xC4 >> 1);
-		isPIDActive = false;
-		tuningConstant = 1;
-		isZero = false;
-		time = new Timer();
-		canFlipArm = false;
+
+
 		liftState = 2;
 		alliance = DriverStation.getInstance().getAlliance();
+		
 		if (arm.getArmRaw() < ArmSubsystem.ArmEncoderConstants.INTAKE_REAR / 2) {
 			armState = ArmSubsystem.ArmStateConstants.INTAKE_REAR;
 		} else {
 			armState = ArmSubsystem.ArmStateConstants.INTAKE_FRONT;
 		}
+		
 		timesCalled = 0;
 		lidarOffset = 0;
+		
 		lidarValue = lidar.getSample();
 
+		isHigh = false;
+		
+		isPIDActive = false;
+		isMPRunning = false;		
+		
+		isZero = false;
+		canFlipArm = false;
+		shouldCanclArmMP = false;
+		
 		isOpen = false;
-		isMPRunning = false;
-		isIntakeOpen = false;
 		prevStateIntakeToggle = false;
 		prevStateIntakeToggle2 = false;
+		
+		isRunnigWithFlip = false;
 		prevStateFlipAndStore = false;
 		prevStateFlipAndIntakeHigh = false;
 		prevStateFlipAndIntakeLow = false;
@@ -504,8 +512,6 @@ public class Robot extends TimedRobot {
 		
 		drive.changeBrakeCoast(false);
 
-		isAutoShift = true;
-		isVPid = true;
 		endAuto = true;
 		isArmPidRunning = false;
 		
