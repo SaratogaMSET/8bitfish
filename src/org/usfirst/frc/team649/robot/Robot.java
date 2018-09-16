@@ -548,8 +548,8 @@ public class Robot extends TimedRobot {
 	public void teleopPeriodic() {
 		Scheduler.getInstance().run();
 		// teleopRun();
-		testMotionMagic();
-//		cleanTeleopRun();
+//		testMotionMagic();
+		cleanTeleopRun();
 		updateSmartDashboardTesting();
 		
 	}
@@ -974,10 +974,10 @@ public class Robot extends TimedRobot {
 	private void testMotionMagic(){
 		if(isTuningPID) {
 			if(oi.operator.getButton3()) {
-				new DrivetrainMotionProfileIn(100).start();
+				new LeftSwitch().start();
 			}
 			if(oi.operator.getButton4()) {
-				new DrivetrainMotionProfileIn(200).start();
+				new GyroPID(90).start();
 			}
 		} else {
 			drive.driveForwardRotateTeleop(oi.driver.getForward(), oi.driver.getRotation());

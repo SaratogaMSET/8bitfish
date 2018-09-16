@@ -5,6 +5,7 @@ import org.usfirst.frc.team649.robot.Robot;
 import edu.wpi.first.wpilibj.ADXRS450_Gyro;
 import edu.wpi.first.wpilibj.command.PIDSubsystem;
 import edu.wpi.first.wpilibj.command.Subsystem;
+import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 
 /**
  *
@@ -15,7 +16,7 @@ public class GyroSubsystem extends PIDSubsystem {
     // here. Call these from Commands.
 	
 	public static class GyroPIDConstants {
-		public static double k_p = 0.4;//0.9;//0.02;
+		public static double k_p = 0.2;//0.9;//0.02;
 		public static double k_i = 0;
 		public static double k_d = 0.9;//0.042;
 		
@@ -74,6 +75,7 @@ public class GyroSubsystem extends PIDSubsystem {
 	@Override
 	protected void usePIDOutput(double output) {
 		// TODO Auto-generated method stub
+		SmartDashboard.putNumber("Gyro PID Output", output);
 		if(drivingStraight) {
 			GyroPIDOutput = output;
 

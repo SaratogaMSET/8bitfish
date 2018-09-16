@@ -2,7 +2,6 @@ package org.usfirst.frc.team649.robot.subsystems;
 
 import org.usfirst.frc.team649.robot.Robot;
 import org.usfirst.frc.team649.robot.RobotMap;
-import org.usfirst.frc.team649.robot.subsystems.LiftSubsystem.LiftPIDConstants;
 import org.usfirst.frc.team649.robot.util.Lidar;
 
 import com.ctre.phoenix.motorcontrol.ControlMode;
@@ -78,7 +77,7 @@ public class LiftSubsystem extends PIDSubsystem {
     double liftPIDOutPut;
     
     public LiftSubsystem(){
-    	super(LiftPIDConstants.k_P, LiftPIDConstants.k_I, LiftPIDConstants.k_D);
+    	super(0, 0, 0);
     	mainLiftMotor = new TalonSRX(RobotMap.Lift.RIGHT_WINCH_MOTOR);
     	mainLiftMotor.configSelectedFeedbackSensor(FeedbackDevice.CTRE_MagEncoder_Relative, 0, Robot.timeoutMs);
     	mainLiftMotor.setInverted(true); // true on final bot
