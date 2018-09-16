@@ -55,8 +55,8 @@ public class LiftMotionProfile extends Command {
 			Robot.lift.mainLiftMotor.config_kI(0, 0, Robot.timeoutMs);
 			Robot.lift.mainLiftMotor.config_kD(0, 0.05, Robot.timeoutMs);
     	}else{
-    		Robot.lift.mainLiftMotor.configMotionCruiseVelocity(5000, Robot.timeoutMs);
-			Robot.lift.mainLiftMotor.configMotionAcceleration(6400, Robot.timeoutMs); // 400 actual
+    		Robot.lift.mainLiftMotor.configMotionCruiseVelocity(5200, Robot.timeoutMs);
+			Robot.lift.mainLiftMotor.configMotionAcceleration(7000, Robot.timeoutMs); // 400 actual
 			Robot.lift.mainLiftMotor.selectProfileSlot(0, 0);
 			Robot.lift.mainLiftMotor.config_kF(0, 0.411, Robot.timeoutMs);
 			Robot.lift.mainLiftMotor.config_kP(0, 1.5, Robot.timeoutMs);
