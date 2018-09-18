@@ -30,7 +30,7 @@ import org.usfirst.frc.team649.robot.CommandGroups.RightScaleDoubleScaleMP;
 import org.usfirst.frc.team649.robot.CommandGroups.RightScaleSingleMP;
 import org.usfirst.frc.team649.robot.commands.Diagnostic;
 import org.usfirst.frc.team649.robot.commands.MotionProfileDrive;
-
+import org.usfirst.frc.team649.robot.commands.MotionProfileDriveInverted;
 import org.usfirst.frc.team649.robot.commands.arm.ArmMotionProfile;
 import org.usfirst.frc.team649.robot.commands.arm.MoveArmCommand;
 import org.usfirst.frc.team649.robot.commands.arm.ZeroArmRoutine;
@@ -38,6 +38,7 @@ import org.usfirst.frc.team649.robot.commands.drivetrain.DrivetrainMotionProfile
 import org.usfirst.frc.team649.robot.commands.drivetrain.GyroPID;
 import org.usfirst.frc.team649.robot.commands.intake.RunIntakeWheels;
 import org.usfirst.frc.team649.robot.commands.intake.SetIntakePistons;
+import org.usfirst.frc.team649.robot.commands.liftCommands.ChangeRobotLiftState;
 import org.usfirst.frc.team649.robot.commands.liftCommands.LiftMotionProfile;
 import org.usfirst.frc.team649.robot.commands.liftCommands.MoveLiftCommand;
 import org.usfirst.frc.team649.robot.subsystems.ArmSubsystem;
@@ -62,7 +63,6 @@ import edu.wpi.first.wpilibj.Compressor;
 import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.I2C;
 import edu.wpi.first.wpilibj.PowerDistributionPanel;
-import edu.wpi.first.wpilibj.Preferences;
 import edu.wpi.first.wpilibj.SerialPort;
 import edu.wpi.first.wpilibj.TimedRobot;
 import edu.wpi.first.wpilibj.Timer;
@@ -175,6 +175,10 @@ public class Robot extends TimedRobot {
 	public static Trajectory trajectorySideBack;
 	public static TankModifier modifierSideBack;
 
+	public static Trajectory.Config configBackTest;
+	public static Trajectory trajectoryBackTest;
+	public static TankModifier modifierBackTest;
+	
 	public static boolean autoShiftButtonPrevState;
 	public static boolean VPidButtonPrevState;
 
@@ -193,14 +197,13 @@ public class Robot extends TimedRobot {
 	public static boolean hasFMS;
 	public static boolean shouldSwitchTurnRatio;
 	public static boolean isAutoInTeleopPrev;
+	public static boolean isIntakeOpen;
 	public static boolean shouldCanclArmMP;
 	public static boolean isRunnigWithFlip;
 	public static boolean endAuto;
 	public static Timer auto;
-	
-	Preferences prefs;
-	double distance = 100;
-	public static int pos = 4; // left mid right forward
+
+	public static int pos = 1; // left mid right forward
 
 	@Override
 
@@ -224,7 +227,7 @@ public class Robot extends TimedRobot {
 		lidarCount = 0;
 
 		
-		switches = new AutoSelector();
+//		switches = new AutoSelector();
 		
 
 		lidar = new Lidar(I2C.Port.kOnboard, 0xC4 >> 1);
@@ -318,8 +321,6 @@ public class Robot extends TimedRobot {
 			modifierRightScaleSingle = new TankModifier(trajectoryRightScaleSingle).modify(0.66);
 			
 		}
-		prefs  = Preferences.getInstance();
-		distance = prefs.getDouble("distance", 100);
 		
 
 	}
@@ -967,8 +968,7 @@ public class Robot extends TimedRobot {
 	}
 	
 	private void getPrefs() {
-		distance = prefs.getDouble("Distance", 100);
-		SmartDashboard.putNumber("Distance", distance);
+		
 	}
 	
 	private void testMotionMagic(){

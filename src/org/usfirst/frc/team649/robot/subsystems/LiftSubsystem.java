@@ -2,6 +2,7 @@ package org.usfirst.frc.team649.robot.subsystems;
 
 import org.usfirst.frc.team649.robot.Robot;
 import org.usfirst.frc.team649.robot.RobotMap;
+import org.usfirst.frc.team649.robot.subsystems.LiftSubsystem.LiftPIDConstants;
 import org.usfirst.frc.team649.robot.util.Lidar;
 
 import com.ctre.phoenix.motorcontrol.ControlMode;
@@ -68,12 +69,12 @@ public class LiftSubsystem extends PIDSubsystem {
     public static class LiftEncoderConstants{
     	public static int LOW_STATE = 0;
     	public static int SWITCH_STATE = 20000; // 20000 P
-    	public static int LOW_SCALE_STATE = 30000; // 35500 P
-    	public static int MID_SCALE_STATE = 42800; // 46000 P
+    	public static int LOW_SCALE_STATE = 32000; // 35500 P
+    	public static int MID_SCALE_STATE = 44900; // 46000 P
     	public static int HIGH_SCALE_STATE = 44900; // 48100 P
     	public static int ADJ_DIST = 4000;
-    	public static int INTAKE_2_STATE = 7500;
-    	public static int LOW_MID_SCALE = 35000;
+    	public static int INTAKE_2_STATE = 12500;
+    	public static int LOW_MID_SCALE = 38000;
     }
     public static class LiftConstants{
     	public static double unitsPerCmSecond = 268;

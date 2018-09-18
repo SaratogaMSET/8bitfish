@@ -37,6 +37,9 @@ public class LeftFarScale extends CommandGroup {
         addSequential(new GyroPID(AutoTest.LeftScaleFarVal.SECOND_ANGLE_TURN));
 //        addSequential(new DrivetrainMotionProfileIn(AutoTest.LeftScaleFarVal.THIRD_DRIVE));
     	addSequential(new RunIntakeForTime(0.35, false, 0.5));
+//        addSequential(new DrivetrainMotionProfileIn(AutoTest.LeftScaleFarVal.THIRD_DRIVE));
+        addSequential(new DrivetrainMotionProfileIn(AutoTest.LeftScaleFarVal.THIRD_DRIVE));
+    	addSequential(new RunIntakeForTime(1, false, 0.5));
     	addSequential(new DrivetrainMotionProfileIn(-25));// deploy
     }
 }

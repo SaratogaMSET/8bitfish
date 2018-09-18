@@ -31,6 +31,7 @@ public class LeftSwitch extends CommandGroup {
     	addSequential(new DrivetrainMotionProfileIn(AutoTest.LeftSwitchVal.FIRST_DRIVE));// drive forward
       	addSequential(new GyroPID(AutoTest.LeftSwitchVal.FIRST_ANGLE_TURN));// turn 90 degrees
 //      	addSequential(new DriveBackForTime(0.4,0.5));
+      	addSequential(new DriveBackForTime(0.4,0.5));
 //      	addSequential(new DrivetrainMotionProfileIn(AutoTest.LeftSwitchVal.SECOND_DRIVE)); // drive forward
     	addSequential(new RunIntakeForTime(1, false, 1));
     	addSequential(new DrivetrainMotionProfileIn(-10));

@@ -73,6 +73,7 @@ public class GyroPIDBack extends Command {
     	if(Robot.auto.get()>14.8){
     		isFinished = true;
     	}
+
     	if (timeout.get() > 3) {
     		isFinished = true;
     		isTimeout = true;
@@ -110,6 +111,5 @@ public class GyroPIDBack extends Command {
     // subsystems is scheduled to run
     protected void interrupted() {
     	end();
-
     }
 }

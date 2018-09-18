@@ -34,13 +34,6 @@ public class ArmMotionProfile extends Command {
     		Robot.arm.bottomMotor.config_kI(0, 0, Robot.timeoutMs);
     		Robot.arm.bottomMotor.config_kD(0, 0, Robot.timeoutMs);
     		Robot.arm.bottomMotor.config_kF(0, 1.25, Robot.timeoutMs);
-    	}else if(Robot.arm.getInfraredSensor()){
-    		Robot.arm.bottomMotor.configMotionCruiseVelocity(700, Robot.timeoutMs);
-    		Robot.arm.bottomMotor.configMotionAcceleration(450, Robot.timeoutMs);
-    		Robot.arm.bottomMotor.config_kP(0, 1, Robot.timeoutMs);
-    		Robot.arm.bottomMotor.config_kI(0, 0, Robot.timeoutMs);
-    		Robot.arm.bottomMotor.config_kD(0, 0, Robot.timeoutMs);
-    		Robot.arm.bottomMotor.config_kF(0, 1.25, Robot.timeoutMs);
     	}else{
     		Robot.arm.bottomMotor.configMotionCruiseVelocity(700, Robot.timeoutMs);
     		Robot.arm.bottomMotor.configMotionAcceleration(1000, Robot.timeoutMs);

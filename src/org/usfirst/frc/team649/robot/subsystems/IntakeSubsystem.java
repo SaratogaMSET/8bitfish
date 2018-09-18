@@ -58,7 +58,9 @@ public class IntakeSubsystem extends Subsystem {
     }
     public void setIntakePiston30(boolean isOut){
   		intakeSol2.set(!isOut ? DoubleSolenoid.Value.kForward : DoubleSolenoid.Value.kReverse);
+
     }
+
 
     public boolean isRunning()
     {
