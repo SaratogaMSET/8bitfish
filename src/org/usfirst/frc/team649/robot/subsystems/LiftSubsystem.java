@@ -20,6 +20,16 @@ import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
  */
 public class LiftSubsystem extends PIDSubsystem {
 
+    public static class LiftPIDConstants{
+    	public static double k_P = 0;
+    	public static double k_I = 0;
+    	public static double k_D = 0;
+    	public static double SECOND_STAGE_TRANSLATION_CONSTANT = 0;
+    	public static double CARRIAGE_STAGE_TRANSLATION_CONSTANT = 0;
+    	public static double MAX_SECOND_STAGE_HEIGHT = 0; //inches
+    	public static double MAX_TOTAL_HEIGHT = 0;
+    	public static double ABS_TOL = 0;
+    }
     public static class LiftPowerValues{
     	public static double LIFT_POWER = 0.5;
     }
@@ -58,12 +68,12 @@ public class LiftSubsystem extends PIDSubsystem {
     public static class LiftEncoderConstants{
     	public static int LOW_STATE = 0;
     	public static int SWITCH_STATE = 20000; // 20000 P
-    	public static int LOW_SCALE_STATE = 32000; // 35500 P
-    	public static int MID_SCALE_STATE = 44900; // 46000 P
+    	public static int LOW_SCALE_STATE = 30000; // 35500 P
+    	public static int MID_SCALE_STATE = 42800; // 46000 P
     	public static int HIGH_SCALE_STATE = 44900; // 48100 P
     	public static int ADJ_DIST = 4000;
-    	public static int INTAKE_2_STATE = 12500;
-    	public static int LOW_MID_SCALE = 38000;
+    	public static int INTAKE_2_STATE = 7500;
+    	public static int LOW_MID_SCALE = 35000;
     }
     public static class LiftConstants{
     	public static double unitsPerCmSecond = 268;
@@ -77,31 +87,25 @@ public class LiftSubsystem extends PIDSubsystem {
     double liftPIDOutPut;
     
     public LiftSubsystem(){
-    	super(0, 0, 0);
+    	super(LiftPIDConstants.k_P, LiftPIDConstants.k_I, LiftPIDConstants.k_D);
     	mainLiftMotor = new TalonSRX(RobotMap.Lift.RIGHT_WINCH_MOTOR);
     	mainLiftMotor.configSelectedFeedbackSensor(FeedbackDevice.CTRE_MagEncoder_Relative, 0, Robot.timeoutMs);
-    	mainLiftMotor.setInverted(true); // true on final bot
-    	mainLiftMotor.setSensorPhase(false);
-    	
-    	
+    	mainLiftMotor.setInverted(false); // true on final bot
+    	mainLiftMotor.setSensorPhase(true);
     	followerLiftMotor = new TalonSRX(RobotMap.Lift.LEFT_WINCH_MOTOR);
-    	followerLiftMotor.setInverted(false); // false on f bot
+    	followerLiftMotor.setInverted(true); // false on f bot
     	followerLiftMotor.set(ControlMode.Follower, RobotMap.Lift.RIGHT_WINCH_MOTOR);
     	
     	mainLiftMotor.configNominalOutputForward(0, Robot.timeoutMs);
 		mainLiftMotor.configNominalOutputReverse(0, Robot.timeoutMs);
 		mainLiftMotor.configPeakOutputForward(1.0, Robot.timeoutMs);
 		mainLiftMotor.configPeakOutputReverse(-1.0, Robot.timeoutMs);
-		
-		
 		followerLiftMotor.configNominalOutputForward(0, Robot.timeoutMs);
 		followerLiftMotor.configNominalOutputReverse(0, Robot.timeoutMs);
 		followerLiftMotor.configPeakOutputForward(1.0, Robot.timeoutMs);
 		followerLiftMotor.configPeakOutputReverse(-1.0, Robot.timeoutMs);
-		
 		mainLiftMotor.setNeutralMode(NeutralMode.Brake);
 		followerLiftMotor.setNeutralMode(NeutralMode.Brake);
-		
 		mainLiftMotor.configMotionCruiseVelocity(3200, Robot.timeoutMs);
 		mainLiftMotor.configMotionAcceleration(3450, Robot.timeoutMs); // 400 actual
 		mainLiftMotor.selectProfileSlot(0, 0);
@@ -110,8 +114,6 @@ public class LiftSubsystem extends PIDSubsystem {
 		mainLiftMotor.config_kP(0, 3.5, Robot.timeoutMs);
 		mainLiftMotor.config_kI(0, 0.015, Robot.timeoutMs);
 		mainLiftMotor.config_kD(0, 0.07, Robot.timeoutMs);
-		
-		
     	botSecondStageHalRight = new DigitalInput(RobotMap.Lift.SECOND_STAGE_HAL_BOT_RIGHT);
     	topSecondStageHalRight = new DigitalInput(RobotMap.Lift.SECOND_STAGE_HAL_TOP_RIGHT);
     	botCarriageHalRight = new DigitalInput(RobotMap.Lift.CARRIAGE_HAL_BOT_RIGHT);
@@ -122,10 +124,36 @@ public class LiftSubsystem extends PIDSubsystem {
     	botCarriageHalLeft = new DigitalInput(RobotMap.Lift.CARRIAGE_HAL_BOT_LEFT);
     	topCarriageHalLeft = new DigitalInput(RobotMap.Lift.CARRIAGE_HAL_TOP_LEFT);
     }
-
+//    public double getLidarValue(){
+//    	return lidar.getSample()
+    ;
+//    }
     //u have a max height of 2nd stage and u have a translsational value tuned by max heihgt/winch turns. 
     //Then u get total height by lidar + (total winch - lidar portion converted)
 
+    public double getLiftHeight(){
+    	return 0.0;
+    }
+
+    public double getLiftHeightNoLidar(){
+    	double height = 0;
+    	if(getRawLift()/LiftPIDConstants.SECOND_STAGE_TRANSLATION_CONSTANT > LiftPIDConstants.MAX_SECOND_STAGE_HEIGHT){
+    		height += LiftPIDConstants.MAX_SECOND_STAGE_HEIGHT;
+    		height += (getRawLift()-LiftPIDConstants.MAX_SECOND_STAGE_HEIGHT*LiftPIDConstants.SECOND_STAGE_TRANSLATION_CONSTANT)/LiftPIDConstants.CARRIAGE_STAGE_TRANSLATION_CONSTANT;
+    	}else{
+    		height += getRawLift()/LiftPIDConstants.SECOND_STAGE_TRANSLATION_CONSTANT;
+    	}
+    	return height;
+    }
+    public double getInchesToRaw(double inches){
+    	if(inches > LiftPIDConstants.MAX_SECOND_STAGE_HEIGHT){
+    		double dist =  LiftPIDConstants.MAX_SECOND_STAGE_HEIGHT*LiftPIDConstants.SECOND_STAGE_TRANSLATION_CONSTANT;
+    		dist += (inches - dist) * LiftPIDConstants.CARRIAGE_STAGE_TRANSLATION_CONSTANT;
+    		return dist;
+    	}else{
+    		return inches*LiftPIDConstants.SECOND_STAGE_TRANSLATION_CONSTANT;
+    	}
+    }
     public double getRawLift(){
     	return (double) mainLiftMotor.getSensorCollection().getQuadraturePosition();
     }
@@ -240,4 +268,3 @@ public class LiftSubsystem extends PIDSubsystem {
 		
 	}
 }
-
