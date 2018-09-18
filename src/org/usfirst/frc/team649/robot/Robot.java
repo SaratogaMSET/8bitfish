@@ -24,6 +24,7 @@ import org.usfirst.frc.team649.robot.CommandGroups.DownAndFlipWhenPossibleStoreF
 import org.usfirst.frc.team649.robot.CommandGroups.DownAndFlipWhenPossibleStoreRear;
 import org.usfirst.frc.team649.robot.CommandGroups.LeftMPSwitch;
 import org.usfirst.frc.team649.robot.CommandGroups.LeftScaleDoubleScaleMP;
+import org.usfirst.frc.team649.robot.CommandGroups.LeftScaleSingleMP;
 import org.usfirst.frc.team649.robot.CommandGroups.RightMPSwitch;
 import org.usfirst.frc.team649.robot.CommandGroups.RightScaleDoubleScaleMP;
 
@@ -404,10 +405,10 @@ public class Robot extends TimedRobot {
 					right.configurePIDVA(2, 0.0, 0, 1 / 4.5, 0);
 					//new LeftScaleDoubleScaleMP().start();
 //					 new LeftScaleMP().start();
-//					 new LeftScaleSingleMP().start();
+					 new LeftScaleSingleMP().start();
 					// new LeftSwitchAround().start();
 					// new LeftScale().start();
-					new DriveStraight().start();
+//					new DriveStraight().start();
 
 				} else if (gameData.charAt(0) == 'L' && gameData.charAt(1) == 'L') {
 					left = new EncoderFollower(modifierLeftScaleSingle.getLeftTrajectory());
@@ -549,8 +550,8 @@ public class Robot extends TimedRobot {
 	public void teleopPeriodic() {
 		Scheduler.getInstance().run();
 		// teleopRun();
-//		testMotionMagic();
-		cleanTeleopRun();
+		testMotionMagic();
+//		cleanTeleopRun();
 		updateSmartDashboardTesting();
 		
 	}
@@ -977,7 +978,7 @@ public class Robot extends TimedRobot {
 				new LeftSwitch().start();
 			}
 			if(oi.operator.getButton4()) {
-				new GyroPID(90).start();
+				
 			}
 		} else {
 			drive.driveForwardRotateTeleop(oi.driver.getForward(), oi.driver.getRotation());

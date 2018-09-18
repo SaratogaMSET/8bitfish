@@ -92,10 +92,10 @@ public class GyroPID extends Command {
 
     // Make this return true when this Command no longer needs to run execute()
     protected boolean isFinished() {
-    	if(Robot.endAuto){
-    		System.out.println("Finishing Gyro PID In Teleop");
-    		return true;
-    	}
+//    	if(Robot.endAuto){
+//    		System.out.println("Finishing Gyro PID In Teleop");
+//    		return true;
+//    	}
         return isFinished;
     }
 
