@@ -70,9 +70,11 @@ public class GyroPIDBack extends Command {
     		gyroVal = Robot.gyro.getGyroAngle();
     		actuallyFinished = "true";
     	}
+
     	if(Robot.auto.get()>14.8){
     		isFinished = true;
     	}
+
     	if (timeout.get() > 3) {
     		isFinished = true;
     		isTimeout = true;
@@ -109,7 +111,10 @@ public class GyroPIDBack extends Command {
     // Called when another command which requires one or more of the same
     // subsystems is scheduled to run
     protected void interrupted() {
+<<<<<<< HEAD
     	end();
 
+=======
+>>>>>>> master
     }
 }

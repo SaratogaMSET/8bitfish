@@ -1,8 +1,7 @@
-package org.usfirst.frc.team649.robot.CommandGroups;
+package org.usfirst.frc.team649.autonomous;
 
 import org.usfirst.frc.team649.robot.Robot;
 import org.usfirst.frc.team649.robot.commands.MotionProfileDrive;
-import org.usfirst.frc.team649.robot.commands.WaitTime;
 import org.usfirst.frc.team649.robot.commands.arm.ArmMotionProfile;
 import org.usfirst.frc.team649.robot.commands.arm.ChangeRobotArmState;
 import org.usfirst.frc.team649.robot.commands.drivetrain.DriveBackForTime;
@@ -20,9 +19,9 @@ import edu.wpi.first.wpilibj.command.CommandGroup;
 /**
  *
  */
-public class RightScaleDoubleScaleMP extends CommandGroup {
+public class LeftScaleDoubleScaleMP extends CommandGroup {
 
-    public RightScaleDoubleScaleMP() {
+    public LeftScaleDoubleScaleMP() {
     	addSequential(new ChangeRobotLiftState(9));
     	addSequential(new ChangeRobotArmState(ArmSubsystem.ArmStateConstants.HEADING_HIGH_DROP_FRONT));
     	addParallel(new ArmMotionProfile(ArmSubsystem.ArmEncoderConstants.HIGH_DROP_FRONT,Robot.armState,false));
@@ -31,16 +30,17 @@ public class RightScaleDoubleScaleMP extends CommandGroup {
     	addSequential(new SetIntakePistons(true,false));
     	addSequential(new DriveBackForTime(-0.3,1.2));
 //    	addSequential(new WaitForSEc(0.5));
-//    	addSequential(new SwitchMPModes(Robot.modifierSideBack));
 //    	addSequential(new SetIntakePistons(false, true));
 
-    	//    	addParallel(new DriveBackForTime(-0.3,0.9));
+//    	addParallel(new DriveBackForTime(-0.3,0.9));
+//////    	addSequential(new SwitchMPModes(Robot.modifierSideBack));
 //    	addSequential(new DownAndFlipWhenPossibleIntakeRear());
 //    	addSequential(new SetIntakePistons(true,false));
 //    	addParallel(new RunIntakeWheels(0.5));
 //    	addSequential(new DriveBackForTime(-0.3,1));
 //    	addSequential(new SetIntakePistons(false,false));
 //    	addSequential(new WaitForSEc(0.75));
+//    	addParallel(new RunIntakeWheels(0));
 //    	addSequential(new ChangeRobotArmState(ArmSubsystem.ArmStateConstants.HEADING_HIGH_DROP_FRONT));
 //    	addSequential(new ChangeRobotLiftState(LiftSubsystem.LiftStateConstants.HEADING_HIGH_SCALE_STATE));
 //    	addParallel(new DrivetrainMotionProfileIn(60));
@@ -48,6 +48,5 @@ public class RightScaleDoubleScaleMP extends CommandGroup {
 //
 //    	addSequential(new LiftMotionProfile(LiftSubsystem.LiftEncoderConstants.HIGH_SCALE_STATE,Robot.liftState,0.5));
 //    	addSequential(new RunIntakeForTime(0.5,false));
-
     }
 }

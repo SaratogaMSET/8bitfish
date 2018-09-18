@@ -1,8 +1,11 @@
-package org.usfirst.frc.team649.autonomous;
+package org.usfirst.frc.team649.autonomous.worlds;
 
+import org.usfirst.frc.team649.autonomous.AutoTest;
+import org.usfirst.frc.team649.autonomous.AutoTest.CenterRightSwitch;
 import org.usfirst.frc.team649.robot.Robot;
 import org.usfirst.frc.team649.robot.CommandGroups.DeployWithWheelsAndIntake;
 import org.usfirst.frc.team649.robot.commands.Delay;
+import org.usfirst.frc.team649.robot.commands.SetMotionMagicParameter;
 import org.usfirst.frc.team649.robot.commands.arm.ArmMotionProfile;
 import org.usfirst.frc.team649.robot.commands.arm.ChangeRobotArmState;
 import org.usfirst.frc.team649.robot.commands.arm.ZeroArmRoutine;
@@ -16,26 +19,25 @@ import org.usfirst.frc.team649.test.AutoTestCommand;
 import edu.wpi.first.wpilibj.command.CommandGroup;
 
 /**
-*Autonomous 1:
- *****Start on right side and drive forward, turn 90 degrees and drive forward to 
- *****drop off the power cube
- *Position: Right
+ *Autonomous 4:
+ *Center Autonomous delivers to Switch on right side
+ *****Drive forward, turn and drive diagonally, 
+ *****then turn to straight again and drive forward a 
+ *****little and drop off block
+ *Positions: Center
  */
-public class RightSwitch extends CommandGroup {
+public class CenterSwitchRight extends CommandGroup {
 
-    public RightSwitch() {
-    	Robot.isMPRunning = false;
+    public CenterSwitchRight() {
     	addSequential(new ZeroArmRoutine());
+       	addSequential(new DrivetrainMotionProfileIn(AutoTest.CenterRightSwitch.FIRST_DRIVE)); // drive straight
+    	addSequential(new GyroPID(AutoTest.CenterRightSwitch.FIRST_ANGLE_TURN)); // turn ~45 degrees
     	addSequential(new ChangeRobotArmState(ArmSubsystem.ArmStateConstants.HEADING_SWITCH_FRONT));
-    	addParallel(new ArmMotionProfile(ArmSubsystem.ArmEncoderConstants.SWITCH_FRONT, Robot.armState,false));
-    	addSequential(new DrivetrainMotionProfileIn(AutoTest.RightSwitchVal.FIRST_DRIVE));// drive forward
-      	addSequential(new GyroPID(AutoTest.RightSwitchVal.FIRST_ANGLE_TURN));// turn 90 degrees
-//      addSequential(new DrivetrainMotionProfileIn(AutoTest.RightSwitchVal.SECOND_DRIVE)); // drive forward
+    	addParallel(new ArmMotionProfile(ArmSubsystem.ArmEncoderConstants.INTAKE_FRONT, Robot.armState,false));
+    	addSequential(new DrivetrainMotionProfileIn(AutoTest.CenterRightSwitch.SECOND_DRIVE)); // drive straight diagonally
+       	addSequential(new GyroPID(AutoTest.CenterRightSwitch.SECOND_ANGLE_TURN));// turn back to straight
     	addSequential(new RunIntakeForTime(1, false, 1));
     	addSequential(new DrivetrainMotionProfileIn(-10));
-      	//      	addSequential(new GyroPID(AutoTest.RightSwitchVal.SECOND_ANGLE_TURN));
-//      	addSequential(new DrivetrainMotionProfileIn(AutoTest.RightSwitchVal.THIRD_DRIVE));
 
-      	// drop off block
     }
 }

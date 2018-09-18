@@ -1,4 +1,4 @@
-package org.usfirst.frc.team649.robot.CommandGroups;
+package org.usfirst.frc.team649.autonomous;
 
 import org.usfirst.frc.team649.robot.Robot;
 import org.usfirst.frc.team649.robot.commands.drivetrain.DrivetrainMotionProfileIn;
@@ -18,9 +18,12 @@ import edu.wpi.first.wpilibj.command.CommandGroup;
 /**
  *
  */
-public class LeftScaleSingleMP extends CommandGroup {
 
-    public LeftScaleSingleMP() {
+// AUTO NOT TESTED AS OF 4/15/18
+
+public class LeftScaleSingleMPOld extends CommandGroup {
+
+    public LeftScaleSingleMPOld() {
     	addSequential(new ChangeRobotLiftState(9));
     	addSequential(new ChangeRobotArmState(ArmSubsystem.ArmStateConstants.HEADING_HIGH_DROP_FRONT));
     	addParallel(new ArmMotionProfile(ArmSubsystem.ArmEncoderConstants.HIGH_DROP_FRONT,Robot.armState,false));

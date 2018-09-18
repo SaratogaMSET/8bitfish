@@ -1,5 +1,7 @@
-package org.usfirst.frc.team649.autonomous;
+package org.usfirst.frc.team649.autonomous.worlds;
 
+import org.usfirst.frc.team649.autonomous.AutoTest;
+import org.usfirst.frc.team649.autonomous.AutoTest.LeftScaleFarVal;
 import org.usfirst.frc.team649.robot.Robot;
 import org.usfirst.frc.team649.robot.commands.Delay;
 import org.usfirst.frc.team649.robot.commands.arm.ArmMotionProfile;
@@ -35,8 +37,13 @@ public class LeftFarScale extends CommandGroup {
         addParallel(new LiftMotionProfile(LiftSubsystem.LiftEncoderConstants.HIGH_SCALE_STATE,Robot.liftState,1.25));
         addSequential(new DrivetrainMotionProfileIn(AutoTest.LeftScaleFarVal.SECOND_DRIVE));// drive straight
         addSequential(new GyroPID(AutoTest.LeftScaleFarVal.SECOND_ANGLE_TURN));
+<<<<<<< HEAD:src/org/usfirst/frc/team649/autonomous/LeftFarScale.java
 //        addSequential(new DrivetrainMotionProfileIn(AutoTest.LeftScaleFarVal.THIRD_DRIVE));
     	addSequential(new RunIntakeForTime(0.35, false, 0.5));
+=======
+        addSequential(new DrivetrainMotionProfileIn(AutoTest.LeftScaleFarVal.THIRD_DRIVE));
+    	addSequential(new RunIntakeForTime(1, false, 0.5));
+>>>>>>> master:src/org/usfirst/frc/team649/autonomous/worlds/LeftFarScale.java
     	addSequential(new DrivetrainMotionProfileIn(-25));// deploy
     }
 }

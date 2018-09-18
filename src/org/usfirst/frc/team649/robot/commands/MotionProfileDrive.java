@@ -40,7 +40,36 @@ public class MotionProfileDrive extends Command {
 
     // Called repeatedly when this Command is scheduled to run
     protected void execute() {
-    	
+    	double l = Robot.left.calculate(Robot.drive.motors[0].getSelectedSensorPosition(0));
+		double r = Robot.right.calculate(Robot.drive.motors[2].getSelectedSensorPosition(0));
+
+		double gyro_heading = -Robot.gyro.getGyroAngle();
+		double desired_heading = Pathfinder.r2d(Robot.left.getHeading());  
+		double angleDifference = Pathfinder.boundHalfDegrees(desired_heading - gyro_heading);
+		//1.1 for middle left
+		double turn;
+		if(Robot.shouldSwitchTurnRatio){
+			turn = 1.1 * (-1.0/80.0) * angleDifference;
+
+		}else{
+			turn = 0.8 * (-1.0/80.0) * angleDifference;
+		}
+		if(back){
+			Robot.drive.motors[0].set(ControlMode.PercentOutput, l);
+			Robot.drive.motors[2].set(ControlMode.PercentOutput, r);
+			
+			Robot.drive.motors[0].setInverted(true);
+			Robot.drive.motors[2].setInverted(true);
+			
+			Robot.drive.motors[0].setSensorPhase(true);
+			Robot.drive.motors[2].setSensorPhase(true);
+
+		}else{
+			Robot.drive.motors[0].set(ControlMode.PercentOutput, l+turn);
+			Robot.drive.motors[2].set(ControlMode.PercentOutput, r-turn);
+		}
+		SmartDashboard.putNumber("turn", turn);
+		
     }
 
     // Make this return true when this Command no longer needs to run execute()
@@ -52,7 +81,15 @@ public class MotionProfileDrive extends Command {
     protected void end() {
     	SmartDashboard.putBoolean("isMPFin", true);
     	Robot.isMPRunning = false;
-    	periodicRunnable.stop();
+    	if(back) {
+    		Robot.drive.motors[0].setInverted(!Robot.drive.motors[0].getInverted());
+    		Robot.drive.motors[2].setInverted(!Robot.drive.motors[2].getInverted());
+    		
+    		Robot.drive.motors[0].setSensorPhase(false);
+    		Robot.drive.motors[2].setSensorPhase(false);
+    	}
+    	
+
 
     	Robot.drive.rawDrive(0, 0);
     }

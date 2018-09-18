@@ -1,5 +1,9 @@
 package org.usfirst.frc.team649.autonomous;
 
+import org.usfirst.frc.team649.autonomous.worlds.CenterSwitchLeft;
+import org.usfirst.frc.team649.autonomous.worlds.CenterSwitchRight;
+import org.usfirst.frc.team649.autonomous.worlds.LeftSwitch;
+import org.usfirst.frc.team649.autonomous.worlds.RightSwitch;
 import org.usfirst.frc.team649.robot.Robot;
 
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
