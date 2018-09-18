@@ -78,10 +78,10 @@ public class MotionProfileDrive extends Command {
     		//1.1 for middle left
     		double turn;
     		if(Robot.shouldSwitchTurnRatio){
-    			turn =  1 * (-1.0/80.0) * angleDifference;
+    			turn =  1.5 * (-1.0/80.0) * angleDifference;
 
     		}else{
-    			turn = 2.5 * (-1.0/80.0) * angleDifference;
+    			turn = 3.5 * (-1.0/80.0) * angleDifference;
     		}
     		if(back){
     			Robot.drive.motors[0].set(ControlMode.PercentOutput, l);

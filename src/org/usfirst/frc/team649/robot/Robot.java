@@ -299,13 +299,13 @@ public class Robot extends TimedRobot {
 //					new Waypoint(8.75,0.5,Pathfinder.d2r(40)),
 //					new Waypoint(9.25,1,Pathfinder.d2r(45)),
 //					new Waypoint(9.75,1.75,Pathfinder.d2r(50)),
-					new Waypoint(14,-3.5,Pathfinder.d2r(-45))
+					new Waypoint(14,-1.5,Pathfinder.d2r(-45))
 			};
 			Waypoint[] backwardTest = new Waypoint[] {
 				new Waypoint(0,0,0),
 				new Waypoint(3,0,0),
 //				new Waypoint(3,0,Pathfinder.d2r(40)),
-				new Waypoint(5.5,5,Pathfinder.d2r(60))
+				new Waypoint(5,2,Pathfinder.d2r(-60))
 			};
 
 			configLeftScaleSingle = new Trajectory.Config(Trajectory.FitMethod.HERMITE_CUBIC,
@@ -322,13 +322,13 @@ public class Robot extends TimedRobot {
 			Waypoint[] pointsMiddleRightSingle = new Waypoint[] { new Waypoint(-5.8, 0, 0), new Waypoint(0, 0, 0) };
 
 			configMiddleRightSingle = new Trajectory.Config(Trajectory.FitMethod.HERMITE_CUBIC,
-					Trajectory.Config.SAMPLES_HIGH, 0.02, 4.5, 3.3, 12);
+					Trajectory.Config.SAMPLES_HIGH, 0.02, 6, 5, 12);
 			trajectoryMiddleRightSingle = Pathfinder.generate(pointsMiddleRightSingle, configMiddleRightSingle);
 			modifierMiddleRightSingle = new TankModifier(trajectoryMiddleRightSingle).modify(0.66);
-			Waypoint[] pointsMiddleLeftSingle = new Waypoint[] { new Waypoint(0, -5, 0),
-					new Waypoint(1.5, -4, Pathfinder.d2r(30)), new Waypoint(3, 0, 0), };
+			Waypoint[] pointsMiddleLeftSingle = new Waypoint[] { new Waypoint(0, -4.5, 0),
+					new Waypoint(1.5, -4, Pathfinder.d2r(60)), new Waypoint(2, 0, 0), };
 			configMiddleLeftSingle = new Trajectory.Config(Trajectory.FitMethod.HERMITE_CUBIC,
-					Trajectory.Config.SAMPLES_HIGH, 0.02, 4, 5, 12);
+					Trajectory.Config.SAMPLES_HIGH, 0.02, 5, 7, 15);
 			trajectoryMiddleLeftSingle = Pathfinder.generate(pointsMiddleLeftSingle, configMiddleLeftSingle);
 			modifierMiddleLeftSingle = new TankModifier(trajectoryMiddleLeftSingle).modify(0.66);
 
@@ -444,10 +444,10 @@ public class Robot extends TimedRobot {
 					new DriveStraight().start();
 
 				} else if (gameData.charAt(0) == 'L' && gameData.charAt(1) == 'L') {
-					left = new EncoderFollower(modifierLeftScaleSingle.getLeftTrajectory());
-					right = new EncoderFollower(modifierLeftScaleSingle.getRightTrajectory());
-//					left = new EncoderFollower(modifierBackTest.getLeftTrajectory());
-//					right = new EncoderFollower(modifierBackTest.getRightTrajectory());
+//					left = new EncoderFollower(modifierLeftScaleSingle.getLeftTrajectory());
+//					right = new EncoderFollower(modifierLeftScaleSingle.getRightTrajectory());
+					left = new EncoderFollower(modifierBackTest.getLeftTrajectory());
+					right = new EncoderFollower(modifierBackTest.getRightTrajectory());
 					left.configureEncoder(0, 4096 * 2, 0.127);
 					right.configureEncoder(0, 4096 * 2, 0.127);
 					left.configurePIDVA(2, 0.0, 0, 1 / 3.5, 0);
@@ -461,7 +461,7 @@ public class Robot extends TimedRobot {
 //					new DriveStraight().start();
 					SmartDashboard.putBoolean("Test",true);
 					
-//					new MotionProfileDrive(false).start();
+					new MotionProfileDriveInverted(false).start();
 
 				} else if (gameData.charAt(0) == 'R' && gameData.charAt(1) == 'R') {
 					
@@ -479,8 +479,8 @@ public class Robot extends TimedRobot {
 					right.configureEncoder(0, 4096 * 2, 0.127);
 					left.configurePIDVA(2, 0.0, 0, 1 / 3, 0);
 					right.configurePIDVA(2, 0.0, 0, 1 / 3, 0);
-//					new LeftMPSwitch().start();
-					new MotionProfileDrive(true).start();
+					new LeftMPSwitch().start();
+//					new MotionProfileDrive(true).start();
 //					new RightMPSwitch().start();
 
 					// new CenterSwitchLeft().start();

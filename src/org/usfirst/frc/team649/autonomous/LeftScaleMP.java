@@ -3,6 +3,7 @@ package org.usfirst.frc.team649.autonomous;
 import org.usfirst.frc.team649.robot.Robot;
 import org.usfirst.frc.team649.robot.CommandGroups.DownAndFlipWhenPossibleIntakeRear;
 import org.usfirst.frc.team649.robot.commands.MotionProfileDrive;
+import org.usfirst.frc.team649.robot.commands.MotionProfileDriveInverted;
 import org.usfirst.frc.team649.robot.commands.SwitchMPModes;
 import org.usfirst.frc.team649.robot.commands.WaitTime;
 import org.usfirst.frc.team649.robot.commands.arm.ArmMotionProfile;
@@ -30,10 +31,13 @@ public class LeftScaleMP extends CommandGroup {
 		addSequential(new ChangeRobotLiftState(9));
     	addSequential(new ChangeRobotArmState(ArmSubsystem.ArmStateConstants.HEADING_HIGH_DROP_FRONT));
     	addParallel(new ArmMotionProfile(ArmSubsystem.ArmEncoderConstants.HIGH_DROP_FRONT,Robot.armState,false));
-    	addParallel(new LiftMotionProfile(LiftSubsystem.LiftEncoderConstants.HIGH_SCALE_STATE,Robot.liftState,1.25));
+    	addParallel(new LiftMotionProfile(LiftSubsystem.LiftEncoderConstants.HIGH_SCALE_STATE,Robot.liftState,1));
     	addSequential(new MotionProfileDrive(false));    	
-//    	addParallel(new ChangeRobotLiftState(1));
+    	addParallel(new ChangeRobotLiftState(1));
     	addSequential(new RunIntakeForTime(0.6, false, 0.35));
+    	addSequential(new SwitchMPModes(Robot.modifierBackTest));
+    	addSequential(new MotionProfileDriveInverted(false));
+    	addParallel(new LiftMotionProfile(LiftSubsystem.LiftEncoderConstants.LOW_STATE,Robot.liftState,0.5));
 //    	addParallel(new GyroPIDBack(57));
 //    	addSequential(new DownAndFlipWhenPossibleIntakeRear());
 //

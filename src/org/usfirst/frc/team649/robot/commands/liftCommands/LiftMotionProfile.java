@@ -128,7 +128,7 @@ public class LiftMotionProfile extends Command {
         	}
     	}
     	
-    	Robot.lift.mainLiftMotor.set(ControlMode.PercentOutput, 0);
+//    	Robot.lift.mainLiftMotor.set(ControlMode.PercentOutput, 0);
     	SmartDashboard.putBoolean("ran is fin", true);
     	SmartDashboard.putBoolean("did cancl", wasCancl);
 
