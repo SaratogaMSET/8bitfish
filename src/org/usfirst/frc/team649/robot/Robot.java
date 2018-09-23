@@ -10,12 +10,7 @@ import org.usfirst.frc.team649.autonomous.DriveStraight;
 import org.usfirst.frc.team649.autonomous.LeftFarScale;
 import org.usfirst.frc.team649.autonomous.LeftScaleMP;
 import org.usfirst.frc.team649.autonomous.LeftSwitch;
-import org.usfirst.frc.team649.autonomous.MiddleRightDouble;
-import org.usfirst.frc.team649.autonomous.RightFarScale;
-import org.usfirst.frc.team649.autonomous.RightScale;
-import org.usfirst.frc.team649.autonomous.RightScaleNoTurn;
 import org.usfirst.frc.team649.autonomous.RightSwitch;
-import org.usfirst.frc.team649.robot.CommandGroups.CenterSwitchRightDoubleMP;
 import org.usfirst.frc.team649.robot.CommandGroups.DownAndFlipWhenPossible2ndIntakeFront;
 import org.usfirst.frc.team649.robot.CommandGroups.DownAndFlipWhenPossible2ndIntakeRear;
 import org.usfirst.frc.team649.robot.CommandGroups.DownAndFlipWhenPossibleIntakeFront;
@@ -23,11 +18,8 @@ import org.usfirst.frc.team649.robot.CommandGroups.DownAndFlipWhenPossibleIntake
 import org.usfirst.frc.team649.robot.CommandGroups.DownAndFlipWhenPossibleStoreFront;
 import org.usfirst.frc.team649.robot.CommandGroups.DownAndFlipWhenPossibleStoreRear;
 import org.usfirst.frc.team649.robot.CommandGroups.LeftMPSwitch;
-import org.usfirst.frc.team649.robot.CommandGroups.LeftScaleDoubleScaleMP;
 import org.usfirst.frc.team649.robot.CommandGroups.LeftScaleSingleMP;
 import org.usfirst.frc.team649.robot.CommandGroups.RightMPSwitch;
-import org.usfirst.frc.team649.robot.CommandGroups.RightScaleDoubleScaleMP;
-
 import org.usfirst.frc.team649.robot.CommandGroups.RightScaleSingleMP;
 import org.usfirst.frc.team649.robot.commands.Diagnostic;
 import org.usfirst.frc.team649.robot.commands.MotionProfileDrive;
@@ -53,9 +45,6 @@ import org.usfirst.frc.team649.robot.subsystems.LiftSubsystem.LiftStateConstants
 import org.usfirst.frc.team649.robot.util.CameraServer;
 import org.usfirst.frc.team649.robot.util.Lidar;
 import org.usfirst.frc.team649.robot.util.VoltageLog;
-
-import com.ctre.phoenix.motorcontrol.ControlMode;
-import com.ctre.phoenix.motorcontrol.NeutralMode;
 
 import edu.wpi.cscore.AxisCamera;
 import edu.wpi.cscore.CvSink;
@@ -108,6 +97,7 @@ public class Robot extends TimedRobot {
 	public static boolean isTestingAuto = true;
 	public static boolean isOpen;
 	public static boolean isMPRunning;
+	public static boolean isGamePad = false;
 
 	// *********************************************************** Prev State
 	// Booleans
@@ -298,16 +288,19 @@ public class Robot extends TimedRobot {
 			modifierLeftScaleSingle = new TankModifier(trajectoryLeftScaleSingle).modify(0.66);
 
 		} else if (pos == 1) {
-			Waypoint[] pointsMiddleRightSingle = new Waypoint[] { new Waypoint(-5.8, 0, 0), new Waypoint(0, 0, 0) };
+			Waypoint[] pointsMiddleRightSingle = new Waypoint[] { new Waypoint(-3.5, 0, 0), 
+					new Waypoint(0, 0, 0) };
 
 			configMiddleRightSingle = new Trajectory.Config(Trajectory.FitMethod.HERMITE_CUBIC,
-					Trajectory.Config.SAMPLES_HIGH, 0.02, 4.5, 3.3, 12);
+					Trajectory.Config.SAMPLES_HIGH, 0.02, 3, 3, 10);
 			trajectoryMiddleRightSingle = Pathfinder.generate(pointsMiddleRightSingle, configMiddleRightSingle);
 			modifierMiddleRightSingle = new TankModifier(trajectoryMiddleRightSingle).modify(0.66);
-			Waypoint[] pointsMiddleLeftSingle = new Waypoint[] { new Waypoint(-1.2, -5, 0),
-					new Waypoint(-.7, -5, Pathfinder.d2r(30)), new Waypoint(0, 0, 0), };
+			
+			
+			Waypoint[] pointsMiddleLeftSingle = new Waypoint[] { new Waypoint(-1.2, -5.5, 0),
+					new Waypoint(-.8, -5.5, Pathfinder.d2r(30)), new Waypoint(0, 0, 0), };
 			configMiddleLeftSingle = new Trajectory.Config(Trajectory.FitMethod.HERMITE_CUBIC,
-					Trajectory.Config.SAMPLES_HIGH, 0.02, 3, 2.3, 12);
+					Trajectory.Config.SAMPLES_HIGH, 0.02, 3, 2.3, 2);
 			trajectoryMiddleLeftSingle = Pathfinder.generate(pointsMiddleLeftSingle, configMiddleLeftSingle);
 			modifierMiddleLeftSingle = new TankModifier(trajectoryMiddleLeftSingle).modify(0.66);
 
@@ -544,14 +537,15 @@ public class Robot extends TimedRobot {
 		liftManualPrevState = false;
 		armManualPrevState = false;
 		prevStateFlipArm = false;
+		
 	}
 
 	@Override
 	public void teleopPeriodic() {
 		Scheduler.getInstance().run();
 		// teleopRun();
-		testMotionMagic();
-//		cleanTeleopRun();
+//		testMotionMagic();
+		cleanTeleopRun();
 		updateSmartDashboardTesting();
 		
 	}
@@ -578,7 +572,13 @@ public class Robot extends TimedRobot {
 			isHigh = !isHigh;
 			drive.shift(isHigh);
 		}
-		drive.driveForwardRotateTeleop(oi.driver.getForward(), oi.driver.getRotation());
+		double yTurn = 0;
+		if(oi.driver.getRotation() < 0){
+			yTurn = - Math.pow(oi.driver.getRotation(), 2);
+		}else{
+			yTurn = Math.pow(oi.driver.getRotation(), 2);
+		}
+		drive.driveForwardRotateTeleop(oi.driver.getForward(), yTurn);
 
 
 		if (oi.operator.getIntakeState()) { // *********************************** Move Lift to bottom, arm to intake
@@ -617,7 +617,7 @@ public class Robot extends TimedRobot {
 			} else {
 				new MoveArmCommand(ArmSubsystem.ArmStateConstants.MID_DROP_REAR, false).start();
 			}
-		} else if (oi.operator.getScaleHighState()) { // ************************ Move Lift to high scale, arm to high drop
+		} else if (oi.operator.getScaleHighState()) {
 			new MoveLiftCommand(LiftSubsystem.LiftStateConstants.HIGH_SCALE_STATE, false).start();
 			if (armIsFront) {
 				new MoveArmCommand(ArmSubsystem.ArmStateConstants.HIGH_DROP_FRONT, false).start();
@@ -978,12 +978,42 @@ public class Robot extends TimedRobot {
 				new LeftSwitch().start();
 			}
 			if(oi.operator.getButton4()) {
+				new DriveStraight().start();
+			}
+			
+			if(oi.operator.getButton5()) {
+				left = new EncoderFollower(modifierLeftScaleSingle.getLeftTrajectory());
+				right = new EncoderFollower(modifierLeftScaleSingle.getRightTrajectory());
+				left.configureEncoder(0, 4096 * 2, 0.127);
+				right.configureEncoder(0, 4096 * 2, 0.127);
+				left.configurePIDVA(2, 0.0, 0, 1 / 4.5, 0);
+				right.configurePIDVA(2, 0.0, 0, 1 / 4.5, 0);
+				new LeftScaleMP().start();
+			}
+			if(oi.operator.getButton6()) {
 				
+				shouldSwitchTurnRatio = true;
+				left = new EncoderFollower(modifierMiddleLeftSingle.getLeftTrajectory());
+				right = new EncoderFollower(modifierMiddleLeftSingle.getRightTrajectory());
+				left.configureEncoder(0, 4096 * 2, 0.127);
+				right.configureEncoder(0, 4096 * 2, 0.127);
+				left.configurePIDVA(2, 0.0, 0, 1 / 3, 0);
+				right.configurePIDVA(2, 0.0, 0, 1 / 3, 0);
+				new LeftMPSwitch().start();
+			}
+			if(oi.operator.getButton8()) {
+				left = new EncoderFollower(modifierMiddleRightSingle.getLeftTrajectory());
+				right = new EncoderFollower(modifierMiddleRightSingle.getRightTrajectory());
+				left.configureEncoder(0, 4096 * 2, 0.127);
+				right.configureEncoder(0, 4096 * 2, 0.127);
+				left.configurePIDVA(2, 0.0, 0, 1 / 4.5, 0);
+				right.configurePIDVA(2, 0.0, 0, 1 / 4.5, 0);
+				new RightMPSwitch().start();
 			}
 		} else {
-			drive.driveForwardRotateTeleop(oi.driver.getForward(), oi.driver.getRotation());
+			cleanTeleopRun();
 		}
-		if(oi.operator.getButton2()) {
+		if(oi.operator.getButton7()) {
 			isTuningPID = !isTuningPID;
 		}
 		getPrefs();

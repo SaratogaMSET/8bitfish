@@ -14,6 +14,7 @@ public class OI {
 	public Joystick driveJoystickHorizontal;
 	public Joystick driveJoystickVertical;
 	public Joystick operatorJoystick;
+	public Joystick gamePad;
 
 	public Driver driver;
 	public Operator operator;
@@ -40,7 +41,7 @@ public class OI {
 		operatorJoystick = new Joystick(RobotMap.OPERATOR_JOYSTICK);
 		driveJoystickHorizontal = new Joystick(RobotMap.DRIVE_JOYSTICK_HORIZONTAL);
 		driveJoystickVertical = new Joystick(RobotMap.DRIVE_JOYSTICK_VERTICAL);
-		// gamePad = new Joystick(3);
+		gamePad = new Joystick(0);
 		driver = new Driver();
 		operator = new Operator();
 		shiftPrev = false;
@@ -234,7 +235,7 @@ public class OI {
 
 		public boolean getButton5() {
 			if (Robot.isTuningPID) {
-				boolean value = buttonBoard.getRawButton(5);
+				boolean value = operatorJoystick.getRawButton(5);
 				if (value == true && oldValue5 == false) {
 					oldValue5 = value;
 					return true;
@@ -247,7 +248,7 @@ public class OI {
 
 		public boolean getButton6() {
 			if (Robot.isTuningPID) {
-				boolean value = buttonBoard.getRawButton(6);
+				boolean value = operatorJoystick.getRawButton(6);
 				if (value == true && oldValue6 == false) {
 					oldValue6 = value;
 					return true;
@@ -259,34 +260,28 @@ public class OI {
 		}
 
 		public boolean getButton7() {
-			if (Robot.isTuningPID) {
-				boolean value = buttonBoard.getRawButton(7);
+				boolean value = operatorJoystick.getRawButton(7);
 				if (value == true && oldValue7 == false) {
 					oldValue7 = value;
 					return true;
 				}
 				oldValue7 = value;
 				return false;
-			}
-			return buttonBoard.getRawButton(7);
 		}
 
 		public boolean getButton8() {
-			if (Robot.isTuningPID) {
-				boolean value = buttonBoard.getRawButton(8);
-				if (value == true && oldValue8 == false) {
-					oldValue8 = value;
-					return true;
-				}
+			boolean value = operatorJoystick.getRawButton(8);
+			if (value == true && oldValue8 == false) {
 				oldValue8 = value;
-				return false;
+				return true;
 			}
-			return buttonBoard.getRawButton(8);
+			oldValue8 = value;
+			return false;
 		}
 
 		public boolean getButton9() {
 			if (Robot.isTuningPID) {
-				boolean value = buttonBoard.getRawButton(9);
+				boolean value = operatorJoystick.getRawButton(9);
 				if (value == true && oldValue9 == false) {
 					oldValue9 = value;
 					return true;
@@ -410,17 +405,25 @@ public class OI {
 		}
 
 		public double getOperatorY() {
-			if (Math.abs(operatorJoystick.getY()) >= 0.1) {
-				return operatorJoystick.getY();
+			if (Robot.isGamePad) {
+				return -gamePad.getRawAxis(1);
+			} else {
+				if (Math.abs(operatorJoystick.getY()) >= 0.1) {
+					return operatorJoystick.getY();
+				}
+				return 0.0;
 			}
-			return 0.0;
 		}
 
 		public double getRotation() {
-			if (driveJoystickHorizontal.getX() >= 0.05 || driveJoystickHorizontal.getX() <= -0.05) {
-				return -driveJoystickHorizontal.getX();
+			if (Robot.isGamePad) {
+				return gamePad.getRawAxis(4);
 			} else {
-				return 0.0;
+				if (driveJoystickHorizontal.getX() >= 0.05 || driveJoystickHorizontal.getX() <= -0.05) {
+					return -driveJoystickHorizontal.getX();
+				} else {
+					return 0.0;
+				}
 			}
 		}
 

@@ -35,6 +35,8 @@ public class MotionProfileDrive extends Command {
     	timeout.start();
     	isFinished = false;
         periodicRunnable.startPeriodic(0.05);
+        
+        SmartDashboard.putBoolean("MP Running", true);
 
     }
 
