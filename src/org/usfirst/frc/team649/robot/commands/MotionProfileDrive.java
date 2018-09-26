@@ -42,28 +42,31 @@ public class MotionProfileDrive extends Command {
 
     // Called repeatedly when this Command is scheduled to run
     protected void execute() {
-    	double l = Robot.left.calculate(Robot.drive.motors[0].getSelectedSensorPosition(0));
-		double r = Robot.right.calculate(Robot.drive.motors[2].getSelectedSensorPosition(0));
-
-		double gyro_heading = -Robot.gyro.getGyroAngle();
-		double desired_heading = Pathfinder.r2d(Robot.left.getHeading());  
-		double angleDifference = Pathfinder.boundHalfDegrees(desired_heading - gyro_heading);
-		//1.1 for middle left
-		double turn;
-		if(Robot.shouldSwitchTurnRatio){
-			turn = 1.1 * (-1.0/80.0) * angleDifference;
-
-		}else{
-			turn = 0.8 * (-1.0/80.0) * angleDifference;
+    	if((Robot.left.isFinished()&&Robot.right.isFinished())||timeout.get()>14.95){
+			isFinished = true;
 		}
-		if(back){
-			Robot.drive.motors[0].set(ControlMode.PercentOutput, l);
-			Robot.drive.motors[2].set(ControlMode.PercentOutput, r);
-		}else{
-			Robot.drive.motors[0].set(ControlMode.PercentOutput, l+turn);
-			Robot.drive.motors[2].set(ControlMode.PercentOutput, r-turn);
-		}
-		SmartDashboard.putNumber("turn", turn);
+//    	double l = Robot.left.calculate(Robot.drive.motors[0].getSelectedSensorPosition(0));
+//		double r = Robot.right.calculate(Robot.drive.motors[2].getSelectedSensorPosition(0));
+//
+//		double gyro_heading = -Robot.gyro.getGyroAngle();
+//		double desired_heading = Pathfinder.r2d(Robot.left.getHeading());  
+//		double angleDifference = Pathfinder.boundHalfDegrees(desired_heading - gyro_heading);
+//		//1.1 for middle left
+//		double turn;
+//		if(Robot.shouldSwitchTurnRatio){
+//			turn = 1.1 * (-1.0/80.0) * angleDifference;
+//
+//		}else{
+//			turn = 0.8 * (-1.0/80.0) * angleDifference;
+//		}
+//		if(back){
+//			Robot.drive.motors[0].set(ControlMode.PercentOutput, l);
+//			Robot.drive.motors[2].set(ControlMode.PercentOutput, r);
+//		}else{
+//			Robot.drive.motors[0].set(ControlMode.PercentOutput, l+turn);
+//			Robot.drive.motors[2].set(ControlMode.PercentOutput, r-turn);
+//		}
+//		SmartDashboard.putNumber("turn", turn);
 		
     }
 
@@ -77,7 +80,7 @@ public class MotionProfileDrive extends Command {
     	SmartDashboard.putBoolean("isMPFin", true);
     	Robot.isMPRunning = false;
 
-
+    	periodicRunnable.stop();
     	Robot.drive.rawDrive(0, 0);
     }
 
@@ -116,9 +119,7 @@ public class MotionProfileDrive extends Command {
     			Robot.drive.motors[2].set(ControlMode.PercentOutput, r-turn);
     		}
     		SmartDashboard.putNumber("turn", turn);
-    		if((Robot.left.isFinished()&&Robot.right.isFinished()&&Math.abs(angleDifference) < 4)||timeout.get()>14.95){
-    			isFinished = true;
-    		}
+    		
     		
 //            // Calculate the current motor outputs based on the trajectory values + encoder positions
 //            double l = left.calculate(Robot.driveTrain.getLeftEncoderValue());

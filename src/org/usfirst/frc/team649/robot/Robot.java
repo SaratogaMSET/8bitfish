@@ -29,6 +29,7 @@ import org.usfirst.frc.team649.robot.commands.arm.MoveArmCommand;
 import org.usfirst.frc.team649.robot.commands.arm.ZeroArmRoutine;
 import org.usfirst.frc.team649.robot.commands.drivetrain.DrivetrainMotionProfileIn;
 import org.usfirst.frc.team649.robot.commands.drivetrain.GyroPID;
+import org.usfirst.frc.team649.robot.commands.intake.RunIntakeForTime;
 import org.usfirst.frc.team649.robot.commands.intake.RunIntakeWheels;
 import org.usfirst.frc.team649.robot.commands.intake.SetIntakePistons;
 import org.usfirst.frc.team649.robot.commands.liftCommands.ChangeRobotLiftState;
@@ -45,6 +46,8 @@ import org.usfirst.frc.team649.robot.subsystems.LiftSubsystem.LiftStateConstants
 import org.usfirst.frc.team649.robot.util.CameraServer;
 import org.usfirst.frc.team649.robot.util.Lidar;
 import org.usfirst.frc.team649.robot.util.VoltageLog;
+
+import com.ctre.phoenix.motorcontrol.NeutralMode;
 
 import edu.wpi.cscore.AxisCamera;
 import edu.wpi.cscore.CvSink;
@@ -194,7 +197,7 @@ public class Robot extends TimedRobot {
 	public static boolean endAuto;
 	public static Timer auto;
 
-	public static int pos = 1; // left mid right forward
+	public static int pos = 0; // left mid right forward
 
 	@Override
 
@@ -278,12 +281,18 @@ public class Robot extends TimedRobot {
 		}).start();
 		isAutoInTeleopPrev = false;
 		if (pos == 0) {
-			Waypoint[] pointsLeftScaleSingle = new Waypoint[] { new Waypoint(-12.9, 3.1, 0),
-					new Waypoint(-6, 3.0, Pathfinder.d2r(-15)),
-					new Waypoint(0.8, 1, Pathfinder.d2r(-60)) };
+			Waypoint[] pointsLeftScaleSingle = new Waypoint[] { new Waypoint(0, 0, 0),
+					new Waypoint(5,0,0),
+					new Waypoint(10.5,0,0),
+//					new Waypoint(8,0.15,Pathfinder.d2r(15)),
+//					new Waypoint(8.75,0.5,Pathfinder.d2r(40)),
+//					new Waypoint(9.25,1,Pathfinder.d2r(45)),
+//					new Waypoint(9.75,1.75,Pathfinder.d2r(50)),
+					new Waypoint(15,-2.5,Pathfinder.d2r(-45))
+			};
 
 			configLeftScaleSingle = new Trajectory.Config(Trajectory.FitMethod.HERMITE_CUBIC,
-					Trajectory.Config.SAMPLES_HIGH, 0.02, 5.5, 2.6, 7); //3.1 accel
+					Trajectory.Config.SAMPLES_HIGH, 0.05, 4, 3.25, 6); //3.1 accel
 			trajectoryLeftScaleSingle = Pathfinder.generate(pointsLeftScaleSingle, configLeftScaleSingle);
 			modifierLeftScaleSingle = new TankModifier(trajectoryLeftScaleSingle).modify(0.66);
 
@@ -292,7 +301,7 @@ public class Robot extends TimedRobot {
 					new Waypoint(0, 0, 0) };
 
 			configMiddleRightSingle = new Trajectory.Config(Trajectory.FitMethod.HERMITE_CUBIC,
-					Trajectory.Config.SAMPLES_HIGH, 0.02, 3, 3, 10);
+					Trajectory.Config.SAMPLES_HIGH, 0.05, 3, 3, 10);
 			trajectoryMiddleRightSingle = Pathfinder.generate(pointsMiddleRightSingle, configMiddleRightSingle);
 			modifierMiddleRightSingle = new TankModifier(trajectoryMiddleRightSingle).modify(0.66);
 			
@@ -300,7 +309,7 @@ public class Robot extends TimedRobot {
 			Waypoint[] pointsMiddleLeftSingle = new Waypoint[] { new Waypoint(-1.2, -5.5, 0),
 					new Waypoint(-.8, -5.5, Pathfinder.d2r(30)), new Waypoint(0, 0, 0), };
 			configMiddleLeftSingle = new Trajectory.Config(Trajectory.FitMethod.HERMITE_CUBIC,
-					Trajectory.Config.SAMPLES_HIGH, 0.02, 3, 2.3, 2);
+					Trajectory.Config.SAMPLES_HIGH, 0.05, 3, 2.3, 2);
 			trajectoryMiddleLeftSingle = Pathfinder.generate(pointsMiddleLeftSingle, configMiddleLeftSingle);
 			modifierMiddleLeftSingle = new TankModifier(trajectoryMiddleLeftSingle).modify(0.66);
 
@@ -356,14 +365,21 @@ public class Robot extends TimedRobot {
 		shouldSwitchTurnRatio = false;
 		
 
-		isZero = false;
-
+		isZero = true; //false
+		for (int i = 0; i < 4; i++) {
+			drive.motors[i].setNeutralMode(NeutralMode.Brake);
+			drive.motors[i].configMotionAcceleration(9000, timeoutMs);
+			drive.motors[i].configMotionCruiseVelocity(18000, timeoutMs);
+			drive.motors[i].config_kP(0, 1.5, Robot.timeoutMs);
+			drive.motors[i].config_kI(0, 0, Robot.timeoutMs);
+			drive.motors[i].config_kD(0, 0.9, Robot.timeoutMs);
+		}
 		drive.resetEncoders();
 		gyro.resetGyro();
 		drive.shift(true);
 		drive.changeBrakeCoast(true);
 
-		new ZeroArmRoutine().start();
+//		new ZeroArmRoutine().start();
 	}
 
 	@Override
@@ -378,6 +394,7 @@ public class Robot extends TimedRobot {
 		 } else if (arm.getArmHalZeroBack()) {
 			 arm.bottomMotor.setSelectedSensorPosition(ArmSubsystem.ArmEncoderConstants.INTAKE_REAR, 0, 20);
 		 }
+		 
 		String gameData = DriverStation.getInstance().getGameSpecificMessage();
 		
 		if (gameData.length() > 0 && !hasFMS) {
@@ -394,11 +411,11 @@ public class Robot extends TimedRobot {
 					right = new EncoderFollower(modifierLeftScaleSingle.getRightTrajectory());
 					left.configureEncoder(0, 4096 * 2, 0.127);
 					right.configureEncoder(0, 4096 * 2, 0.127);
-					left.configurePIDVA(2, 0.0, 0, 1 / 4.5, 0);
-					right.configurePIDVA(2, 0.0, 0, 1 / 4.5, 0);
+					left.configurePIDVA(2, 0.0, 0, 1 / 3.5, 0);
+					right.configurePIDVA(2, 0.0, 0, 1 / 3.5, 0);
 					//new LeftScaleDoubleScaleMP().start();
-//					 new LeftScaleMP().start();
-					 new LeftScaleSingleMP().start();
+					 new LeftScaleMP().start();
+//					 new LeftScaleSingleMP().start();
 					// new LeftSwitchAround().start();
 					// new LeftScale().start();
 //					new DriveStraight().start();
@@ -411,12 +428,12 @@ public class Robot extends TimedRobot {
 					left.configurePIDVA(2, 0.0, 0, 1 / 4.5, 0);
 					right.configurePIDVA(2, 0.0, 0, 1 / 4.5, 0);
 					// new LeftScaleDoubleScaleMP().start();
-//					new LeftScaleMP().start();	
+					new LeftScaleMP().start();	
 //					 new LeftScaleSingleMP().start();
 					// new LeftScaleSWSCMP().start();
 //					 new LeftSwitch().start();
 					// new LeftScale().start();
-					new DriveStraight().start();
+//					new DriveStraight().start();
 
 
 				} else if (gameData.charAt(0) == 'R' && gameData.charAt(1) == 'R') {
@@ -573,11 +590,15 @@ public class Robot extends TimedRobot {
 			drive.shift(isHigh);
 		}
 		double yTurn = 0;
+		double turnScaleFactor = 0.8;  // 0.66 is too low, 1 is too sensitive
+		// don't need the following if statement if we're not squaring the joystick.  Leaving it in
+		// in case we decide to square them in the future.
 		if(oi.driver.getRotation() < 0){
-			yTurn = - Math.pow(oi.driver.getRotation(), 2);
+			yTurn = oi.driver.getRotation() * turnScaleFactor;
 		}else{
-			yTurn = Math.pow(oi.driver.getRotation(), 2);
+			yTurn = oi.driver.getRotation() * turnScaleFactor;
 		}
+		
 		drive.driveForwardRotateTeleop(oi.driver.getForward(), yTurn);
 
 
@@ -900,7 +921,7 @@ public class Robot extends TimedRobot {
 		prevStateFlipAndIntakeLow = oi.operator.flipAndIntakeLow();
 		prevStateFlipAndStore = oi.operator.flipAndStore();
 		if (oi.operatorJoystick.getRawButton(10)) {
-			lift.mainLiftMotor.setSelectedSensorPosition(0, 0, timeoutMs);
+			arm.bottomMotor.setSelectedSensorPosition(0, 0, timeoutMs);
 		} else if (oi.operatorJoystick.getRawButton(1)) {
 			lift.mainLiftMotor.setSelectedSensorPosition(-1000, 0, timeoutMs);
 		}

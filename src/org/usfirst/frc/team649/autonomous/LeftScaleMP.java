@@ -29,13 +29,13 @@ import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 public class LeftScaleMP extends CommandGroup {
 	public LeftScaleMP() {
 		SmartDashboard.putBoolean("In LeftScale MP", true);
-//		addSequential(new ChangeRobotLiftState(9));
-//    	addSequential(new ChangeRobotArmState(ArmSubsystem.ArmStateConstants.HEADING_HIGH_DROP_FRONT));
-//    	addParallel(new ArmMotionProfile(ArmSubsystem.ArmEncoderConstants.HIGH_DROP_FRONT,Robot.armState,false));
-//    	addParallel(new LiftMotionProfile(LiftSubsystem.LiftEncoderConstants.HIGH_SCALE_STATE,Robot.liftState,1.25));
+		addSequential(new ChangeRobotLiftState(9));
+    	addSequential(new ChangeRobotArmState(ArmSubsystem.ArmStateConstants.HEADING_HIGH_DROP_FRONT));
+    	addParallel(new ArmMotionProfile(ArmSubsystem.ArmEncoderConstants.HIGH_DROP_FRONT,Robot.armState,false));
+    	addParallel(new LiftMotionProfile(LiftSubsystem.LiftEncoderConstants.HIGH_SCALE_STATE,Robot.liftState,1.25));
     	addSequential(new MotionProfileDrive(false));    	
-//    	addParallel(new ChangeRobotLiftState(1));
-//    	addSequential(new RunIntakeForTime(0.6, false, 0.35));
+    	addParallel(new ChangeRobotLiftState(1));
+    	addSequential(new RunIntakeForTime(0.6, false, 0.35));
 //    	addParallel(new GyroPIDBack(57));
 //    	addSequential(new DownAndFlipWhenPossibleIntakeRear());
 
