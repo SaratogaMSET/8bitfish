@@ -36,6 +36,11 @@ public class LeftScaleMP extends CommandGroup {
     	addSequential(new MotionProfileDrive(false));    	
     	addParallel(new ChangeRobotLiftState(1));
     	addSequential(new RunIntakeForTime(0.6, false, 0.35));
+    	addSequential(new ChangeRobotLiftState(LiftSubsystem.LiftStateConstants.HEADING_INTAKE_EXCHANGE_STORE_STATE));
+    	addSequential(new ChangeRobotArmState(ArmSubsystem.ArmStateConstants.HEADING_STORE_FRONT));
+    	addParallel(new LiftMotionProfile(LiftSubsystem.LiftEncoderConstants.LOW_STATE,Robot.liftState, 1.25));
+    	addParallel(new ArmMotionProfile(ArmSubsystem.ArmEncoderConstants.STORE_FRONT,Robot.armState, false));
+    	addSequential(new DrivetrainMotionProfileIn(-20));
 //    	addParallel(new GyroPIDBack(57));
 //    	addSequential(new DownAndFlipWhenPossibleIntakeRear());
 

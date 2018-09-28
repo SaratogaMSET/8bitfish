@@ -288,7 +288,7 @@ public class Robot extends TimedRobot {
 //					new Waypoint(8.75,0.5,Pathfinder.d2r(40)),
 //					new Waypoint(9.25,1,Pathfinder.d2r(45)),
 //					new Waypoint(9.75,1.75,Pathfinder.d2r(50)),
-					new Waypoint(15,-2.5,Pathfinder.d2r(-45))
+					new Waypoint(14,-1.5,Pathfinder.d2r(-35)) //-45, 2.5
 			};
 
 			configLeftScaleSingle = new Trajectory.Config(Trajectory.FitMethod.HERMITE_CUBIC,
@@ -297,7 +297,7 @@ public class Robot extends TimedRobot {
 			modifierLeftScaleSingle = new TankModifier(trajectoryLeftScaleSingle).modify(0.66);
 
 		} else if (pos == 1) {
-			Waypoint[] pointsMiddleRightSingle = new Waypoint[] { new Waypoint(-3.5, 0, 0), 
+			Waypoint[] pointsMiddleRightSingle = new Waypoint[] { new Waypoint(-5.3, 0, 0), 
 					new Waypoint(0, 0, 0) };
 
 			configMiddleRightSingle = new Trajectory.Config(Trajectory.FitMethod.HERMITE_CUBIC,
@@ -365,7 +365,7 @@ public class Robot extends TimedRobot {
 		shouldSwitchTurnRatio = false;
 		
 
-		isZero = true; //false
+		isZero = false; //false
 		for (int i = 0; i < 4; i++) {
 			drive.motors[i].setNeutralMode(NeutralMode.Brake);
 			drive.motors[i].configMotionAcceleration(9000, timeoutMs);
@@ -379,7 +379,7 @@ public class Robot extends TimedRobot {
 		drive.shift(true);
 		drive.changeBrakeCoast(true);
 
-//		new ZeroArmRoutine().start();
+		new ZeroArmRoutine().start();
 	}
 
 	@Override
@@ -403,8 +403,8 @@ public class Robot extends TimedRobot {
 				if (gameData.charAt(0) == 'L' && gameData.charAt(1) == 'R') {
 					
 //					new LeftFarScale().start();
-//					new LeftSwitch().start();
-					new DriveStraight().start();
+					new LeftSwitch().start();
+//					new DriveStraight().start();
 
 				} else if (gameData.charAt(0) == 'R' && gameData.charAt(1) == 'L') {
 					left = new EncoderFollower(modifierLeftScaleSingle.getLeftTrajectory());
