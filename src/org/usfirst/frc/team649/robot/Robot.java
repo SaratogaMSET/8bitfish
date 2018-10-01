@@ -6,11 +6,14 @@ import java.util.concurrent.ScheduledExecutorService;
 import org.opencv.core.Mat;
 import org.usfirst.frc.team649.autonomous.AutoTest;
 import org.usfirst.frc.team649.autonomous.CenterSwitchRight;
+import org.usfirst.frc.team649.autonomous.DelayRightSwitch;
 import org.usfirst.frc.team649.autonomous.DriveStraight;
 import org.usfirst.frc.team649.autonomous.LeftFarScale;
 import org.usfirst.frc.team649.autonomous.LeftScaleMP;
 import org.usfirst.frc.team649.autonomous.LeftSwitch;
 import org.usfirst.frc.team649.autonomous.RightSwitch;
+import org.usfirst.frc.team649.robot.CommandGroups.DelayLeftMPSwitch;
+import org.usfirst.frc.team649.robot.CommandGroups.DelayRightMPSwitch;
 import org.usfirst.frc.team649.robot.CommandGroups.DownAndFlipWhenPossible2ndIntakeFront;
 import org.usfirst.frc.team649.robot.CommandGroups.DownAndFlipWhenPossible2ndIntakeRear;
 import org.usfirst.frc.team649.robot.CommandGroups.DownAndFlipWhenPossibleIntakeFront;
@@ -197,7 +200,7 @@ public class Robot extends TimedRobot {
 	public static boolean endAuto;
 	public static Timer auto;
 
-	public static int pos = 0; // left mid right forward
+	public static int pos = 1; // left mid right forward
 
 	@Override
 
@@ -205,6 +208,7 @@ public class Robot extends TimedRobot {
 		oi = new OI();
 		compressor = new Compressor(4);
 		endAuto = false;
+		
 		
 		auto = new Timer();
 		intakeTimer = new Timer();
@@ -379,7 +383,7 @@ public class Robot extends TimedRobot {
 		drive.shift(true);
 		drive.changeBrakeCoast(true);
 
-		new ZeroArmRoutine().start();
+//		new ZeroArmRoutine().start();
 	}
 
 	@Override
@@ -414,11 +418,11 @@ public class Robot extends TimedRobot {
 					left.configurePIDVA(2, 0.0, 0, 1 / 3.5, 0);
 					right.configurePIDVA(2, 0.0, 0, 1 / 3.5, 0);
 					//new LeftScaleDoubleScaleMP().start();
-					 new LeftScaleMP().start();
+//					 new LeftScaleMP().start();
 //					 new LeftScaleSingleMP().start();
 					// new LeftSwitchAround().start();
 					// new LeftScale().start();
-//					new DriveStraight().start();
+					new DriveStraight().start();
 
 				} else if (gameData.charAt(0) == 'L' && gameData.charAt(1) == 'L') {
 					left = new EncoderFollower(modifierLeftScaleSingle.getLeftTrajectory());
@@ -428,10 +432,10 @@ public class Robot extends TimedRobot {
 					left.configurePIDVA(2, 0.0, 0, 1 / 4.5, 0);
 					right.configurePIDVA(2, 0.0, 0, 1 / 4.5, 0);
 					// new LeftScaleDoubleScaleMP().start();
-					new LeftScaleMP().start();	
+//					new LeftScaleMP().start();	
 //					 new LeftScaleSingleMP().start();
 					// new LeftScaleSWSCMP().start();
-//					 new LeftSwitch().start();
+					 new LeftSwitch().start();
 					// new LeftScale().start();
 //					new DriveStraight().start();
 
@@ -444,7 +448,17 @@ public class Robot extends TimedRobot {
 					new DriveStraight().start();
 				}
 			} else if (pos == 1) { // mid
-				if (gameData.charAt(0) == 'L') {
+				if (gameData.charAt(0) == 'L' && gameData.charAt(1) == 'R') {
+					shouldSwitchTurnRatio = true;
+					left = new EncoderFollower(modifierMiddleLeftSingle.getLeftTrajectory());
+					right = new EncoderFollower(modifierMiddleLeftSingle.getRightTrajectory());
+					left.configureEncoder(0, 4096 * 2, 0.127);
+					right.configureEncoder(0, 4096 * 2, 0.127);
+					left.configurePIDVA(2, 0.0, 0, 1 / 3, 0);
+					right.configurePIDVA(2, 0.0, 0, 1 / 3, 0);
+					new DelayLeftMPSwitch().start();
+//					new RightMPSwitch().start();
+				} else if (gameData.charAt(0) == 'L' && gameData.charAt(1) == 'L') {
 					shouldSwitchTurnRatio = true;
 					left = new EncoderFollower(modifierMiddleLeftSingle.getLeftTrajectory());
 					right = new EncoderFollower(modifierMiddleLeftSingle.getRightTrajectory());
@@ -453,19 +467,18 @@ public class Robot extends TimedRobot {
 					left.configurePIDVA(2, 0.0, 0, 1 / 3, 0);
 					right.configurePIDVA(2, 0.0, 0, 1 / 3, 0);
 					new LeftMPSwitch().start();
-//					new RightMPSwitch().start();
-
+//				new RightMPSwitch().start();
 					// new CenterSwitchLeft().start();
-				} else if (gameData.charAt(0) == 'R') {
+				} else if (gameData.charAt(0) == 'R' && gameData.charAt(1) == 'R') {
 					left = new EncoderFollower(modifierMiddleRightSingle.getLeftTrajectory());
 					right = new EncoderFollower(modifierMiddleRightSingle.getRightTrajectory());
 					left.configureEncoder(0, 4096 * 2, 0.127);
 					right.configureEncoder(0, 4096 * 2, 0.127);
 					left.configurePIDVA(2, 0.0, 0, 1 / 4.5, 0);
 					right.configurePIDVA(2, 0.0, 0, 1 / 4.5, 0);
-					new RightMPSwitch().start();
+					new DelayRightMPSwitch().start();
 //					new CenterSwitchRight().start();
-					
+				} else if(gameData.charAt(0) == 'R' && gameData.charAt(1) == 'L') {
 //					left = new EncoderFollower(modifierRightScaleSingle.getLeftTrajectory());
 //					right = new EncoderFollower(modifierRightScaleSingle.getRightTrajectory());
 //					left.configureEncoder(0, 4096 * 2, 0.127);
@@ -473,6 +486,7 @@ public class Robot extends TimedRobot {
 //					left.configurePIDVA(2, 0.0, 0, 1 / 4.5, 0);
 //					right.configurePIDVA(2, 0.0, 0, 1 / 4.5, 0);
 					//new CenterSwitchRightDoubleMP().start();
+					new RightMPSwitch().start();
 				}
 
 			} else if (pos == 2) { // right
@@ -487,6 +501,8 @@ public class Robot extends TimedRobot {
 					right.configurePIDVA(2, 0.0, 0, 1 / 4.5, 0);
 //					new RightScaleSingleMP().start();
 					new DriveStraight().start();
+//					new RightSwitch().start();
+
 				} else if (gameData.charAt(0) == 'R' && gameData.charAt(1) == 'R') { // near switch, near scale
 					//TODO: Change command and encoder values if we want to run switch instead
 					left = new EncoderFollower(modifierRightScaleSingle.getLeftTrajectory());
@@ -503,6 +519,8 @@ public class Robot extends TimedRobot {
 					//TODO: Set the encoder values if we decide to make this MP
 //					new RightFarScale().start();
 					new DriveStraight().start();
+//					new RightSwitch().start();
+
 
 				}
 			}
@@ -546,6 +564,7 @@ public class Robot extends TimedRobot {
 		SmartDashboard.putBoolean("Flipping Arm Op 6", false);
 		SmartDashboard.putBoolean("In Intake Low Flip", false);
 		SmartDashboard.putBoolean("Move Arm to Back", false);
+		SmartDashboard.putNumber("Pos:", pos);
 
 		// ***************************************************** Prev States
 		autoShiftButtonPrevState = false;
@@ -952,6 +971,8 @@ public class Robot extends TimedRobot {
 		SmartDashboard.putBoolean("is Carriage at Top", lift.isCarriageAtTop());
 		SmartDashboard.putNumber("Lift Raw", lift.getRawLift());
 		SmartDashboard.putNumber("Arm Raw", arm.getArmRaw());
+		
+		SmartDashboard.putBoolean("Arm Hal Front", arm.getArmHalZeroFront());
 		
 		SmartDashboard.putNumber("left Talon Voltage", drive.motors[0].getMotorOutputVoltage());
 		SmartDashboard.putNumber("right 1 Talon Voltage", drive.motors[2].getMotorOutputVoltage());

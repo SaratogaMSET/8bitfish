@@ -1,6 +1,7 @@
 package org.usfirst.frc.team649.robot.CommandGroups;
 
 import org.usfirst.frc.team649.robot.Robot;
+import org.usfirst.frc.team649.robot.commands.Delay;
 import org.usfirst.frc.team649.robot.commands.MotionProfileDrive;
 import org.usfirst.frc.team649.robot.commands.WaitTime;
 import org.usfirst.frc.team649.robot.commands.arm.ArmMotionProfile;
@@ -19,33 +20,31 @@ import edu.wpi.first.wpilibj.command.CommandGroup;
 /**
  *
  */
-public class RightMPSwitch extends CommandGroup {
+public class DelayLeftMPSwitch extends CommandGroup {
 
-    public RightMPSwitch() {
+    public DelayLeftMPSwitch() {
+    	addSequential(new Delay(6));
     	addSequential(new ZeroArmRoutine());
     	addSequential(new ChangeRobotArmState(ArmSubsystem.ArmStateConstants.HEADING_SWITCH_FRONT));
     	addParallel(new ArmMotionProfile(ArmSubsystem.ArmEncoderConstants.SWITCH_FRONT,Robot.armState,false));
-        addSequential(new MotionProfileDrive(false));
-        addSequential(new RunIntakeForTime(0.5,false,1));
-//        addSequential(new DrivetrainMotionProfileIn(-63.5));
+        addSequential(new MotionProfileDrive(true));
+        addSequential(new RunIntakeForTime(0.5,false,0.75));
+////        addSequential(new DrivetrainMotionProfileIn(-65));
 //        addParallel(new ChangeRobotArmState(ArmSubsystem.ArmStateConstants.HEADING_INTAKE_FRONT));
 //        addParallel(new ArmMotionProfile(ArmSubsystem.ArmEncoderConstants.INTAKE_FRONT,Robot.armState,false));
 //        addParallel(new SetIntakePistons(true,false));
-//        addSequential(new GyroPID(-75));
+//        addSequential(new GyroPID(70));
 //    	addParallel(new RunIntakeWheels(0.3));
-//    	addSequential(new DrivetrainMotionProfileIn(37.5));
+//    	addSequential(new DrivetrainMotionProfileIn(22.5));
 //    	addSequential(new SetIntakePistons(false,true));
 //    	addParallel(new RunIntakeWheels(1.0));
-//    	addSequential(new WaitTime(1.5));
+//    	addSequential(new WaitTime(0.5));
 //    	addSequential(new RunIntakeWheels(0));
 //    	addParallel(new ChangeRobotArmState(ArmSubsystem.ArmStateConstants.HEADING_SWITCH_FRONT));
 //    	addParallel(new ArmMotionProfile(ArmSubsystem.ArmEncoderConstants.SWITCH_FRONT,Robot.armState,false));
-//    	addSequential(new DrivetrainMotionProfileIn(-62.5));
-//    	addSequential(new GyroPID(85));
-////    	addSequential(new DrivetrainMotionProfileIn(22));
-//
-//    	addSequential(new DriveBackForTime(0.5,1));
-//        addSequential(new RunIntakeForTime(0.5,false,1));
-//      addSequential(new DrivetrainPIDCommand(-25));
+//    	addSequential(new DrivetrainMotionProfileIn(-67.5));
+//    	addSequential(new GyroPID(-70));
+//    	addSequential(new DriveBackForTime(0.5,0.5));
+//        addSequential(new RunIntakeForTime(0.35,false,1));
     }
 }

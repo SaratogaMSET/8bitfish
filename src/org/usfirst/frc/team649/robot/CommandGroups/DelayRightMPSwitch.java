@@ -1,6 +1,7 @@
 package org.usfirst.frc.team649.robot.CommandGroups;
 
 import org.usfirst.frc.team649.robot.Robot;
+import org.usfirst.frc.team649.robot.commands.Delay;
 import org.usfirst.frc.team649.robot.commands.MotionProfileDrive;
 import org.usfirst.frc.team649.robot.commands.WaitTime;
 import org.usfirst.frc.team649.robot.commands.arm.ArmMotionProfile;
@@ -19,9 +20,10 @@ import edu.wpi.first.wpilibj.command.CommandGroup;
 /**
  *
  */
-public class RightMPSwitch extends CommandGroup {
+public class DelayRightMPSwitch extends CommandGroup {
 
-    public RightMPSwitch() {
+    public DelayRightMPSwitch() {
+    	addSequential(new Delay(6));
     	addSequential(new ZeroArmRoutine());
     	addSequential(new ChangeRobotArmState(ArmSubsystem.ArmStateConstants.HEADING_SWITCH_FRONT));
     	addParallel(new ArmMotionProfile(ArmSubsystem.ArmEncoderConstants.SWITCH_FRONT,Robot.armState,false));

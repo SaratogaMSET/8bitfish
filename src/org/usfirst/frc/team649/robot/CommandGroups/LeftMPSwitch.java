@@ -5,6 +5,7 @@ import org.usfirst.frc.team649.robot.commands.MotionProfileDrive;
 import org.usfirst.frc.team649.robot.commands.WaitTime;
 import org.usfirst.frc.team649.robot.commands.arm.ArmMotionProfile;
 import org.usfirst.frc.team649.robot.commands.arm.ChangeRobotArmState;
+import org.usfirst.frc.team649.robot.commands.arm.ZeroArmRoutine;
 import org.usfirst.frc.team649.robot.commands.drivetrain.DriveBackForTime;
 import org.usfirst.frc.team649.robot.commands.drivetrain.DrivetrainMotionProfileIn;
 import org.usfirst.frc.team649.robot.commands.drivetrain.GyroPID;
@@ -21,6 +22,7 @@ import edu.wpi.first.wpilibj.command.CommandGroup;
 public class LeftMPSwitch extends CommandGroup {
 
     public LeftMPSwitch() {
+    	addSequential(new ZeroArmRoutine());
     	addSequential(new ChangeRobotArmState(ArmSubsystem.ArmStateConstants.HEADING_SWITCH_FRONT));
     	addParallel(new ArmMotionProfile(ArmSubsystem.ArmEncoderConstants.SWITCH_FRONT,Robot.armState,false));
         addSequential(new MotionProfileDrive(true));
