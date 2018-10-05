@@ -390,7 +390,7 @@ public class Robot extends TimedRobot {
 		shouldSwitchTurnRatio = false;
 		
 
-		isZero = true; //false
+		isZero = false; //false
 		for (int i = 0; i < 4; i++) {
 			drive.motors[i].setNeutralMode(NeutralMode.Brake);
 			drive.motors[i].configMotionAcceleration(9000, timeoutMs);
@@ -462,11 +462,11 @@ public class Robot extends TimedRobot {
 					left.configurePIDVA(2, 0.0, 0, 1 / 3.5, 0);
 					right.configurePIDVA(2, 0.0, 0, 1 / 3.5, 0);
 					//new LeftScaleDoubleScaleMP().start();
-//					 new LeftScaleMP().start();
+					 new LeftScaleMP().start();
 //					 new LeftScaleSingleMP().start();
 					// new LeftSwitchAround().start();
 					// new LeftScale().start();
-					new DriveStraight().start();
+//					new DriveStraight().start();
 
 				} else if (gameData.charAt(0) == 'L' && gameData.charAt(1) == 'L') {
 					left = new EncoderFollower(modifierLeftScaleSingle.getLeftTrajectory());
@@ -476,10 +476,10 @@ public class Robot extends TimedRobot {
 					left.configurePIDVA(2, 0.0, 0, 1 / 4.5, 0);
 					right.configurePIDVA(2, 0.0, 0, 1 / 4.5, 0);
 					// new LeftScaleDoubleScaleMP().start();
-//					new LeftScaleMP().start();	
+					new LeftScaleMP().start();	
 //					 new LeftScaleSingleMP().start();
 					// new LeftScaleSWSCMP().start();
-					 new LeftSwitch().start();
+//					 new LeftSwitch().start();
 					// new LeftScale().start();
 //					new DriveStraight().start();
 
@@ -487,9 +487,9 @@ public class Robot extends TimedRobot {
 				} else if (gameData.charAt(0) == 'R' && gameData.charAt(1) == 'R') {
 					
 
-//					 new LeftFarScale().start();
+					 new LeftFarScale().start();
 					// new LeftSwitchAround().start();
-					new DriveStraight().start();
+//					new DriveStraight().start();
 				}
 			} else if (pos == 1) { // mid
 				if (gameData.charAt(0) == 'L' && gameData.charAt(1) == 'R') {
@@ -500,8 +500,9 @@ public class Robot extends TimedRobot {
 					right.configureEncoder(0, 4096 * 2, 0.127);
 					left.configurePIDVA(2, 0.0, 0, 1 / 3, 0);
 					right.configurePIDVA(2, 0.0, 0, 1 / 3, 0);
-					new DelayLeftMPSwitch().start();
+//					new DelayLeftMPSwitch().start();
 //					new RightMPSwitch().start();
+					new LeftMPSwitch().start();
 				} else if (gameData.charAt(0) == 'L' && gameData.charAt(1) == 'L') {
 					shouldSwitchTurnRatio = true;
 					left = new EncoderFollower(modifierMiddleLeftSingle.getLeftTrajectory());
@@ -522,6 +523,7 @@ public class Robot extends TimedRobot {
 					right.configurePIDVA(2, 0.0, 0, 1 / 4.5, 0);
 //					new DelayRightMPSwitch().start();
 //					new CenterSwitchRight().start();
+					new RightMPSwitch().start();
 				} else if(gameData.charAt(0) == 'R' && gameData.charAt(1) == 'L') {
 //					left = new EncoderFollower(modifierRightScaleSingle.getLeftTrajectory());
 //					right = new EncoderFollower(modifierRightScaleSingle.getRightTrajectory());
