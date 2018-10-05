@@ -27,7 +27,7 @@ public class LeftScaleSingleMP extends CommandGroup {
     	addParallel(new LiftMotionProfile(LiftSubsystem.LiftEncoderConstants.HIGH_SCALE_STATE,Robot.liftState,1.25));
     	addSequential(new MotionProfileDrive(false));    	
     	addParallel(new DrivetrainMotionProfileIn(-15));
-    	addParallel(new ChangeRobotLiftState(1));
+    	addSequential(new ChangeRobotLiftState(1));
     	addSequential(new RunIntakeForTime(0.5,false,1));
     	addSequential(new LiftMotionProfile(LiftSubsystem.LiftEncoderConstants.LOW_STATE,Robot.liftState,0.1));
     	addSequential(new ChangeRobotArmState(ArmSubsystem.ArmStateConstants.HEADING_INTAKE_REAR));
