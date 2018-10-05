@@ -70,8 +70,8 @@ public class LiftSubsystem extends PIDSubsystem {
     	public static int LOW_STATE = 0;
     	public static int SWITCH_STATE = 20000; // 20000 P
     	public static int LOW_SCALE_STATE = 32000; // 35500 P
-    	public static int MID_SCALE_STATE = 44900; // 46000 P
-    	public static int HIGH_SCALE_STATE = 44900; // 48100 P
+    	public static int MID_SCALE_STATE = 44400; // 46000 P
+    	public static int HIGH_SCALE_STATE = 44400; // 48100 P
     	public static int ADJ_DIST = 4000;
     	public static int INTAKE_2_STATE = 12500;
     	public static int LOW_MID_SCALE = 38000;
