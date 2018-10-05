@@ -36,7 +36,7 @@ public class LeftScaleDoubleMP extends CommandGroup {
     	addParallel(new ChangeRobotLiftState(1));
     	addSequential(new RunIntakeForTime(0.6, false, 0.35));
     	addSequential(new SwitchMPModes(Robot.modifierBackTest));
-    	addSequential(new MotionProfileDriveInverted(false));
+    	addSequential(new MotionProfileDriveInverted(false, false));
     	addParallel(new LiftMotionProfile(LiftSubsystem.LiftEncoderConstants.LOW_STATE,Robot.liftState,0.5));
 //    	addParallel(new GyroPIDBack(57));
 //    	addSequential(new DownAndFlipWhenPossibleIntakeRear());

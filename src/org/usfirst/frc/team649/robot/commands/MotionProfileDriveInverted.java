@@ -20,10 +20,12 @@ public class MotionProfileDriveInverted extends Command {
     Notifier run;
     boolean isFinished;
     Timer timeout;
+    boolean intake;
 
     
-    public MotionProfileDriveInverted(boolean isBack) {
+    public MotionProfileDriveInverted(boolean isBack, boolean intake) {
     	back = isBack;
+    	this.intake = intake;
         // Use requires() here to declare subsystem dependencies
         // eg. requires(chassis);
     }
@@ -59,6 +61,7 @@ public class MotionProfileDriveInverted extends Command {
     protected void end() {
     	SmartDashboard.putBoolean("isMPFin", true);
     	Robot.isMPRunning = false;
+    	run.stop();
 
     	Robot.drive.rawDrive(0, 0);
     }
@@ -81,7 +84,7 @@ public class MotionProfileDriveInverted extends Command {
     		//1.1 for middle left
     		double turn;
     		if(Robot.shouldSwitchTurnRatio){
-    			turn = 2* (-1.0/80.0) * angleDifference;
+    			turn = 5* (-1.0/80.0) * angleDifference;
 
     		}else{
     			turn = 2 * (-1.0/80.0) * angleDifference;
@@ -98,6 +101,10 @@ public class MotionProfileDriveInverted extends Command {
     		if((Robot.left.isFinished()&&Robot.right.isFinished())||timeout.get()>14.95){
     			isFinished = true;
     			SmartDashboard.putBoolean("fin", true);
+    		}
+    		
+    		if(Robot.arm.getInfraredSensor()) {
+    			isFinished = true;
     		}
         }
     }

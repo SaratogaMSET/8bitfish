@@ -2,6 +2,7 @@ package org.usfirst.frc.team649.robot.CommandGroups;
 
 import org.usfirst.frc.team649.robot.Robot;
 import org.usfirst.frc.team649.robot.commands.MotionProfileDrive;
+import org.usfirst.frc.team649.robot.commands.SwitchMPModes;
 import org.usfirst.frc.team649.robot.commands.arm.ArmMotionProfile;
 import org.usfirst.frc.team649.robot.commands.arm.ChangeRobotArmState;
 import org.usfirst.frc.team649.robot.commands.drivetrain.DriveBackForTime;
@@ -26,9 +27,15 @@ public class LeftScaleDoubleScaleMP extends CommandGroup {
     	addSequential(new ChangeRobotArmState(ArmSubsystem.ArmStateConstants.HEADING_HIGH_DROP_FRONT));
     	addParallel(new ArmMotionProfile(ArmSubsystem.ArmEncoderConstants.HIGH_DROP_FRONT,Robot.armState,false));
     	addParallel(new LiftMotionProfile(LiftSubsystem.LiftEncoderConstants.HIGH_SCALE_STATE,Robot.liftState,1.25));
-    	addSequential(new MotionProfileDrive(true)); 
-    	addSequential(new SetIntakePistons(true,false));
-    	addSequential(new DriveBackForTime(-0.3,1.2));
+    	addSequential(new MotionProfileDrive(false));    	
+    	addParallel(new ChangeRobotLiftState(1));
+    	addSequential(new RunIntakeForTime(0.6, false, 0.35));
+    	addSequential(new ChangeRobotLiftState(LiftSubsystem.LiftStateConstants.HEADING_INTAKE_EXCHANGE_STORE_STATE));
+    	addSequential(new ChangeRobotArmState(ArmSubsystem.ArmStateConstants.HEADING_STORE_FRONT));
+    	addParallel(new LiftMotionProfile(LiftSubsystem.LiftEncoderConstants.LOW_STATE,Robot.liftState, 1.25));
+    	addParallel(new ArmMotionProfile(ArmSubsystem.ArmEncoderConstants.STORE_FRONT,Robot.armState, false));
+    	addSequential(new SwitchMPModes(Robot.modifierLeftBack));
+    	addSequential(new MotionProfileDrive(true));
 //    	addSequential(new WaitForSEc(0.5));
 //    	addSequential(new SetIntakePistons(false, true));
 

@@ -105,6 +105,7 @@ public class GyroPIDBack extends Command {
     	//drivePIDRight.disable();
     	time.stop();
     	time.reset();
+    	Robot.gyro.resetGyro();
     }
 
     // Called when another command which requires one or more of the same
