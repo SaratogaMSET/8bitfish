@@ -216,7 +216,7 @@ public class Robot extends TimedRobot {
 	public double firstBackX;
 	public double firstAngle;
 
-	public static int pos = 1; // left mid right forward
+	public static int pos = 0; // left mid right forward
 
 	@Override
 
@@ -404,7 +404,7 @@ public class Robot extends TimedRobot {
 		drive.shift(true);
 		drive.changeBrakeCoast(true);
 		
-		getPrefs();
+//		getPrefs();
 		
 //		Waypoint[] pointLeftBack = new Waypoint[] {
 //				new Waypoint(0,0,0),
@@ -449,9 +449,14 @@ public class Robot extends TimedRobot {
 			hasFMS = true;
 			if (pos == 0) { // left
 				if (gameData.charAt(0) == 'L' && gameData.charAt(1) == 'R') {
-					
-//					new LeftFarScale().start();
-					new LeftSwitch().start();
+					left = new EncoderFollower(modifierLeftScaleSingle.getLeftTrajectory());
+					right = new EncoderFollower(modifierLeftScaleSingle.getRightTrajectory());
+					left.configureEncoder(0, 4096 * 2, 0.127);
+					right.configureEncoder(0, 4096 * 2, 0.127);
+					left.configurePIDVA(2, 0.0, 0, 1 / 3.5, 0);
+					right.configurePIDVA(2, 0.0, 0, 1 / 3.5, 0);
+					new LeftFarScale().start();
+//					new LeftSwitch().start();
 //					new DriveStraight().start();
 
 				} else if (gameData.charAt(0) == 'R' && gameData.charAt(1) == 'L') {
@@ -485,7 +490,12 @@ public class Robot extends TimedRobot {
 
 
 				} else if (gameData.charAt(0) == 'R' && gameData.charAt(1) == 'R') {
-					
+					left = new EncoderFollower(modifierLeftScaleSingle.getLeftTrajectory());
+					right = new EncoderFollower(modifierLeftScaleSingle.getRightTrajectory());
+					left.configureEncoder(0, 4096 * 2, 0.127);
+					right.configureEncoder(0, 4096 * 2, 0.127);
+					left.configurePIDVA(2, 0.0, 0, 1 / 3.5, 0);
+					right.configurePIDVA(2, 0.0, 0, 1 / 3.5, 0);
 
 					 new LeftFarScale().start();
 					// new LeftSwitchAround().start();
@@ -525,12 +535,12 @@ public class Robot extends TimedRobot {
 //					new CenterSwitchRight().start();
 					new RightMPSwitch().start();
 				} else if(gameData.charAt(0) == 'R' && gameData.charAt(1) == 'L') {
-//					left = new EncoderFollower(modifierRightScaleSingle.getLeftTrajectory());
-//					right = new EncoderFollower(modifierRightScaleSingle.getRightTrajectory());
-//					left.configureEncoder(0, 4096 * 2, 0.127);
-//					right.configureEncoder(0, 4096 * 2, 0.127);
-//					left.configurePIDVA(2, 0.0, 0, 1 / 4.5, 0);
-//					right.configurePIDVA(2, 0.0, 0, 1 / 4.5, 0);
+					left = new EncoderFollower(modifierMiddleRightSingle.getLeftTrajectory());
+					right = new EncoderFollower(modifierMiddleRightSingle.getRightTrajectory());
+					left.configureEncoder(0, 4096 * 2, 0.127);
+					right.configureEncoder(0, 4096 * 2, 0.127);
+					left.configurePIDVA(2, 0.0, 0, 1 / 4.5, 0);
+					right.configurePIDVA(2, 0.0, 0, 1 / 4.5, 0);
 					//new CenterSwitchRightDoubleMP().start();
 					new RightMPSwitch().start();
 				}
@@ -1017,7 +1027,7 @@ public class Robot extends TimedRobot {
 		SmartDashboard.putBoolean("is Carriage at Top", lift.isCarriageAtTop());
 		SmartDashboard.putNumber("Lift Raw", lift.getRawLift());
 		SmartDashboard.putNumber("Arm Raw", arm.getArmRaw());
-		
+		SmartDashboard.putNumber("Match Time", DriverStation.getInstance().getMatchTime());
 		SmartDashboard.putBoolean("Arm Hal Front", arm.getArmHalZeroFront());
 		
 		SmartDashboard.putNumber("left Talon Voltage", drive.motors[0].getMotorOutputVoltage());

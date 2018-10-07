@@ -117,8 +117,8 @@ public class AutoTest {
 		public static double FIRST_DRIVE = 230.8-Robot.robotLength/2 - 30 + 18;
 		public static double FIRST_ANGLE_TURN = 86; // need to tune, should be 90
 		public static double SECOND_DRIVE = 185-Robot.robotLength/2 + 18;// + 155
-		public static double SECOND_ANGLE_TURN = -105;
-		public static double THIRD_DRIVE = 20;
+		public static double SECOND_ANGLE_TURN = -110;
+		public static double THIRD_DRIVE = 19;
 	}
 	
 	public int currentlyTuningProgram;

@@ -107,7 +107,7 @@ public class ArmMotionProfileDelayed extends Command {
 //        	}
         	else if(Robot.arm.getArmHalZeroBack() && state == ArmSubsystem.ArmStateConstants.HEADING_INTAKE_REAR){
         		return true;
-        	}else if(doneTime.get()>2){
+        	}else if(doneTime.get()>1.25){
         		return true;
         	}else if(Robot.arm.getArmHalZeroFront() && state == ArmSubsystem.ArmStateConstants.HEADING_INTAKE_FRONT){
         		return true;
@@ -118,6 +118,8 @@ public class ArmMotionProfileDelayed extends Command {
 
     // Called once after isFinished returns true
     protected void end() {
+    	doneTime.stop();
+    	doneTime.reset();
     	if(Robot.armState > 0){
     	
     			Robot.armState++;
